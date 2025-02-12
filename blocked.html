@@ -1,0 +1,132 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: '微软雅黑', sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        .warning-icon {
+            font-size: 60px;
+            color: #ff4444;
+            margin-bottom: 20px;
+        }
+        .domain {
+            color: #2c3e50;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-icon">⚠️</div>
+    <h2>专注提醒</h2>
+    <p>你正在尝试访问：<br>
+    <span class="domain" id="blockedDomain"></span></p>
+    <p>请专注于当前工作，延迟享受！</p>
+    <button onclick="window.history.back()">返回上一页</button>
+    
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('blockedDomain').textContent = params.get('url') || '未知网站';
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>访问受限</title>
+  <style>
+    /* 页面基础样式 */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    /* 居中容器 */
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    /* 提示信息盒子 */
+    .message {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 40px 60px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(5px);
+    }
+    h1 {
+      margin: 0 0 20px;
+      font-size: 2em;
+    }
+    p {
+      font-size: 1.5em;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    /* 渐显动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    /* 主提醒文本呼吸效果 */
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+   /* 按钮样式 */
+   .btn-close {
+      margin-top: 30px;
+      padding: 10px 25px;
+      font-size: 1.1em;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      color: #333;
+    }
+    .btn-close:hover {
+      background: rgba(255, 255, 255, 1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="message">
+      <h1>专注模式下当前 页面不允许访问</h1>
+      <p class="pulse">延迟满足，兑现承诺，保持专注，自律是自由！！！</p>
+      <button class="btn-close" id="closeButton">返回/关闭</button>
+    </div>
+  </div>
+  <script src="block.js"></script>
+</body>
+</html>

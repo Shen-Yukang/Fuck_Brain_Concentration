@@ -1,0 +1,40 @@
+{
+    
+    "manifest_version": 3,
+    "name": "Yukang-Concentration",
+    "version": "1.0.0",
+  
+    
+    "action": {
+        "default_icon": {
+            "16":"images/spring-16.png",
+            "48":"images/spring-48.png",
+            "128":"images/spring-128.png"
+        },
+        "default-title": "Syk-AdMask",
+        "default_popup": "popup.html" 
+    },
+    "default_locale": "zh_CN",
+    "description": "一个无广告免费开源绿色的专注插件，从外在给你增加自制力，减少一些不必要的网站的干扰, 还你一个纯粹的知识海洋 ^-^",
+    "icons": {
+        "16":"images/spring-16.png",
+        "48":"images/spring-48.png",
+        "128":"images/spring-128.png"
+    },
+    "devtools_page": "index.html",
+
+    "author": "shenyukang99@gmail.com",
+    "background": {
+      "service_worker": "background.js",
+      "type": "module"
+    },
+    "permissions": [
+      "storage",
+      "alarms",
+      "declarativeNetRequest",
+      "declarativeNetRequestWithHostAccess",
+      "notifications"
+    ],
+    
+    "host_permissions": ["*://*/*"]
+  }

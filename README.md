@@ -1,2 +1,5 @@
-# Yukang_Concentration_chromePlugin
-一个无广告免费开源绿色的专注插件，从外在给你增加自制力，减少一些不必要的网站的干扰, 还你一个纯粹的知识海洋 ^-^
+# 使用指南
+updated:[February 5 2025]
+### 1.直接整个文件加载
+    在chrome plugin设置中右上角打开开发者模式
+    然后左上角 load unpacked选择当前项目文件夹即可加载使用
