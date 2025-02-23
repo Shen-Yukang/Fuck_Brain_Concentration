@@ -5,4 +5,4 @@ document.getElementById("closeButton").addEventListener("click", function() {
     } else {
       window.close();
     }
-  });
+});

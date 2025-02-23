@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* 独立样式作用域 */
+    :host {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2147483647;
+    }
+  </style>
+</head>
+<body>
+  <div id="notification"></div>
+  <script>
+    window.addEventListener('message', (e) => {
+      document.getElementById('notification').innerHTML = `
+        <h2>${e.data.title}</h2>
+        <p>${e.data.message}</p>
+      `;
+    });
+  </script>
+</body>
+</html>

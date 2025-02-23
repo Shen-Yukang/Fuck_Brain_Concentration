@@ -1,17 +1,22 @@
 {
     
     "manifest_version": 3,
-    "name": "Yukang-Concentration",
+    "name": "YukangConcentration",
     "version": "1.0.0",
   
-    
+    "content_scripts": [{
+      "matches": ["*://*/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_end", 
+      "all_frames": true
+    }],
     "action": {
         "default_icon": {
             "16":"images/spring-16.png",
             "48":"images/spring-48.png",
             "128":"images/spring-128.png"
         },
-        "default-title": "Syk-AdMask",
+        "default-title": "YukangConcentration",
         "default_popup": "popup.html" 
     },
     "default_locale": "zh_CN",
@@ -29,12 +34,21 @@
       "type": "module"
     },
     "permissions": [
+      "scripting",
       "storage",
       "alarms",
+        "webNavigation",
       "declarativeNetRequest",
       "declarativeNetRequestWithHostAccess",
-      "notifications"
+      "notifications",
+      "tabs", "activeTab"
     ],
-    
+    "web_accessible_resources": [{
+      "resources": ["notification.html"],
+      "matches": ["<all_urls>"]
+    }],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
     "host_permissions": ["*://*/*"]
   }
