@@ -59,23 +59,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-   // 绑定删除事件
-   document.querySelectorAll(".remove-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-        const siteToRemove = e.target.dataset.site;
-        chrome.runtime.sendMessage(
-            { action: "removeSite", domain: siteToRemove },
-            (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error(chrome.runtime.lastError);
-                    return;
-                }
-                // 重新加载列表
-                loadBlockedList();
-            }
-        );
-    });
-});
+     // 绑定删除事件 （事件委托）
+  document.getElementById("blockedList").addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+      const siteToRemove = e.target.dataset.site;
+      chrome.runtime.sendMessage(
+        { action: "removeSite", domain: siteToRemove },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+            return;
+          }
+          loadBlockedList();
+        }
+      );
+    }
+  });
+//    // 绑定删除事件
+//    document.querySelectorAll(".remove-btn").forEach((btn) => {
+//     console.log("点击了")
+//     btn.addEventListener("click", (e) => {
+//         const siteToRemove = e.target.dataset.site;
+//         chrome.runtime.sendMessage(
+//             { action: "removeSite", domain: siteToRemove },
+//             (response) => {
+//                 if (chrome.runtime.lastError) {
+//                     console.error(chrome.runtime.lastError);
+//                     return;
+//                 }
+//                 // 重新加载列表
+//                 loadBlockedList();
+//             }
+//         );
+//     });
+// });
 
 });
 

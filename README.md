@@ -1,5 +1,5 @@
 # 使用指南
-**感谢 deepseek 的友情支持！**
+
 ### 1.用法
 
 - **Method 1** ✅
@@ -22,6 +22,7 @@
 
     - **Redirect page while on concentration period**
     <img width="1467" alt="Image" src="https://github.com/user-attachments/assets/0c599ec3-11cc-4811-b13b-e0a4cb6e0ea7" />
+
 
 - **OR Method 2** ⌛️
     - [ ] 打包发布Chrome Extension Store ( **暂时不打算...** )
@@ -69,3 +70,5 @@
 - 02/05/2025 Wednesday ⛅️ （**我**诞生了🎉 —— version 0.0.1）
 
 **我**: 不思善，不思恶，正与么时，哪个是明上座本来面目 —— 《六祖坛经》
+
+==**在这里感谢deepseek！(部分代码实现思路参考自 deepseek， 部分debug思路参考自 deepseek)**==
