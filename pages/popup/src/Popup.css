@@ -1,0 +1,22 @@
+.App {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.App-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+code {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 0.25rem;
+  padding: 0.2rem 0.5rem;
+}

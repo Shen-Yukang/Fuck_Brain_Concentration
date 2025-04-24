@@ -1,18 +1,26 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+# dependencies
+**/node_modules
 
-# Other files and folders
-.settings/
+# testing
+**/coverage
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+# build
+**/dist
+**/build
+**/dist-zip
+chrome-extension/manifest.js
+chrome-extension/pre-build.tsconfig.tsbuildinfo
+eslint.config.js
+tsconfig.tsbuildinfo
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# env
+**/.env.*
+**/.env
+
+# etc
+.DS_Store
+.idea
+**/.turbo
+
+# compiled
+**/tailwind-output.css
