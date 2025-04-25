@@ -1,6 +1,6 @@
-# 使用指南
+# 专注时间管理功能使用说明
 
-### 1.用法
+### 使用方法
 
 - **Method 1** ✅
 先在[Google Chrome Manage Extensions](chrome://extensions/)中右上角打开开发者模式，然后左上角Load Unpacked 调出系统文件夹选择当前项目文件夹即可加载使用。
@@ -71,4 +71,5 @@
 
 **我**: 不思善，不思恶，正与么时，哪个是明上座本来面目 —— 《六祖坛经》
 
-==**在这里感谢deepseek！(部分代码实现思路参考自 deepseek， 部分debug思路参考自 deepseek)**==
+### Reference
+[Chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
