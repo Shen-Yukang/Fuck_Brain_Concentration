@@ -10,7 +10,7 @@ const NewTab = () => {
   const isLight = theme === 'light';
   const logo = isLight ? 'new-tab/logo_horizontal.svg' : 'new-tab/logo_horizontal_dark.svg';
   const goGithubSite = () =>
-    chrome.tabs.create({ url: 'https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite' });
+    chrome.tabs.create({ url: 'https://github.com/Shen-Yukang/Yukang_Concentration_chromePlugin' });
 
   console.log(t('hello', 'World'));
   return (
