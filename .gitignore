@@ -25,5 +25,5 @@ tsconfig.tsbuildinfo
 # compiled
 **/tailwind-output.css
 
-# temporarily commented out
-.github/workflows
+# temporarily commented out (can learn more about it)
+.github/
