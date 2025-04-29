@@ -30,8 +30,7 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel'],
-  options_page: 'options/index.html',
+  permissions: ['storage', 'scripting', 'tabs', 'notifications'],
   background: {
     service_worker: 'background.js',
     type: 'module',
@@ -45,11 +44,8 @@ const manifest = {
       '128': 'spring-128.png',
     },
   },
-  // chrome_url_overrides: {
-  //   newtab: 'new-tab/index.html',
-  // },
   icons: {
-    128: 'spring-128.png',
+    '128': 'spring-128.png',
   },
   content_scripts: [
     {
@@ -58,23 +54,15 @@ const manifest = {
     },
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content-ui/index.iife.js'],
-    },
-    {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
       css: ['content.css'],
     },
   ],
-  devtools_page: 'devtools/index.html',
   web_accessible_resources: [
     {
       resources: ['*.js', '*.css', '*.svg', 'spring-16.png', 'spring-48.png', 'spring-128.png'],
       matches: ['*://*/*'],
     },
   ],
-  side_panel: {
-    default_path: 'side-panel/index.html',
-  },
 } satisfies chrome.runtime.ManifestV3;
 
 export default manifest;

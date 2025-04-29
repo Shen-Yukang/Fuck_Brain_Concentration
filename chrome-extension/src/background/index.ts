@@ -9,6 +9,8 @@ exampleThemeStorage.get().then(theme => {
 // 检查专注状态
 let isFocusModeActive = false;
 let blockedUrls: string[] = [];
+let studyModeUrls: string[] = [];
+let studyModeSelectors: Record<string, string[]> = {};
 
 // 加载专注状态和禁用URL
 async function loadFocusState() {
@@ -16,10 +18,14 @@ async function loadFocusState() {
   isFocusModeActive = focusConfig.isActive;
 
   const urlsConfig = await blockedUrlsStorage.get();
-  blockedUrls = urlsConfig.urls;
+  blockedUrls = urlsConfig.urls || [];
+  studyModeUrls = urlsConfig.studyModeUrls || [];
+  studyModeSelectors = urlsConfig.studyModeSelectors || {};
 
   console.log('Focus mode active:', isFocusModeActive);
   console.log('Blocked URLs:', blockedUrls);
+  console.log('Study Mode URLs:', studyModeUrls);
+  console.log('Study Mode Selectors:', studyModeSelectors);
 
   // 如果专注模式已激活，设置图标状态
   updateExtensionIcon(isFocusModeActive);
@@ -74,7 +80,9 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     if (changes['blocked-urls-storage-key']) {
       const newValue = changes['blocked-urls-storage-key'].newValue;
       if (newValue) {
-        blockedUrls = newValue.urls;
+        blockedUrls = newValue.urls || [];
+        studyModeUrls = newValue.studyModeUrls || [];
+        studyModeSelectors = newValue.studyModeSelectors || {};
       }
     }
   }
@@ -104,6 +112,7 @@ async function checkTabUrl(tabId: number, url: string) {
 
   // 检查URL是否在禁用列表中
   const isBlocked = isUrlBlocked(url);
+  const isStudyMode = isUrlInStudyMode(url);
 
   if (isBlocked) {
     // 重定向到阻止页面或显示警告
@@ -111,6 +120,16 @@ async function checkTabUrl(tabId: number, url: string) {
       target: { tabId },
       func: showBlockedWarning,
     });
+  } else if (isStudyMode) {
+    // 应用学习模式，禁用特定元素
+    const selectors = getStudyModeSelectors(url);
+    if (selectors && selectors.length > 0) {
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        func: applyStudyMode,
+        args: [selectors],
+      });
+    }
   }
 }
 
@@ -133,6 +152,64 @@ function isUrlBlocked(url: string): boolean {
   }
 }
 
+// 检查URL是否在学习模式中
+function isUrlInStudyMode(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return studyModeUrls.some(studyModeUrl => {
+      try {
+        const studyModeUrlObj = new URL(studyModeUrl);
+        // 检查主域名是否匹配
+        return urlObj.hostname.includes(studyModeUrlObj.hostname);
+      } catch {
+        // 如果无法解析学习模式URL，则检查简单的包含关系
+        return url.includes(studyModeUrl);
+      }
+    });
+  } catch {
+    return false;
+  }
+}
+
+// 获取URL对应的学习模式选择器
+function getStudyModeSelectors(url: string): string[] {
+  try {
+    const urlObj = new URL(url);
+
+    // 首先尝试精确匹配
+    for (const studyModeUrl in studyModeSelectors) {
+      if (url === studyModeUrl) {
+        return studyModeSelectors[studyModeUrl];
+      }
+    }
+
+    // 然后尝试域名匹配
+    for (const studyModeUrl in studyModeSelectors) {
+      try {
+        const studyModeUrlObj = new URL(studyModeUrl);
+        if (urlObj.hostname.includes(studyModeUrlObj.hostname)) {
+          return studyModeSelectors[studyModeUrl];
+        }
+      } catch {
+        // 如果无法解析URL，则检查简单的包含关系
+        if (url.includes(studyModeUrl)) {
+          return studyModeSelectors[studyModeUrl];
+        }
+      }
+    }
+
+    // 如果没有找到匹配的选择器，返回默认选择器
+    // 对于bilibili网站，默认禁用搜索框
+    if (urlObj.hostname.includes('bilibili.com')) {
+      return ['#nav-searchform', '.center-search__bar'];
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+}
+
 // 在页面上显示警告
 function showBlockedWarning() {
   // 创建覆盖层
@@ -150,6 +227,7 @@ function showBlockedWarning() {
   overlay.style.justifyContent = 'center';
   overlay.style.color = 'white';
   overlay.style.fontFamily = 'Arial, sans-serif';
+  overlay.style.fontSize = '16px'; // Base font size
   overlay.style.padding = '20px';
   overlay.style.boxSizing = 'border-box';
 
@@ -157,10 +235,13 @@ function showBlockedWarning() {
   const warningText = document.createElement('h1');
   warningText.textContent = '专注模式已启动';
   warningText.style.marginBottom = '20px';
+  warningText.style.fontSize = '24px';
+  warningText.style.fontWeight = 'bold';
 
   const messageText = document.createElement('p');
   messageText.textContent = '当前网站在专注模式下被禁用';
   messageText.style.marginBottom = '30px';
+  messageText.style.fontSize = '18px';
 
   // 创建返回按钮
   const backButton = document.createElement('button');
@@ -184,6 +265,118 @@ function showBlockedWarning() {
 
   // 添加覆盖层到页面
   document.body.appendChild(overlay);
+}
+
+// 应用学习模式，禁用特定元素
+function applyStudyMode(selectors: string[]) {
+  console.log('Applying study mode with selectors:', selectors);
+
+  // 创建一个小提示，显示学习模式已启用
+  const studyModeIndicator = document.createElement('div');
+  studyModeIndicator.style.position = 'fixed';
+  studyModeIndicator.style.top = '10px';
+  studyModeIndicator.style.right = '10px';
+  studyModeIndicator.style.backgroundColor = 'rgba(0, 128, 0, 0.8)';
+  studyModeIndicator.style.color = 'white';
+  studyModeIndicator.style.padding = '8px 12px';
+  studyModeIndicator.style.borderRadius = '4px';
+  studyModeIndicator.style.zIndex = '9999998';
+  studyModeIndicator.style.fontSize = '14px';
+  studyModeIndicator.style.fontFamily = 'Arial, sans-serif';
+  studyModeIndicator.textContent = '学习模式已启用';
+
+  // 添加到页面
+  document.body.appendChild(studyModeIndicator);
+
+  // 5秒后隐藏提示
+  setTimeout(() => {
+    studyModeIndicator.style.opacity = '0';
+    studyModeIndicator.style.transition = 'opacity 0.5s';
+    setTimeout(() => {
+      if (document.body.contains(studyModeIndicator)) {
+        document.body.removeChild(studyModeIndicator);
+      }
+    }, 500);
+  }, 5000);
+
+  // 禁用指定的元素
+  selectors.forEach(selector => {
+    try {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        if (element instanceof HTMLElement) {
+          // 保存原始样式
+          const originalPointerEvents = element.style.pointerEvents;
+          const originalOpacity = element.style.opacity;
+          const originalCursor = element.style.cursor;
+
+          // 应用禁用样式
+          element.style.pointerEvents = 'none';
+          element.style.opacity = '0.5';
+          element.style.cursor = 'not-allowed';
+
+          // 确保字体样式一致
+          if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'BUTTON') {
+            element.style.fontSize = element.style.fontSize || 'inherit';
+          }
+
+          // 添加一个标记，表示这个元素已被禁用
+          element.dataset.studyModeDisabled = 'true';
+
+          // 保存原始样式，以便以后可以恢复
+          element.dataset.originalPointerEvents = originalPointerEvents;
+          element.dataset.originalOpacity = originalOpacity;
+          element.dataset.originalCursor = originalCursor;
+        }
+      });
+      console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
+    } catch (error) {
+      console.error(`Error disabling elements with selector ${selector}:`, error);
+    }
+  });
+
+  // 监听DOM变化，对新添加的元素也应用禁用
+  const observer = new MutationObserver(mutations => {
+    let shouldReapply = false;
+
+    mutations.forEach(mutation => {
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        shouldReapply = true;
+      }
+    });
+
+    if (shouldReapply) {
+      selectors.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(element => {
+            if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
+              // 应用禁用样式
+              element.style.pointerEvents = 'none';
+              element.style.opacity = '0.5';
+              element.style.cursor = 'not-allowed';
+              // 确保字体样式一致
+              if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.tagName === 'BUTTON') {
+                element.style.fontSize = element.style.fontSize || 'inherit';
+              }
+              element.dataset.studyModeDisabled = 'true';
+            }
+          });
+        } catch (error) {
+          console.error(`Error in mutation observer for selector ${selector}:`, error);
+        }
+      });
+    }
+  });
+
+  // 开始观察整个文档
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
+
+  // 将观察器保存到window对象，以便以后可以断开连接
+  (window as any).__studyModeObserver = observer;
 }
 
 // 初始化

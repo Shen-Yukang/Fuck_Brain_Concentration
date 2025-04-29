@@ -20,6 +20,14 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // 计算进度百分比
+  const calculateProgress = () => {
+    if (!focusConfig.startTime || !focusConfig.endTime) return 0;
+    const totalDuration = (focusConfig.endTime - focusConfig.startTime) / 1000;
+    const elapsed = totalDuration - remainingTime;
+    return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+  };
+
   // 更新剩余时间
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -75,37 +83,65 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
   };
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
-      <h2 className="text-lg font-bold">专注时间设置</h2>
+    <div
+      className={cn('flex flex-col gap-4 p-4 rounded-lg shadow-md transition-all duration-300', className)}
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+      <h2 className="text-lg font-bold flex items-center gap-2">
+        <span className="inline-block w-1.5 h-5 bg-blue-500 rounded-sm"></span>
+        专注时间设置
+      </h2>
 
       {isActive ? (
-        <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold mb-2">{formatTime(remainingTime)}</div>
+        <div className="flex flex-col items-center py-3">
+          <div className="relative w-32 h-32 mb-4 flex items-center justify-center">
+            {/* Progress circle */}
+            <svg className="absolute w-full h-full -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="#3b82f6"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeDasharray="283"
+                strokeDashoffset={283 - (283 * calculateProgress()) / 100}
+                style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
+              />
+            </svg>
+            <div className="text-3xl font-bold z-10">{formatTime(remainingTime)}</div>
+          </div>
           <button
             onClick={handleStopFocus}
-            className="py-1 px-4 rounded shadow hover:scale-105 bg-red-500 text-white font-bold">
+            className="py-2 px-6 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-white font-bold"
+            style={{ background: 'linear-gradient(to right, #ef4444, #dc2626)' }}>
             停止专注
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <label htmlFor="duration" className="whitespace-nowrap">
+        <div className="flex flex-col gap-4 py-2">
+          <div className="flex items-center gap-3">
+            <label htmlFor="duration" className="whitespace-nowrap font-medium">
               专注时长 (分钟):
             </label>
-            <input
-              id="duration"
-              type="number"
-              min="1"
-              max="180"
-              value={duration}
-              onChange={handleDurationChange}
-              className="border rounded px-2 py-1 w-16 text-center"
-            />
+            <div className="relative">
+              <input
+                id="duration"
+                type="number"
+                min="1"
+                max="180"
+                value={duration}
+                onChange={handleDurationChange}
+                className="border border-gray-300 rounded-md px-3 py-2 w-20 text-center outline-none"
+                style={{ transition: 'all 0.3s ease' }}
+              />
+            </div>
           </div>
           <button
             onClick={handleStartFocus}
-            className="py-1 px-4 rounded shadow hover:scale-105 bg-green-500 text-white font-bold">
+            className="py-2 px-6 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-white font-bold"
+            style={{ background: 'linear-gradient(to right, #22c55e, #16a34a)' }}>
             开始专注
           </button>
         </div>

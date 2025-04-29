@@ -11,15 +11,15 @@ const archivePath = resolve(import.meta.dirname, '..', 'archive');
 const pageFolders = fs.readdirSync(pagesPath);
 
 const DEFAULT_CHOICES = [
-  { name: 'Background Script', value: 'background' },
-  { name: 'Content Script (Execute JS on Web Page)', value: 'content' },
-  { name: 'Content Script UI (Render Custom React Component on Web Page)', value: 'content-ui' },
-  { name: 'Content Script Runtime (Inject JS on Specific Actions like Popup Click)', value: 'content-runtime' },
-  { name: 'New Tab Override', value: 'new-tab' },
-  { name: 'Popup (On Extension Icon Click)', value: 'popup' },
-  { name: 'DevTools (Include DevTools Panel)', value: 'devtools' },
-  { name: 'Side Panel', value: 'side-panel' },
-  { name: 'Options Page', value: 'options' },
+  { name: 'Background Script', value: 'background' }, // 必须的， 如果您的扩展需要在后台持续运行，处理事件或管理状态，则此组件是必需的。
+  { name: 'Content Script (Execute JS on Web Page)', value: 'content' }, // 如果您的扩展需要在网页上执行 JavaScript，则需要此功能。
+  { name: 'Content Script UI (Render Custom React Component on Web Page)', value: 'content-ui' }, // 如果您的扩展需要在网页上渲染自定义 React 组件，则需要此功能。
+  { name: 'Content Script Runtime (Inject JS on Specific Actions like Popup Click)', value: 'content-runtime' }, // 如果您的扩展需要在特定操作（如点击弹出窗口）时注入 JavaScript，则需要此功能。
+  { name: 'New Tab Override', value: 'new-tab' }, // 如果您的扩展需要自定义新标签页，则需要此功能。
+  { name: 'Popup (On Extension Icon Click)', value: 'popup' }, //如果您的扩展需要在点击扩展图标时显示弹出窗口，则需要此功能。
+  { name: 'DevTools (Include DevTools Panel)', value: 'devtools' }, //如果您的扩展需要添加自定义开发者工具面板，则需要此功能。
+  { name: 'Side Panel', value: 'side-panel' }, //如果您的扩展需要提供侧边栏功能（Chrome 114+），则需要此功能。
+  { name: 'Options Page', value: 'options' }, // 如果您的扩展需要提供设置或配置页面，则需要此功能。
 ];
 
 export default async function deleteModules(manifestObject: chrome.runtime.ManifestV3) {
