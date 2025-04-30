@@ -2,7 +2,7 @@ import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { t } from '@extension/i18n';
-import { ToggleButton, FocusTimer, BlockedUrlsList } from '@extension/ui';
+import { ToggleButton, FocusTimer, BlockedUrlsList, AISettings, AINotificationGenerator } from '@extension/ui';
 import { useEffect } from 'react';
 
 const Popup = () => {
@@ -18,6 +18,31 @@ const Popup = () => {
     }
   }, [isLight]);
 
+  // 添加消息监听器，用于检测popup是否打开
+  useEffect(() => {
+    // 监听来自背景脚本的消息
+    const messageListener = (
+      message: any,
+      _sender: chrome.runtime.MessageSender,
+      sendResponse: (response?: any) => void,
+    ) => {
+      // 如果是ping消息，回复pong
+      if (message && message.type === 'PING_POPUP') {
+        sendResponse({ type: 'PONG_POPUP' });
+        return true;
+      }
+      return false;
+    };
+
+    // 添加监听器
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    // 清理函数
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
+
   return (
     <div
       className="App"
@@ -27,6 +52,9 @@ const Popup = () => {
           ? 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)'
           : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
       }}>
+      {/* 添加AI通知生成器组件（不可见） */}
+      <AINotificationGenerator />
+
       <div className={`App-content ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
@@ -51,6 +79,9 @@ const Popup = () => {
         <div className="flex flex-col gap-6">
           {/* 专注时间设置 */}
           <FocusTimer />
+
+          {/* AI通知设置 */}
+          <AISettings />
 
           {/* 禁用URL列表 */}
           <BlockedUrlsList />

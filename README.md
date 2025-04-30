@@ -7,7 +7,7 @@
     
     ######  具体步骤如下：
     -  **Load plugin raw package**
-    <img width="1464" alt="Image" src="https://github.com/user-attachments/assets/22227664-bd87-401b-b64d-08c05ca0c20b" />
+    <img width="1464" alt="Image" src="https://private-user-images.githubusercontent.com/160222653/438998601-2be2c314-4390-47ed-b5d5-ccdff7c60900.png" />
 
     - **Enable plugin**
     <img width="426" alt="Image" src="https://github.com/user-attachments/assets/4c72ae73-dc2d-4a8b-bc14-f80cea76108f" />
@@ -66,10 +66,11 @@
 
 ### Update History
 
-- 02/21/2025 Friday ☀️ (**我**自己修改了一些严重bug、提升notification体验)
+- 02/21/2025 Friday ☀️ (**我**的一些严重bug被修改、提升notification体验)
 - 02/05/2025 Wednesday ⛅️ （**我**诞生了🎉 —— version 0.0.1）
+- 04/29/2025 Tuesday ⛅️☀️ （**我** 🎉 —— version 1.1.0, 彻底改头还面了，更稳健的功能和交互！）
 
-**我**: 不思善，不思恶，正与么时，哪个是明上座本来面目 —— 《六祖坛经》
+**我**: 不思善，不思恶，正与么时，哪个是明上座本来面目
 
 ### Reference
-[Chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite)
+[Chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite) 👈 更多高级配置定制参考

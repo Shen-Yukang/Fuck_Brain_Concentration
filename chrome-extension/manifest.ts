@@ -36,7 +36,7 @@ const manifest = {
     type: 'module',
   },
   action: {
-    default_title: 'YukangConcentration',
+    default_title: 'Fuck_Brain_Concentration',
     default_popup: 'popup/index.html',
     default_icon: {
       '16': 'spring-16.png',

@@ -43,10 +43,8 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
         focusStorage.getRemainingTime().then(time => {
           setRemainingTime(time);
 
-          // 如果时间到了，自动停止专注
-          if (time <= 0 && focusConfig.isActive) {
-            focusStorage.stopFocus();
-          }
+          // 注意：不再在这里停止专注，而是由后台脚本负责
+          // 这样即使popup关闭，后台脚本也能处理倒计时结束的情况
         });
       }, 1000);
     }

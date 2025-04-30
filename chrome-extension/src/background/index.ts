@@ -1,5 +1,12 @@
 import 'webextension-polyfill';
-import { exampleThemeStorage, focusStorage, blockedUrlsStorage } from '@extension/storage';
+import {
+  exampleThemeStorage,
+  focusStorage,
+  blockedUrlsStorage,
+  notificationCacheStorage,
+  aiConfigStorage,
+  AIProvider,
+} from '@extension/storage';
 
 // 初始化主题
 exampleThemeStorage.get().then(theme => {
@@ -11,6 +18,87 @@ let isFocusModeActive = false;
 let blockedUrls: string[] = [];
 let studyModeUrls: string[] = [];
 let studyModeSelectors: Record<string, string[]> = {};
+
+// 预生成通知
+async function preGenerateNotification(duration: number) {
+  try {
+    // 获取AI配置
+    const config = await aiConfigStorage.get();
+
+    // 如果未启用AI或没有API密钥，不预生成
+    if (!config.enabled || !config.apiKey) {
+      console.log('AI service not enabled or no API key, skipping notification pre-generation');
+      return;
+    }
+
+    // 检查是否已经有缓存的通知
+    const cachedNotification = await notificationCacheStorage.getNotification();
+    if (cachedNotification) {
+      console.log('Already have a cached notification, skipping pre-generation');
+      return;
+    }
+
+    // 检查是否已经在生成中
+    const isGenerating = await notificationCacheStorage.isGenerating();
+    if (isGenerating) {
+      console.log('Already generating a notification, skipping');
+      return;
+    }
+
+    // 设置生成状态，标记为需要生成
+    await notificationCacheStorage.setGenerating(true);
+
+    // 这里我们只是设置一个标记，表示需要生成通知
+    // 实际的通知生成会在popup页面中进行，因为我们不能在这里直接使用shared模块
+    console.log('Marked notification for pre-generation, duration:', duration);
+
+    // 检查是否有popup页面打开
+    const popupOpen = await checkIfPopupIsOpen();
+
+    // 如果没有popup页面打开，使用备用消息
+    if (!popupOpen) {
+      console.log('No popup open, using fallback message');
+
+      // 使用一个简单的备用消息
+      const fallbackMessages = [
+        '休息一下吧！你已经专注工作了一段时间。',
+        '该活动一下了！站起来伸展一下身体吧。',
+        '休息是为了更好的工作，现在是放松的时候了。',
+        '你的大脑需要休息，去喝杯水吧！',
+        '专注时间结束，给自己一个小奖励吧！',
+      ];
+
+      const randomIndex = Math.floor(Math.random() * fallbackMessages.length);
+      const message = fallbackMessages[randomIndex];
+
+      // 缓存通知（默认60分钟过期）
+      await notificationCacheStorage.saveNotification(message);
+
+      // 重置生成状态
+      await notificationCacheStorage.setGenerating(false);
+    }
+    // 如果popup页面打开，保持生成状态为true，让popup页面处理生成
+
+    return true;
+  } catch (error) {
+    console.error('Error pre-generating notification:', error);
+    // 重置生成状态
+    await notificationCacheStorage.setGenerating(false);
+    return false;
+  }
+}
+
+// 检查popup页面是否打开
+async function checkIfPopupIsOpen(): Promise<boolean> {
+  try {
+    // 尝试向popup页面发送消息
+    const response = await chrome.runtime.sendMessage({ type: 'PING_POPUP' });
+    return response && response.type === 'PONG_POPUP';
+  } catch {
+    // 如果发送消息失败，说明popup页面未打开
+    return false;
+  }
+}
 
 // 加载专注状态和禁用URL
 async function loadFocusState() {
@@ -29,6 +117,8 @@ async function loadFocusState() {
 
   // 如果专注模式已激活，设置图标状态
   updateExtensionIcon(isFocusModeActive);
+
+  return { isFocusModeActive, focusConfig };
 }
 
 // 更新扩展图标和徽章
@@ -54,7 +144,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
         isFocusModeActive = newValue.isActive;
         updateExtensionIcon(isFocusModeActive);
 
-        // 如果状态从非活跃变为活跃，显示通知
+        // 如果状态从非活跃变为活跃，显示通知并启动定时器检查
         if (isFocusModeActive && !changes['focus-time-storage-key'].oldValue?.isActive) {
           chrome.notifications.create('focus-start', {
             type: 'basic',
@@ -62,16 +152,28 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
             title: '专注模式已启动',
             message: `专注时间：${newValue.duration}分钟`,
           });
+
+          // 启动定时器检查
+          startTimerCheck();
+
+          // 如果启用了AI通知，预生成通知
+          aiConfigStorage.get().then(aiConfig => {
+            if (aiConfig.enabled) {
+              // 预生成通知
+              preGenerateNotification(newValue.duration);
+            }
+          });
         }
 
-        // 如果状态从活跃变为非活跃，显示通知
+        // 如果状态从活跃变为非活跃，显示通知并停止定时器检查
         if (!isFocusModeActive && changes['focus-time-storage-key'].oldValue?.isActive) {
-          chrome.notifications.create('focus-end', {
-            type: 'basic',
-            iconUrl: chrome.runtime.getURL('spring-128.png'),
-            title: '专注模式已结束',
-            message: '休息一下吧！',
-          });
+          // 通知已经在checkFocusTimer中处理，这里不再重复
+
+          // 停止定时器检查
+          stopTimerCheck();
+
+          // 清除缓存的通知
+          notificationCacheStorage.clearNotification();
         }
       }
     }
@@ -83,6 +185,15 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
         blockedUrls = newValue.urls || [];
         studyModeUrls = newValue.studyModeUrls || [];
         studyModeSelectors = newValue.studyModeSelectors || {};
+      }
+    }
+
+    // 检查AI配置变化
+    if (changes['ai-config-storage-key']) {
+      const newValue = changes['ai-config-storage-key'].newValue;
+      if (newValue) {
+        // 配置发生变化，但我们不需要特殊处理
+        console.log('AI configuration changed');
       }
     }
   }
@@ -376,10 +487,118 @@ function applyStudyMode(selectors: string[]) {
   });
 
   // 将观察器保存到window对象，以便以后可以断开连接
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).__studyModeObserver = observer;
 }
 
-// 初始化
-loadFocusState();
+// 定期检查专注时间是否结束
+async function checkFocusTimer() {
+  // 只在专注模式激活时检查
+  if (!isFocusModeActive) return;
 
-console.log('Focus mode background script loaded');
+  try {
+    // 获取剩余时间
+    const remainingTime = await focusStorage.getRemainingTime();
+
+    // 获取AI配置
+    const aiConfig = await aiConfigStorage.get();
+
+    // 如果时间到了，自动停止专注
+    if (remainingTime <= 0 && isFocusModeActive) {
+      console.log('Focus timer ended, stopping focus mode automatically');
+
+      // 不需要获取专注配置
+
+      // 如果启用了AI通知，尝试获取预生成的通知
+      let notificationMessage = '休息一下吧！';
+
+      if (aiConfig.enabled) {
+        try {
+          // 尝试从缓存中获取通知
+          const cachedNotification = await notificationCacheStorage.getNotification();
+          if (cachedNotification) {
+            notificationMessage = cachedNotification;
+            // 清除缓存
+            await notificationCacheStorage.clearNotification();
+          }
+        } catch (error) {
+          console.error('Error getting cached notification:', error);
+        }
+      }
+
+      // 停止专注模式
+      await focusStorage.stopFocus();
+
+      // 显示自定义通知
+      chrome.notifications.create('focus-end', {
+        type: 'basic',
+        iconUrl: chrome.runtime.getURL('spring-128.png'),
+        title: '专注模式已结束',
+        message: notificationMessage,
+      });
+    }
+    // 如果启用了AI通知，并且剩余时间接近预生成时间，预生成通知
+    else if (aiConfig.enabled && remainingTime > 0 && remainingTime <= aiConfig.preGenerateMinutes * 60) {
+      // 检查是否已经有缓存的通知
+      const cachedNotification = await notificationCacheStorage.getNotification();
+
+      // 如果没有缓存的通知，预生成一个
+      if (!cachedNotification) {
+        const focusConfig = await focusStorage.get();
+        await preGenerateNotification(focusConfig.duration);
+      }
+    }
+  } catch (error) {
+    console.error('Error checking focus timer:', error);
+  }
+}
+
+// 设置定时器，每秒检查一次专注时间
+let timerCheckInterval: number | null = null;
+
+function startTimerCheck() {
+  if (timerCheckInterval) return; // 避免重复设置
+
+  // 设置每秒检查一次
+  timerCheckInterval = setInterval(checkFocusTimer, 1000) as unknown as number;
+  console.log('Started focus timer check interval');
+}
+
+function stopTimerCheck() {
+  if (timerCheckInterval) {
+    clearInterval(timerCheckInterval);
+    timerCheckInterval = null;
+    console.log('Stopped focus timer check interval');
+  }
+}
+
+// 初始化
+async function initialize() {
+  // 加载专注状态
+  await loadFocusState();
+
+  // 检查AI配置
+  const aiConfig = await aiConfigStorage.get();
+  console.log('AI notifications enabled:', aiConfig.enabled);
+
+  // 如果专注模式已激活，启动定时器检查
+  if (isFocusModeActive) {
+    startTimerCheck();
+
+    // 获取AI配置
+    const aiConfig = await aiConfigStorage.get();
+
+    // 如果启用了AI通知，获取专注配置并预生成通知
+    if (aiConfig.enabled) {
+      const focusConfig = await focusStorage.get();
+      await preGenerateNotification(focusConfig.duration);
+    }
+  }
+
+  console.log('Focus mode background script loaded with AI integration');
+}
+
+// 启动初始化
+initialize().catch(error => {
+  console.error('Error during initialization:', error);
+});
