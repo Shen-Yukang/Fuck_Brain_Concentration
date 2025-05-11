@@ -45,7 +45,7 @@ export class AIService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.config.apiKey}`,
+                    Authorization: `Bearer ${this.config.apiKey}`,
                 },
                 body: JSON.stringify(requestBody),
                 signal: controller.signal,
@@ -82,7 +82,7 @@ export class AIService {
                     model: this.config.model,
                     messages: [
                         ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-                        { role: 'user', content: prompt }
+                        { role: 'user', content: prompt },
                     ],
                     temperature: temperature ?? this.config.temperature,
                     max_tokens: maxTokens ?? this.config.maxTokens,
@@ -103,11 +103,13 @@ export class AIService {
             case AIProvider.OPENAI:
                 return {
                     text: data.choices[0].message.content,
-                    usage: data.usage ? {
-                        promptTokens: data.usage.prompt_tokens,
-                        completionTokens: data.usage.completion_tokens,
-                        totalTokens: data.usage.total_tokens,
-                    } : undefined,
+                    usage: data.usage
+                        ? {
+                            promptTokens: data.usage.prompt_tokens,
+                            completionTokens: data.usage.completion_tokens,
+                            totalTokens: data.usage.total_tokens,
+                        }
+                        : undefined,
                     model: data.model,
                     provider: this.config.provider,
                 };

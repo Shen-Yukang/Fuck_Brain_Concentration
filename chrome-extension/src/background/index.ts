@@ -7,6 +7,7 @@ import {
   aiConfigStorage,
   AIProvider,
 } from '@extension/storage';
+import { getSiteHandler } from './site-handlers';
 
 // 初始化主题
 exampleThemeStorage.get().then(theme => {
@@ -232,14 +233,26 @@ async function checkTabUrl(tabId: number, url: string) {
       func: showBlockedWarning,
     });
   } else if (isStudyMode) {
-    // 应用学习模式，禁用特定元素
+    // 检查是否有站点特定处理器
+    const siteHandler = getSiteHandler(url);
     const selectors = getStudyModeSelectors(url);
+
     if (selectors && selectors.length > 0) {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        func: applyStudyMode,
-        args: [selectors],
-      });
+      // 如果有自定义处理函数，使用自定义处理函数
+      if (siteHandler && siteHandler.getCustomHandler) {
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: siteHandler.getCustomHandler(tabId),
+          args: [selectors],
+        });
+      } else {
+        // 否则使用默认的处理函数
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: applyStudyMode,
+          args: [selectors],
+        });
+      }
     }
   }
 }
@@ -287,6 +300,13 @@ function getStudyModeSelectors(url: string): string[] {
   try {
     const urlObj = new URL(url);
 
+    // 首先检查是否有站点特定处理器
+    const siteHandler = getSiteHandler(url);
+    if (siteHandler) {
+      return siteHandler.getSelectors();
+    }
+
+    // 如果没有站点特定处理器，尝试从存储中获取
     // 首先尝试精确匹配
     for (const studyModeUrl in studyModeSelectors) {
       if (url === studyModeUrl) {
@@ -307,12 +327,6 @@ function getStudyModeSelectors(url: string): string[] {
           return studyModeSelectors[studyModeUrl];
         }
       }
-    }
-
-    // 如果没有找到匹配的选择器，返回默认选择器
-    // 对于bilibili网站，默认禁用搜索框
-    if (urlObj.hostname.includes('bilibili.com')) {
-      return ['#nav-searchform', '.center-search__bar'];
     }
 
     return [];
