@@ -69,7 +69,7 @@ export const AINotificationGenerator = () => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${aiConfig.apiKey}`,
+                            Authorization: `Bearer; ${aiConfig.apiKey}`,
                         },
                         body: JSON.stringify(options),
                     });

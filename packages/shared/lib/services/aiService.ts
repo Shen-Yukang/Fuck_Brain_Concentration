@@ -91,7 +91,7 @@ export class AIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.config.apiKey}`,
+          Authorization: `Bearer; ${this.config.apiKey}`,
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal,

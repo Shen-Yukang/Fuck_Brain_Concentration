@@ -17,7 +17,8 @@
     "storage",
     "scripting",
     "tabs",
-    "notifications"
+    "notifications",
+    "offscreen"
   ],
   "background": {
     "service_worker": "background.js",
@@ -60,15 +61,15 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "*.js",
-        "*.css",
-        "*.svg",
         "spring-16.png",
         "spring-48.png",
-        "spring-128.png"
+        "spring-128.png",
+        "notification.mp3",
+        "offscreen.html",
+        "offscreen.js"
       ],
       "matches": [
-        "*://*/*"
+        "<all_urls>"
       ]
     }
   ]

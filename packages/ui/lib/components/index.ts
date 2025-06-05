@@ -3,3 +3,5 @@ export * from './FocusTimer';
 export * from './BlockedUrlsList';
 export * from './AISettings';
 export * from './AINotificationGenerator';
+export * from './SoundSettings';
+export * from './TTSSettings';

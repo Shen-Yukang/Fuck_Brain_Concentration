@@ -30,7 +30,7 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications'],
+  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'offscreen'],
   background: {
     service_worker: 'background.js',
     type: 'module',
@@ -59,8 +59,15 @@ const manifest = {
   ],
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'spring-16.png', 'spring-48.png', 'spring-128.png'],
-      matches: ['*://*/*'],
+      resources: [
+        'spring-16.png',
+        'spring-48.png',
+        'spring-128.png',
+        'notification.mp3', // 添加音频文件
+        'offscreen.html',
+        'offscreen.js',
+      ],
+      matches: ['<all_urls>'],
     },
   ],
 } satisfies chrome.runtime.ManifestV3;

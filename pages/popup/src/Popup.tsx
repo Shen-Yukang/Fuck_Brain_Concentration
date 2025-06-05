@@ -2,7 +2,15 @@ import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import { t } from '@extension/i18n';
-import { ToggleButton, FocusTimer, BlockedUrlsList, AISettings, AINotificationGenerator } from '@extension/ui';
+import {
+  ToggleButton,
+  FocusTimer,
+  BlockedUrlsList,
+  AISettings,
+  AINotificationGenerator,
+  SoundSettings,
+  TTSSettings,
+} from '@extension/ui';
 import { useEffect } from 'react';
 
 const Popup = () => {
@@ -79,6 +87,12 @@ const Popup = () => {
         <div className="flex flex-col gap-6">
           {/* 专注时间设置 */}
           <FocusTimer />
+
+          {/* 声音设置 */}
+          <SoundSettings />
+
+          {/* 语音合成设置 */}
+          <TTSSettings />
 
           {/* AI通知设置 */}
           <AISettings />

@@ -5,9 +5,127 @@ import {
   blockedUrlsStorage,
   notificationCacheStorage,
   aiConfigStorage,
-  AIProvider,
+  soundSettingsStorage,
+  ttsConfigStorage,
 } from '@extension/storage';
 import { getSiteHandler } from './site-handlers';
+import { TTSService } from '../services/ttsService';
+
+// 播放TTS语音通知
+async function playTTSNotification(text: string) {
+  try {
+    // 获取TTS配置
+    const ttsConfig = await ttsConfigStorage.get();
+
+    // 如果TTS未启用或未配置，回退到普通音频
+    if (!ttsConfig.enabled || !(await ttsConfigStorage.isConfigured())) {
+      console.log('TTS not enabled or not configured, falling back to normal sound');
+      return await playNotificationSound();
+    }
+
+    // 获取声音设置
+    const soundSettings = await soundSettingsStorage.get();
+    if (!soundSettings.enabled) {
+      console.log('Notification sound is disabled');
+      return;
+    }
+
+    console.log('Generating TTS for text:', text);
+
+    // 生成语音
+    const audioData = await TTSService.generateSpeech(text);
+
+    if (!audioData) {
+      console.log('TTS generation failed, falling back to normal sound');
+      return await playNotificationSound();
+    }
+
+    // 使用offscreen document来播放音频
+    await ensureOffscreenDocument();
+
+    // 向offscreen document发送播放TTS音频的消息
+    const response = await chrome.runtime.sendMessage({
+      type: 'PLAY_TTS_SOUND',
+      volume: soundSettings.volume,
+      audioData: audioData,
+    });
+
+    if (response && response.success) {
+      console.log('TTS notification played successfully with volume:', soundSettings.volume);
+    } else {
+      console.error('Failed to play TTS notification:', response?.error);
+      // 如果TTS播放失败，回退到普通音频
+      await playNotificationSound();
+    }
+  } catch (error) {
+    console.error('Error playing TTS notification:', error);
+    // 如果出错，回退到普通音频
+    await playNotificationSound();
+  }
+}
+
+// 音频播放功能
+async function playNotificationSound() {
+  try {
+    // 获取声音设置
+    const soundSettings = await soundSettingsStorage.get();
+
+    // 如果声音被禁用，直接返回
+    if (!soundSettings.enabled) {
+      console.log('Notification sound is disabled');
+      return;
+    }
+
+    // 使用offscreen document来播放音频
+    await ensureOffscreenDocument();
+
+    // 向offscreen document发送播放音频的消息
+    const response = await chrome.runtime.sendMessage({
+      type: 'PLAY_NOTIFICATION_SOUND',
+      volume: soundSettings.volume,
+      audioUrl: chrome.runtime.getURL('notification.mp3'),
+    });
+
+    if (response && response.success) {
+      console.log('Notification sound played successfully with volume:', soundSettings.volume);
+    } else {
+      console.error('Failed to play notification sound:', response?.error);
+    }
+  } catch (error) {
+    console.error('Error playing notification sound:', error);
+  }
+}
+
+// 确保offscreen document存在
+async function ensureOffscreenDocument() {
+  try {
+    // 检查是否已经有offscreen document
+    try {
+      const existingContexts = await chrome.runtime.getContexts({
+        contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
+        documentUrls: [chrome.runtime.getURL('offscreen.html')],
+      });
+
+      if (existingContexts.length > 0) {
+        return; // 已经存在
+      }
+    } catch (contextError) {
+      // 如果getContexts不可用，继续创建offscreen document
+      console.log('getContexts not available, proceeding to create offscreen document');
+    }
+
+    // 创建offscreen document
+    await chrome.offscreen.createDocument({
+      url: chrome.runtime.getURL('offscreen.html'),
+      reasons: [chrome.offscreen.Reason.AUDIO_PLAYBACK],
+      justification: 'Playing notification sounds for focus timer',
+    });
+
+    console.log('Offscreen document created for audio playback');
+  } catch (error) {
+    console.error('Error creating offscreen document:', error);
+  }
+}
 
 // 初始化主题
 exampleThemeStorage.get().then(theme => {
@@ -147,12 +265,17 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 
         // 如果状态从非活跃变为活跃，显示通知并启动定时器检查
         if (isFocusModeActive && !changes['focus-time-storage-key'].oldValue?.isActive) {
+          const startMessage = `专注模式已启动，专注时间：${newValue.duration}分钟。加油，保持专注！`;
+
           chrome.notifications.create('focus-start', {
             type: 'basic',
             iconUrl: chrome.runtime.getURL('spring-128.png'),
             title: '专注模式已启动',
             message: `专注时间：${newValue.duration}分钟`,
           });
+
+          // 播放TTS语音通知
+          playTTSNotification(startMessage);
 
           // 启动定时器检查
           startTimerCheck();
@@ -550,6 +673,9 @@ async function checkFocusTimer() {
         title: '专注模式已结束',
         message: notificationMessage,
       });
+
+      // 播放TTS语音通知
+      playTTSNotification(notificationMessage);
     }
     // 如果启用了AI通知，并且剩余时间接近预生成时间，预生成通知
     else if (aiConfig.enabled && remainingTime > 0 && remainingTime <= aiConfig.preGenerateMinutes * 60) {
@@ -610,6 +736,89 @@ async function initialize() {
   }
 
   console.log('Focus mode background script loaded with AI integration');
+}
+
+// 消息监听器
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === 'TEST_TTS') {
+    // 处理TTS测试请求
+    handleTTSTest(message.text)
+      .then(result => sendResponse(result))
+      .catch(error => {
+        console.error('TTS test error:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // 保持消息通道开放以进行异步响应
+  }
+  return false;
+});
+
+// 处理TTS测试
+async function handleTTSTest(text: string) {
+  try {
+    // 检查TTS配置
+    const ttsConfig = await ttsConfigStorage.get();
+    if (!ttsConfig.enabled || !(await ttsConfigStorage.isConfigured())) {
+      return { success: false, error: 'TTS未启用或未配置' };
+    }
+
+    // 生成语音
+    const audioData = await TTSService.generateSpeech(text);
+
+    if (!audioData) {
+      return { success: false, error: '语音生成失败' };
+    }
+
+    // 获取声音设置
+    const soundSettings = await soundSettingsStorage.get();
+    if (!soundSettings.enabled) {
+      return { success: false, error: '声音已禁用' };
+    }
+
+    // 确保offscreen document存在
+    await ensureOffscreenDocument();
+
+    // 等待一小段时间确保offscreen document完全加载
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    try {
+      // 使用Promise包装消息发送，设置超时
+      const response = await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('消息发送超时'));
+        }, 5000);
+
+        chrome.runtime.sendMessage(
+          {
+            type: 'PLAY_TTS_SOUND',
+            volume: soundSettings.volume,
+            audioData: audioData,
+          },
+          response => {
+            clearTimeout(timeout);
+            if (chrome.runtime.lastError) {
+              reject(new Error(chrome.runtime.lastError.message));
+            } else {
+              resolve(response);
+            }
+          },
+        );
+      });
+
+      const typedResponse = response as { success: boolean; error?: string };
+      if (typedResponse && typedResponse.success) {
+        return { success: true };
+      } else {
+        return { success: false, error: typedResponse?.error || '播放失败' };
+      }
+    } catch (messageError) {
+      console.error('Message sending error:', messageError);
+      return { success: false, error: '无法与音频播放器通信: ' + (messageError as Error).message };
+    }
+  } catch (error) {
+    console.error('TTS test error:', error);
+    return { success: false, error: (error as Error).message };
+  }
 }
 
 // 启动初始化
