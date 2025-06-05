@@ -1666,9 +1666,10 @@ const G = class G {
 3. 有时可以幽默或有趣
 4. 提醒用户休息的重要性
 5. 偶尔可以建议简单的伸展运动或放松技巧
-6. 语气自然，像朋友一样交流
+6. 语气亲切自然, 邻家女孩口吻或可爱学妹口吻, 带有情感色彩
 7. 不要重复相同的内容
-8. 不要使用过于正式或机械的语言`;
+8. 不要使用过于正式或机械的语言
+ `;
     return {
       model: e.model || "deepseek-chat",
       messages: [
@@ -1758,7 +1759,10 @@ const De = {
 function Fe(r) {
   try {
     const t = new URL(r).hostname;
-    console.log("getSiteHandler: Checking URL:", r), console.log("getSiteHandler: Hostname:", t), console.log("getSiteHandler: Available handlers:", he.map((o) => o.domain));
+    console.log("getSiteHandler: Checking URL:", r), console.log("getSiteHandler: Hostname:", t), console.log(
+      "getSiteHandler: Available handlers:",
+      he.map((o) => o.domain)
+    );
     const s = he.find((o) => !!(t === o.domain || t.endsWith("." + o.domain) || (t.startsWith("www.") ? t.substring(4) : t) === o.domain));
     return console.log("getSiteHandler: Found handler:", (s == null ? void 0 : s.domain) || "none"), s;
   } catch (e) {

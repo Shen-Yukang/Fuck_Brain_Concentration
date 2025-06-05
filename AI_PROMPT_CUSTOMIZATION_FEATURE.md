@@ -2,7 +2,7 @@
 
 ## 功能概述
 
-已成功为 Chrome 扩展的 AISettings 组件添加了用户自定义 prompt 的功能，允许用户个性化定制 AI 生成通知的行为和内容。
+为 Chrome 扩展的 AISettings 组件添加了用户自定义 prompt 的功能，允许用户个性化定制 AI 生成通知的行为和内容。
 
 ## 实现的功能
 

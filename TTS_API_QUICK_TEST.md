@@ -3,7 +3,7 @@
 ## 获取API密钥
 
 1. **访问字节跳动语音开放平台**
-   - 网址：https://openspeech.bytedance.com/
+   - 网址：https://console.volcengine.com/speech/app
    - 注册并登录账号
 
 2. **创建应用**

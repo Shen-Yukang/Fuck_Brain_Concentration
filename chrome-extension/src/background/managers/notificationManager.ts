@@ -210,9 +210,10 @@ export class NotificationManager {
 3. 有时可以幽默或有趣
 4. 提醒用户休息的重要性
 5. 偶尔可以建议简单的伸展运动或放松技巧
-6. 语气自然，像朋友一样交流
+6. 语气亲切自然, 邻家女孩口吻或可爱学妹口吻, 带有情感色彩
 7. 不要重复相同的内容
-8. 不要使用过于正式或机械的语言`;
+8. 不要使用过于正式或机械的语言
+ `;
 
     const systemPrompt = aiConfig.systemPrompt || defaultSystemPrompt;
 
