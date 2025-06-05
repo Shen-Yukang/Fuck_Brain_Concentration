@@ -1,19 +1,19 @@
-var be = Object.defineProperty;
-var Se = (e, t, r) => t in e ? be(e, t, { enumerable: !0, configurable: !0, writable: !0, value: r }) : e[t] = r;
-var le = (e, t, r) => Se(e, typeof t != "symbol" ? t + "" : t, r);
-var X = { exports: {} }, Te = X.exports, ge;
-function ve() {
-  return ge || (ge = 1, function(e, t) {
-    (function(r, s) {
-      s(e);
-    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : Te, function(r) {
+var Me = Object.defineProperty;
+var Ne = (r, e, t) => e in r ? Me(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var B = (r, e, t) => Ne(r, typeof e != "symbol" ? e + "" : e, t);
+var re = { exports: {} }, Re = re.exports, Te;
+function Le() {
+  return Te || (Te = 1, function(r, e) {
+    (function(t, s) {
+      s(r);
+    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : Re, function(t) {
       if (!(globalThis.chrome && globalThis.chrome.runtime && globalThis.chrome.runtime.id))
         throw new Error("This script should only be loaded in a browser extension.");
       if (globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)
-        r.exports = globalThis.browser;
+        t.exports = globalThis.browser;
       else {
-        const s = "The message port closed before a response was received.", n = (o) => {
-          const d = {
+        const s = "The message port closed before a response was received.", o = (c) => {
+          const l = {
             alarms: {
               clear: {
                 minArgs: 0,
@@ -685,175 +685,175 @@ function ve() {
               }
             }
           };
-          if (Object.keys(d).length === 0)
+          if (Object.keys(l).length === 0)
             throw new Error("api-metadata.json has not been included in browser-polyfill");
-          class c extends WeakMap {
-            constructor(a, g = void 0) {
-              super(g), this.createItem = a;
+          class a extends WeakMap {
+            constructor(i, d = void 0) {
+              super(d), this.createItem = i;
             }
-            get(a) {
-              return this.has(a) || this.set(a, this.createItem(a)), super.get(a);
+            get(i) {
+              return this.has(i) || this.set(i, this.createItem(i)), super.get(i);
             }
           }
-          const p = (i) => i && typeof i == "object" && typeof i.then == "function", A = (i, a) => (...g) => {
-            o.runtime.lastError ? i.reject(new Error(o.runtime.lastError.message)) : a.singleCallbackArg || g.length <= 1 && a.singleCallbackArg !== !1 ? i.resolve(g[0]) : i.resolve(g);
-          }, T = (i) => i == 1 ? "argument" : "arguments", k = (i, a) => function(u, ...y) {
-            if (y.length < a.minArgs)
-              throw new Error(`Expected at least ${a.minArgs} ${T(a.minArgs)} for ${i}(), got ${y.length}`);
-            if (y.length > a.maxArgs)
-              throw new Error(`Expected at most ${a.maxArgs} ${T(a.maxArgs)} for ${i}(), got ${y.length}`);
-            return new Promise((x, w) => {
-              if (a.fallbackToNoCallback)
+          const h = (n) => n && typeof n == "object" && typeof n.then == "function", A = (n, i) => (...d) => {
+            c.runtime.lastError ? n.reject(new Error(c.runtime.lastError.message)) : i.singleCallbackArg || d.length <= 1 && i.singleCallbackArg !== !1 ? n.resolve(d[0]) : n.resolve(d);
+          }, f = (n) => n == 1 ? "argument" : "arguments", T = (n, i) => function(m, ...p) {
+            if (p.length < i.minArgs)
+              throw new Error(`Expected at least ${i.minArgs} ${f(i.minArgs)} for ${n}(), got ${p.length}`);
+            if (p.length > i.maxArgs)
+              throw new Error(`Expected at most ${i.maxArgs} ${f(i.maxArgs)} for ${n}(), got ${p.length}`);
+            return new Promise((x, S) => {
+              if (i.fallbackToNoCallback)
                 try {
-                  u[i](...y, A({
+                  m[n](...p, A({
                     resolve: x,
-                    reject: w
-                  }, a));
-                } catch (l) {
-                  console.warn(`${i} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, l), u[i](...y), a.fallbackToNoCallback = !1, a.noCallback = !0, x();
+                    reject: S
+                  }, i));
+                } catch (g) {
+                  console.warn(`${n} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, g), m[n](...p), i.fallbackToNoCallback = !1, i.noCallback = !0, x();
                 }
-              else a.noCallback ? (u[i](...y), x()) : u[i](...y, A({
+              else i.noCallback ? (m[n](...p), x()) : m[n](...p, A({
                 resolve: x,
-                reject: w
-              }, a));
+                reject: S
+              }, i));
             });
-          }, H = (i, a, g) => new Proxy(a, {
-            apply(u, y, x) {
-              return g.call(y, i, ...x);
+          }, P = (n, i, d) => new Proxy(i, {
+            apply(m, p, x) {
+              return d.call(p, n, ...x);
             }
           });
-          let L = Function.call.bind(Object.prototype.hasOwnProperty);
-          const R = (i, a = {}, g = {}) => {
-            let u = /* @__PURE__ */ Object.create(null), y = {
-              has(w, l) {
-                return l in i || l in u;
+          let M = Function.call.bind(Object.prototype.hasOwnProperty);
+          const N = (n, i = {}, d = {}) => {
+            let m = /* @__PURE__ */ Object.create(null), p = {
+              has(S, g) {
+                return g in n || g in m;
               },
-              get(w, l, b) {
-                if (l in u)
-                  return u[l];
-                if (!(l in i))
+              get(S, g, E) {
+                if (g in m)
+                  return m[g];
+                if (!(g in n))
                   return;
-                let f = i[l];
-                if (typeof f == "function")
-                  if (typeof a[l] == "function")
-                    f = H(i, i[l], a[l]);
-                  else if (L(g, l)) {
-                    let _ = k(l, g[l]);
-                    f = H(i, i[l], _);
+                let y = n[g];
+                if (typeof y == "function")
+                  if (typeof i[g] == "function")
+                    y = P(n, n[g], i[g]);
+                  else if (M(d, g)) {
+                    let $ = T(g, d[g]);
+                    y = P(n, n[g], $);
                   } else
-                    f = f.bind(i);
-                else if (typeof f == "object" && f !== null && (L(a, l) || L(g, l)))
-                  f = R(f, a[l], g[l]);
-                else if (L(g, "*"))
-                  f = R(f, a[l], g["*"]);
+                    y = y.bind(n);
+                else if (typeof y == "object" && y !== null && (M(i, g) || M(d, g)))
+                  y = N(y, i[g], d[g]);
+                else if (M(d, "*"))
+                  y = N(y, i[g], d["*"]);
                 else
-                  return Object.defineProperty(u, l, {
+                  return Object.defineProperty(m, g, {
                     configurable: !0,
                     enumerable: !0,
                     get() {
-                      return i[l];
+                      return n[g];
                     },
-                    set(_) {
-                      i[l] = _;
+                    set($) {
+                      n[g] = $;
                     }
-                  }), f;
-                return u[l] = f, f;
+                  }), y;
+                return m[g] = y, y;
               },
-              set(w, l, b, f) {
-                return l in u ? u[l] = b : i[l] = b, !0;
+              set(S, g, E, y) {
+                return g in m ? m[g] = E : n[g] = E, !0;
               },
-              defineProperty(w, l, b) {
-                return Reflect.defineProperty(u, l, b);
+              defineProperty(S, g, E) {
+                return Reflect.defineProperty(m, g, E);
               },
-              deleteProperty(w, l) {
-                return Reflect.deleteProperty(u, l);
+              deleteProperty(S, g) {
+                return Reflect.deleteProperty(m, g);
               }
-            }, x = Object.create(i);
-            return new Proxy(x, y);
-          }, I = (i) => ({
-            addListener(a, g, ...u) {
-              a.addListener(i.get(g), ...u);
+            }, x = Object.create(n);
+            return new Proxy(x, p);
+          }, k = (n) => ({
+            addListener(i, d, ...m) {
+              i.addListener(n.get(d), ...m);
             },
-            hasListener(a, g) {
-              return a.hasListener(i.get(g));
+            hasListener(i, d) {
+              return i.hasListener(n.get(d));
             },
-            removeListener(a, g) {
-              a.removeListener(i.get(g));
+            removeListener(i, d) {
+              i.removeListener(n.get(d));
             }
-          }), V = new c((i) => typeof i != "function" ? i : function(g) {
-            const u = R(g, {}, {
+          }), O = new a((n) => typeof n != "function" ? n : function(d) {
+            const m = N(d, {}, {
               getContent: {
                 minArgs: 0,
                 maxArgs: 0
               }
             });
-            i(u);
-          }), D = new c((i) => typeof i != "function" ? i : function(g, u, y) {
-            let x = !1, w, l = new Promise((F) => {
-              w = function(M) {
-                x = !0, F(M);
+            n(m);
+          }), H = new a((n) => typeof n != "function" ? n : function(d, m, p) {
+            let x = !1, S, g = new Promise((q) => {
+              S = function(v) {
+                x = !0, q(v);
               };
-            }), b;
+            }), E;
             try {
-              b = i(g, u, w);
-            } catch (F) {
-              b = Promise.reject(F);
+              E = n(d, m, S);
+            } catch (q) {
+              E = Promise.reject(q);
             }
-            const f = b !== !0 && p(b);
-            if (b !== !0 && !f && !x)
+            const y = E !== !0 && h(E);
+            if (E !== !0 && !y && !x)
               return !1;
-            const _ = (F) => {
-              F.then((M) => {
-                y(M);
-              }, (M) => {
-                let ee;
-                M && (M instanceof Error || typeof M.message == "string") ? ee = M.message : ee = "An unexpected error occurred", y({
+            const $ = (q) => {
+              q.then((v) => {
+                p(v);
+              }, (v) => {
+                let ce;
+                v && (v instanceof Error || typeof v.message == "string") ? ce = v.message : ce = "An unexpected error occurred", p({
                   __mozWebExtensionPolyfillReject__: !0,
-                  message: ee
+                  message: ce
                 });
-              }).catch((M) => {
-                console.error("Failed to send onMessage rejected reply", M);
+              }).catch((v) => {
+                console.error("Failed to send onMessage rejected reply", v);
               });
             };
-            return _(f ? b : l), !0;
-          }), m = ({
-            reject: i,
-            resolve: a
-          }, g) => {
-            o.runtime.lastError ? o.runtime.lastError.message === s ? a() : i(new Error(o.runtime.lastError.message)) : g && g.__mozWebExtensionPolyfillReject__ ? i(new Error(g.message)) : a(g);
-          }, N = (i, a, g, ...u) => {
-            if (u.length < a.minArgs)
-              throw new Error(`Expected at least ${a.minArgs} ${T(a.minArgs)} for ${i}(), got ${u.length}`);
-            if (u.length > a.maxArgs)
-              throw new Error(`Expected at most ${a.maxArgs} ${T(a.maxArgs)} for ${i}(), got ${u.length}`);
-            return new Promise((y, x) => {
-              const w = m.bind(null, {
-                resolve: y,
+            return $(y ? E : g), !0;
+          }), u = ({
+            reject: n,
+            resolve: i
+          }, d) => {
+            c.runtime.lastError ? c.runtime.lastError.message === s ? i() : n(new Error(c.runtime.lastError.message)) : d && d.__mozWebExtensionPolyfillReject__ ? n(new Error(d.message)) : i(d);
+          }, D = (n, i, d, ...m) => {
+            if (m.length < i.minArgs)
+              throw new Error(`Expected at least ${i.minArgs} ${f(i.minArgs)} for ${n}(), got ${m.length}`);
+            if (m.length > i.maxArgs)
+              throw new Error(`Expected at most ${i.maxArgs} ${f(i.maxArgs)} for ${n}(), got ${m.length}`);
+            return new Promise((p, x) => {
+              const S = u.bind(null, {
+                resolve: p,
                 reject: x
               });
-              u.push(w), g.sendMessage(...u);
+              m.push(S), d.sendMessage(...m);
             });
-          }, we = {
+          }, Ce = {
             devtools: {
               network: {
-                onRequestFinished: I(V)
+                onRequestFinished: k(O)
               }
             },
             runtime: {
-              onMessage: I(D),
-              onMessageExternal: I(D),
-              sendMessage: N.bind(null, "sendMessage", {
+              onMessage: k(H),
+              onMessageExternal: k(H),
+              sendMessage: D.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
               })
             },
             tabs: {
-              sendMessage: N.bind(null, "sendMessage", {
+              sendMessage: D.bind(null, "sendMessage", {
                 minArgs: 2,
                 maxArgs: 3
               })
             }
-          }, Q = {
+          }, ie = {
             clear: {
               minArgs: 1,
               maxArgs: 1
@@ -867,244 +867,244 @@ function ve() {
               maxArgs: 1
             }
           };
-          return d.privacy = {
+          return l.privacy = {
             network: {
-              "*": Q
+              "*": ie
             },
             services: {
-              "*": Q
+              "*": ie
             },
             websites: {
-              "*": Q
+              "*": ie
             }
-          }, R(o, we, d);
+          }, N(c, Ce, l);
         };
-        r.exports = n(chrome);
+        t.exports = o(chrome);
       }
     });
-  }(X)), X.exports;
+  }(re)), re.exports;
 }
-ve();
-var C;
-(function(e) {
-  e.Local = "local", e.Sync = "sync", e.Managed = "managed", e.Session = "session";
-})(C || (C = {}));
-var re;
-(function(e) {
-  e.ExtensionPagesOnly = "TRUSTED_CONTEXTS", e.ExtensionPagesAndContentScripts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
-})(re || (re = {}));
-const h = globalThis.chrome, de = async (e, t) => {
-  const r = (n) => typeof n == "function", s = (n) => n instanceof Promise;
-  return r(e) ? (s(e), e(t)) : e;
+Le();
+var b;
+(function(r) {
+  r.Local = "local", r.Sync = "sync", r.Managed = "managed", r.Session = "session";
+})(b || (b = {}));
+var ue;
+(function(r) {
+  r.ExtensionPagesOnly = "TRUSTED_CONTEXTS", r.ExtensionPagesAndContentScripts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
+})(ue || (ue = {}));
+const w = globalThis.chrome, xe = async (r, e) => {
+  const t = (o) => typeof o == "function", s = (o) => o instanceof Promise;
+  return t(r) ? (s(r), r(e)) : r;
 };
-let ue = !1;
-function me(e) {
-  if (h && h.storage[e] === void 0)
-    throw new Error(`Check your storage permission in manifest.json: ${e} is not defined`);
+let Se = !1;
+function Ee(r) {
+  if (w && w.storage[r] === void 0)
+    throw new Error(`Check your storage permission in manifest.json: ${r} is not defined`);
 }
-function P(e, t, r) {
-  var V, D;
-  let s = null, n = !1, o = [];
-  const d = (r == null ? void 0 : r.storageEnum) ?? C.Local, c = (r == null ? void 0 : r.liveUpdate) ?? !1, p = ((V = r == null ? void 0 : r.serialization) == null ? void 0 : V.serialize) ?? ((m) => m), A = ((D = r == null ? void 0 : r.serialization) == null ? void 0 : D.deserialize) ?? ((m) => m);
-  ue === !1 && d === C.Session && (r == null ? void 0 : r.sessionAccessForContentScripts) === !0 && (me(d), h == null || h.storage[d].setAccessLevel({
-    accessLevel: re.ExtensionPagesAndContentScripts
-  }).catch((m) => {
-    console.warn(m), console.warn("Please call setAccessLevel into different context, like a background script.");
-  }), ue = !0);
-  const T = async () => {
-    me(d);
-    const m = await (h == null ? void 0 : h.storage[d].get([e]));
-    return m ? A(m[e]) ?? t : t;
-  }, k = () => {
-    o.forEach((m) => m());
-  }, H = async (m) => {
-    n || (s = await T()), s = await de(m, s), await (h == null ? void 0 : h.storage[d].set({ [e]: p(s) })), k();
-  }, L = (m) => (o = [...o, m], () => {
-    o = o.filter((N) => N !== m);
-  }), R = () => s;
-  T().then((m) => {
-    s = m, n = !0, k();
+function I(r, e, t) {
+  var O, H;
+  let s = null, o = !1, c = [];
+  const l = (t == null ? void 0 : t.storageEnum) ?? b.Local, a = (t == null ? void 0 : t.liveUpdate) ?? !1, h = ((O = t == null ? void 0 : t.serialization) == null ? void 0 : O.serialize) ?? ((u) => u), A = ((H = t == null ? void 0 : t.serialization) == null ? void 0 : H.deserialize) ?? ((u) => u);
+  Se === !1 && l === b.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ee(l), w == null || w.storage[l].setAccessLevel({
+    accessLevel: ue.ExtensionPagesAndContentScripts
+  }).catch((u) => {
+    console.warn(u), console.warn("Please call setAccessLevel into different context, like a background script.");
+  }), Se = !0);
+  const f = async () => {
+    Ee(l);
+    const u = await (w == null ? void 0 : w.storage[l].get([r]));
+    return u ? A(u[r]) ?? e : e;
+  }, T = () => {
+    c.forEach((u) => u());
+  }, P = async (u) => {
+    o || (s = await f()), s = await xe(u, s), await (w == null ? void 0 : w.storage[l].set({ [r]: h(s) })), T();
+  }, M = (u) => (c = [...c, u], () => {
+    c = c.filter((D) => D !== u);
+  }), N = () => s;
+  f().then((u) => {
+    s = u, o = !0, T();
   });
-  async function I(m) {
-    if (m[e] === void 0)
+  async function k(u) {
+    if (u[r] === void 0)
       return;
-    const N = A(m[e].newValue);
-    s !== N && (s = await de(N, s), k());
+    const D = A(u[r].newValue);
+    s !== D && (s = await xe(D, s), T());
   }
-  return c && (h == null || h.storage[d].onChanged.addListener(I)), {
-    get: T,
-    set: H,
-    getSnapshot: R,
-    subscribe: L
+  return a && (w == null || w.storage[l].onChanged.addListener(k)), {
+    get: f,
+    set: P,
+    getSnapshot: N,
+    subscribe: M
   };
 }
-const fe = P("theme-storage-key", "light", {
-  storageEnum: C.Local,
+const be = I("theme-storage-key", "light", {
+  storageEnum: b.Local,
   liveUpdate: !0
-}), Ee = {
-  ...fe,
+}), _e = {
+  ...be,
   toggle: async () => {
-    await fe.set((e) => e === "light" ? "dark" : "light");
+    await be.set((r) => r === "light" ? "dark" : "light");
   }
-}, W = P("focus-time-storage-key", {
+}, Q = I("focus-time-storage-key", {
   duration: 25,
   // 默认25分钟
   isActive: !1
 }, {
-  storageEnum: C.Local,
+  storageEnum: b.Local,
   liveUpdate: !0
-}), v = P("blocked-urls-storage-key", {
-  urls: [],
-  studyModeUrls: [],
-  studyModeSelectors: {}
-}, {
-  storageEnum: C.Local,
-  liveUpdate: !0
-});
-(async () => {
-  try {
-    const e = await v.get();
-    (!e.studyModeUrls || !e.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await v.set((t) => ({
-      urls: t.urls || [],
-      studyModeUrls: t.studyModeUrls || [],
-      studyModeSelectors: t.studyModeSelectors || {}
-    })), console.log("Migration complete."));
-  } catch (e) {
-    console.error("Error migrating blocked URLs storage:", e);
-  }
-})();
-const z = {
-  ...W,
-  startFocus: async (e) => {
-    const t = Date.now();
-    await W.set({
-      duration: e,
+}), R = {
+  ...Q,
+  startFocus: async (r) => {
+    const e = Date.now();
+    await Q.set({
+      duration: r,
       isActive: !0,
-      startTime: t,
-      endTime: t + e * 60 * 1e3
+      startTime: e,
+      endTime: e + r * 60 * 1e3
     });
   },
   stopFocus: async () => {
-    await W.set((e) => ({
-      ...e,
+    await Q.set((r) => ({
+      ...r,
       isActive: !1,
       startTime: void 0,
       endTime: void 0
     }));
   },
   getRemainingTime: async () => {
-    const e = await W.get();
-    if (!e.isActive || !e.endTime)
+    const r = await Q.get();
+    if (!r.isActive || !r.endTime)
       return 0;
-    const t = Math.max(0, e.endTime - Date.now());
-    return Math.floor(t / 1e3);
+    const e = Math.max(0, r.endTime - Date.now());
+    return Math.floor(e / 1e3);
   }
-}, ne = {
-  ...v,
-  addUrl: async (e) => {
-    await v.set((t) => {
-      if (t.urls.includes(e))
-        return t;
-      const r = t.studyModeUrls.filter((s) => s !== e);
+}, U = I("blocked-urls-storage-key", {
+  urls: [],
+  studyModeUrls: [],
+  studyModeSelectors: {}
+}, {
+  storageEnum: b.Local,
+  liveUpdate: !0
+}), Ie = async () => {
+  try {
+    const r = await U.get();
+    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await U.set((e) => ({
+      urls: e.urls || [],
+      studyModeUrls: e.studyModeUrls || [],
+      studyModeSelectors: e.studyModeSelectors || {}
+    })), console.log("Blocked URLs storage migration complete."));
+  } catch (r) {
+    console.error("Error migrating blocked URLs storage:", r);
+  }
+};
+Ie();
+const C = {
+  ...U,
+  addUrl: async (r) => {
+    await U.set((e) => {
+      if (e.urls.includes(r))
+        return e;
+      const t = e.studyModeUrls.filter((s) => s !== r);
       return {
-        ...t,
-        urls: [...t.urls, e],
-        studyModeUrls: r
+        ...e,
+        urls: [...e.urls, r],
+        studyModeUrls: t
       };
     });
   },
-  removeUrl: async (e) => {
-    await v.set((t) => ({
-      ...t,
-      urls: t.urls.filter((r) => r !== e)
+  removeUrl: async (r) => {
+    await U.set((e) => ({
+      ...e,
+      urls: e.urls.filter((t) => t !== r)
     }));
   },
   clearUrls: async () => {
-    await v.set((e) => ({
-      ...e,
+    await U.set((r) => ({
+      ...r,
       urls: []
     }));
   },
-  addStudyModeUrl: async (e) => {
-    await v.set((t) => {
-      if (t.studyModeUrls.includes(e))
-        return t;
-      const r = t.urls.filter((s) => s !== e);
+  addStudyModeUrl: async (r) => {
+    await U.set((e) => {
+      if (e.studyModeUrls.includes(r))
+        return e;
+      const t = e.urls.filter((s) => s !== r);
       return {
-        ...t,
-        studyModeUrls: [...t.studyModeUrls, e],
-        urls: r
+        ...e,
+        studyModeUrls: [...e.studyModeUrls, r],
+        urls: t
       };
     });
   },
-  removeStudyModeUrl: async (e) => {
-    await v.set((t) => ({
-      ...t,
-      studyModeUrls: t.studyModeUrls.filter((r) => r !== e)
+  removeStudyModeUrl: async (r) => {
+    await U.set((e) => ({
+      ...e,
+      studyModeUrls: e.studyModeUrls.filter((t) => t !== r)
     }));
   },
-  toggleUrlMode: async (e, t) => {
-    t ? await ne.addStudyModeUrl(e) : await ne.addUrl(e);
+  toggleUrlMode: async (r, e) => {
+    e ? await C.addStudyModeUrl(r) : await C.addUrl(r);
   },
-  addStudyModeSelector: async (e, t) => {
-    await v.set((r) => {
-      const s = r.studyModeSelectors[e] || [];
-      return s.includes(t) ? r : {
-        ...r,
+  addStudyModeSelector: async (r, e) => {
+    await U.set((t) => {
+      const s = t.studyModeSelectors[r] || [];
+      return s.includes(e) ? t : {
+        ...t,
         studyModeSelectors: {
-          ...r.studyModeSelectors,
-          [e]: [...s, t]
+          ...t.studyModeSelectors,
+          [r]: [...s, e]
         }
       };
     });
   },
-  removeStudyModeSelector: async (e, t) => {
-    await v.set((r) => {
-      const s = r.studyModeSelectors[e] || [];
-      return {
-        ...r,
-        studyModeSelectors: {
-          ...r.studyModeSelectors,
-          [e]: s.filter((n) => n !== t)
-        }
-      };
-    });
-  },
-  clearStudyModeSelectors: async (e) => {
-    await v.set((t) => {
-      const { [e]: r, ...s } = t.studyModeSelectors;
+  removeStudyModeSelector: async (r, e) => {
+    await U.set((t) => {
+      const s = t.studyModeSelectors[r] || [];
       return {
         ...t,
+        studyModeSelectors: {
+          ...t.studyModeSelectors,
+          [r]: s.filter((o) => o !== e)
+        }
+      };
+    });
+  },
+  clearStudyModeSelectors: async (r) => {
+    await U.set((e) => {
+      const { [r]: t, ...s } = e.studyModeSelectors;
+      return {
+        ...e,
         studyModeSelectors: s
       };
     });
   }
-}, O = P("notification-cache-storage-key", {
+}, j = I("notification-cache-storage-key", {
   isGenerating: !1
 }, {
-  storageEnum: C.Local,
+  storageEnum: b.Local,
   liveUpdate: !0
-}), E = {
-  ...O,
+}), se = {
+  ...j,
   // 保存通知内容
-  saveNotification: async (e, t = 60) => {
-    const r = Date.now();
-    await O.set({
-      pendingNotification: e,
-      generatedAt: r,
-      expiresAt: r + t * 60 * 1e3,
+  saveNotification: async (r, e = 60) => {
+    const t = Date.now();
+    await j.set({
+      pendingNotification: r,
+      generatedAt: t,
+      expiresAt: t + e * 60 * 1e3,
       isGenerating: !1
     });
   },
   // 获取通知内容（如果有效）
   getNotification: async () => {
-    const e = await O.get();
-    return e.pendingNotification ? e.expiresAt && e.expiresAt < Date.now() ? (await E.clearNotification(), null) : e.pendingNotification : null;
+    const r = await j.get();
+    return r.pendingNotification ? r.expiresAt && r.expiresAt < Date.now() ? (await se.clearNotification(), null) : r.pendingNotification : null;
   },
   // 清除通知缓存
   clearNotification: async () => {
-    await O.set((e) => ({
-      ...e,
+    await j.set((r) => ({
+      ...r,
       pendingNotification: void 0,
       generatedAt: void 0,
       expiresAt: void 0,
@@ -1112,96 +1112,96 @@ const z = {
     }));
   },
   // 设置生成状态
-  setGenerating: async (e) => {
-    await O.set((t) => ({
-      ...t,
-      isGenerating: e
+  setGenerating: async (r) => {
+    await j.set((e) => ({
+      ...e,
+      isGenerating: r
     }));
   },
   // 检查是否正在生成中
-  isGenerating: async () => (await O.get()).isGenerating
+  isGenerating: async () => (await j.get()).isGenerating
 };
-var oe;
-(function(e) {
-  e.DEEPSEEK = "deepseek", e.OPENAI = "openai";
-})(oe || (oe = {}));
-const B = P("ai-config-storage-key", {
+var Ae;
+(function(r) {
+  r.DEEPSEEK = "deepseek", r.OPENAI = "openai";
+})(Ae || (Ae = {}));
+const z = I("ai-config-storage-key", {
   enabled: !1,
-  provider: oe.DEEPSEEK,
+  provider: Ae.DEEPSEEK,
   model: "deepseek-chat",
   apiKey: "",
   preGenerateMinutes: 5
   // 默认提前5分钟生成
 }, {
-  storageEnum: C.Local,
+  storageEnum: b.Local,
   liveUpdate: !0
-}), q = {
-  ...B,
+}), Y = {
+  ...z,
   // 启用/禁用AI生成
-  enableAI: async (e) => {
-    await B.set((t) => ({
-      ...t,
-      enabled: e
+  enableAI: async (r) => {
+    await z.set((e) => ({
+      ...e,
+      enabled: r
     }));
   },
   // 更新API密钥
-  updateAPIKey: async (e) => {
-    await B.set((t) => ({
-      ...t,
-      apiKey: e
+  updateAPIKey: async (r) => {
+    await z.set((e) => ({
+      ...e,
+      apiKey: r
     }));
   },
   // 更新AI提供商
-  updateProvider: async (e, t, r) => {
-    await B.set((s) => ({
+  updateProvider: async (r, e, t) => {
+    await z.set((s) => ({
       ...s,
-      provider: e,
-      ...t ? { model: t } : {},
-      ...r ? { apiEndpoint: r } : { apiEndpoint: void 0 }
+      provider: r,
+      ...e ? { model: e } : {},
+      ...t ? { apiEndpoint: t } : { apiEndpoint: void 0 }
     }));
   },
   // 更新提示词
-  updatePrompts: async (e, t) => {
-    await B.set((r) => ({
-      ...r,
-      ...e !== void 0 ? { systemPrompt: e } : {},
-      ...t !== void 0 ? { promptTemplate: t } : {}
+  updatePrompts: async (r, e) => {
+    await z.set((t) => ({
+      ...t,
+      ...r !== void 0 ? { systemPrompt: r } : {},
+      ...e !== void 0 ? { promptTemplate: e } : {}
     }));
   },
   // 更新预生成时间
-  updatePreGenerateTime: async (e) => {
-    await B.set((t) => ({
-      ...t,
-      preGenerateMinutes: Math.max(1, Math.min(30, e))
+  updatePreGenerateTime: async (r) => {
+    await z.set((e) => ({
+      ...e,
+      preGenerateMinutes: Math.max(1, Math.min(30, r))
       // 限制在1-30分钟之间
     }));
   }
-}, te = P("sound-settings-storage-key", {
+}, le = I("sound-settings-storage-key", {
   enabled: !0,
   // 默认启用声音
   volume: 0.5
   // 默认音量50%
 }, {
-  storageEnum: C.Local,
+  storageEnum: b.Local,
   liveUpdate: !0
-}), ie = {
-  ...te,
+}), ge = {
+  ...le,
   // 启用/禁用声音
-  enableSound: async (e) => {
-    await te.set((t) => ({
-      ...t,
-      enabled: e
+  enableSound: async (r) => {
+    await le.set((e) => ({
+      ...e,
+      enabled: r
     }));
   },
   // 设置音量
-  setVolume: async (e) => {
-    const t = Math.max(0, Math.min(1, e));
-    await te.set((r) => ({
-      ...r,
-      volume: t
+  setVolume: async (r) => {
+    const e = Math.max(0, Math.min(1, r));
+    await le.set((t) => ({
+      ...t,
+      volume: e
     }));
   }
-}, se = P("tts-config-storage-key", {
+}, de = I("tts-config-storage-key", {
   enabled: !1,
   appid: "",
   token: "",
@@ -1211,100 +1211,140 @@ const B = P("ai-config-storage-key", {
   speedRatio: 1,
   uid: "chrome_extension_user"
 }, {
-  storageEnum: C.Local,
+  storageEnum: b.Local,
   liveUpdate: !0
-}), G = {
-  ...se,
+}), K = {
+  ...de,
   // 更新配置
-  updateConfig: async (e) => {
-    await se.set((t) => ({
-      ...t,
-      ...e
+  updateConfig: async (r) => {
+    await de.set((e) => ({
+      ...e,
+      ...r
     }));
   },
   // 检查是否已配置
   isConfigured: async () => {
-    const e = await se.get();
-    return e.enabled && e.appid.length > 0 && e.token.length > 0;
+    const r = await de.get();
+    return r.enabled && r.appid.length > 0 && r.token.length > 0;
   }
-}, Ce = {
-  domain: "bilibili.com",
-  getSelectors() {
-    return ["#nav-searchform", ".center-search__bar"];
-  }
-}, ke = {
-  domain: "baidu.com",
-  getSelectors() {
-    return ["#s-hotsearch-wrapper", "#con-ceiling-wrapper"];
+}, _ = I("voice-cache-storage-key", {}, {
+  storageEnum: b.Local,
+  liveUpdate: !0
+}), L = {
+  ..._,
+  // 缓存开始语音
+  cacheStartVoice: async (r, e) => {
+    await _.set((t) => ({
+      ...t,
+      startVoiceCache: {
+        voiceType: r,
+        audioData: e,
+        cachedAt: Date.now()
+      }
+    })), console.log("Start voice cached for voiceType:", r);
   },
-  getCustomHandler(e) {
-    return function(r) {
-      console.log("Applying Baidu specific study mode with selectors:", r);
-      const s = document.createElement("div");
-      s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = "rgba(0, 128, 0, 0.8)", s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
-      const n = document.createElement("div");
-      n.textContent = "专注提醒", n.style.fontWeight = "bold", n.style.fontSize = "16px", n.style.marginBottom = "8px", s.appendChild(n);
-      const o = document.createElement("div");
-      o.textContent = "已为您屏蔽热搜和顶部导航，专注于当前任务", s.appendChild(o), document.body.appendChild(s), setTimeout(() => {
-        s.style.transition = "opacity 1s", s.style.opacity = "0", setTimeout(() => {
-          document.body.contains(s) && document.body.removeChild(s);
-        }, 1e3);
-      }, 3e4), r.forEach((c) => {
-        try {
-          const p = document.querySelectorAll(c);
-          p.forEach((A) => {
-            A instanceof HTMLElement && (A.style.display = "none", A.dataset.studyModeDisabled = "true");
-          }), console.log(`Disabled ${p.length} elements with selector: ${c}`);
-        } catch (p) {
-          console.error(`Error disabling elements with selector ${c}:`, p);
-        }
-      });
-      const d = new MutationObserver((c) => {
-        let p = !1;
-        c.forEach((A) => {
-          A.type === "childList" && A.addedNodes.length > 0 && (p = !0);
-        }), p && r.forEach((A) => {
-          try {
-            document.querySelectorAll(A).forEach((k) => {
-              k instanceof HTMLElement && !k.dataset.studyModeDisabled && (k.style.display = "none", k.dataset.studyModeDisabled = "true");
-            });
-          } catch (T) {
-            console.error(`Error in mutation observer for selector ${A}:`, T);
-          }
-        });
-      });
-      d.observe(document.documentElement, {
-        childList: !0,
-        subtree: !0
-      }), window.__studyModeObserver = d;
-    };
-  }
-}, Me = [
-  Ce,
-  ke
-  // 在这里添加更多网站处理器
-];
-function Ae(e) {
-  try {
-    const t = new URL(e);
-    return Me.find((r) => t.hostname.includes(r.domain));
-  } catch {
-    return;
-  }
-}
-const j = class j {
+  // 获取开始语音缓存
+  getStartVoice: async (r) => {
+    const e = await _.get();
+    if (!e.startVoiceCache)
+      return null;
+    if (e.startVoiceCache.voiceType !== r)
+      return console.log("Start voice cache voiceType mismatch, clearing cache"), await L.clearStartVoice(), null;
+    const t = Date.now() - e.startVoiceCache.cachedAt, s = 7 * 24 * 60 * 60 * 1e3;
+    return t > s ? (console.log("Start voice cache expired, clearing cache"), await L.clearStartVoice(), null) : (console.log("Using cached start voice for voiceType:", r), e.startVoiceCache.audioData);
+  },
+  // 清除开始语音缓存
+  clearStartVoice: async () => {
+    await _.set((r) => ({
+      ...r,
+      startVoiceCache: void 0
+    })), console.log("Start voice cache cleared");
+  },
+  // 缓存结束语音
+  cacheEndVoice: async (r, e) => {
+    await _.set((t) => ({
+      ...t,
+      endVoiceCache: {
+        voiceType: r,
+        audioData: e,
+        cachedAt: Date.now()
+      }
+    })), console.log("End voice cached for voiceType:", r);
+  },
+  // 获取结束语音缓存
+  getEndVoice: async (r) => {
+    const e = await _.get();
+    if (!e.endVoiceCache)
+      return null;
+    if (e.endVoiceCache.voiceType !== r)
+      return console.log("End voice cache voiceType mismatch, clearing cache"), await L.clearEndVoice(), null;
+    const t = Date.now() - e.endVoiceCache.cachedAt, s = 7 * 24 * 60 * 60 * 1e3;
+    return t > s ? (console.log("End voice cache expired, clearing cache"), await L.clearEndVoice(), null) : (console.log("Using cached end voice for voiceType:", r), e.endVoiceCache.audioData);
+  },
+  // 清除结束语音缓存
+  clearEndVoice: async () => {
+    await _.set((r) => ({
+      ...r,
+      endVoiceCache: void 0
+    })), console.log("End voice cache cleared");
+  },
+  // 清除所有语音缓存
+  clearAllVoiceCache: async () => {
+    await _.set({}), console.log("All voice cache cleared");
+  },
+  // 检查开始语音缓存是否有效
+  isStartVoiceCacheValid: async (r) => await L.getStartVoice(r) !== null,
+  // 检查结束语音缓存是否有效
+  isEndVoiceCacheValid: async (r) => await L.getEndVoice(r) !== null
+}, fe = {
+  OFFSCREEN_LOAD_DELAY: 200,
+  // offscreen document加载延迟
+  MESSAGE_TIMEOUT: 5e3,
+  // 消息发送超时时间
+  TIMER_CHECK_INTERVAL: 1e3
+  // 定时器检查间隔
+}, Pe = {
+  API_URL: "https://openspeech.bytedance.com/api/v1/tts"
+}, ee = {
+  DEFAULT_DURATION: 25,
+  // 默认专注时间（分钟）
+  MIN_DURATION: 1,
+  MAX_DURATION: 120,
+  BADGE_COLOR: "#E53935",
+  BADGE_TEXT: "专注"
+}, me = {
+  DEFAULT_PRE_GENERATE_MINUTES: 5,
+  MIN_PRE_GENERATE_MINUTES: 1,
+  MAX_PRE_GENERATE_MINUTES: 30
+}, oe = {
+  PLAY_NOTIFICATION_SOUND: "PLAY_NOTIFICATION_SOUND",
+  PLAY_TTS_SOUND: "PLAY_TTS_SOUND",
+  TEST_TTS: "TEST_TTS",
+  PING_POPUP: "PING_POPUP",
+  PONG_POPUP: "PONG_POPUP"
+}, Ue = {
+  FOCUS_START: "focus-start",
+  FOCUS_END: "focus-end"
+}, te = {
+  TTS_NOT_CONFIGURED: "TTS未启用或未配置",
+  TTS_GENERATION_FAILED: "语音生成失败",
+  SOUND_DISABLED: "声音已禁用",
+  MESSAGE_TIMEOUT: "消息发送超时",
+  OFFSCREEN_NOT_FOUND: "Offscreen document未找到",
+  AUDIO_PLAY_FAILED: "音频播放失败"
+}, Z = class Z {
   /**
    * 生成语音并返回base64音频数据
    */
-  static async generateSpeech(t) {
-    var r;
+  static async generateSpeech(e) {
+    var t;
     try {
-      const s = await G.get();
+      const s = await K.get();
       if (!s.enabled)
         return console.log("TTS is disabled"), null;
       if (!s.appid || !s.token)
         return console.error("TTS configuration is incomplete"), null;
-      const n = `chrome_ext_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, o = {
+      const o = `chrome_ext_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`, c = {
         app: {
           appid: s.appid,
           cluster: s.cluster
@@ -1318,32 +1358,32 @@ const j = class j {
           speed_ratio: s.speedRatio
         },
         request: {
-          reqid: n,
-          text: t,
+          reqid: o,
+          text: e,
           operation: "query"
         }
       };
-      console.log("Sending TTS request:", { reqid: n, text: t });
-      const d = await fetch(j.API_URL, {
+      console.log("Sending TTS request:", { reqid: o, text: e });
+      const l = await fetch(Z.API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer; ${s.token}`
         },
-        body: JSON.stringify(o)
+        body: JSON.stringify(c)
       });
-      if (!d.ok)
-        throw new Error(`HTTP error! status: ${d.status}`);
-      const c = await d.json();
-      if (c.code !== 3e3)
-        throw new Error(`TTS API error: ${c.message} (code: ${c.code})`);
-      if (!c.data)
+      if (!l.ok)
+        throw new Error(`HTTP error! status: ${l.status}`);
+      const a = await l.json();
+      if (a.code !== 3e3)
+        throw new Error(`TTS API error: ${a.message} (code: ${a.code})`);
+      if (!a.data)
         throw new Error("No audio data received from TTS API");
       return console.log("TTS generation successful:", {
-        reqid: c.reqid,
-        duration: (r = c.addition) == null ? void 0 : r.duration,
-        dataLength: c.data.length
-      }), c.data;
+        reqid: a.reqid,
+        duration: (t = a.addition) == null ? void 0 : t.duration,
+        dataLength: a.data.length
+      }), a.data;
     } catch (s) {
       return console.error("Error generating speech:", s), null;
     }
@@ -1353,369 +1393,764 @@ const j = class j {
    */
   static async testConfiguration() {
     try {
-      return await j.generateSpeech("测试语音合成") !== null;
-    } catch (t) {
-      return console.error("TTS configuration test failed:", t), !1;
+      return await Z.generateSpeech("测试语音合成") !== null;
+    } catch (e) {
+      return console.error("TTS configuration test failed:", e), !1;
     }
   }
 };
-le(j, "API_URL", "https://openspeech.bytedance.com/api/v1/tts");
-let Y = j;
-async function ye(e) {
-  try {
-    if (!(await G.get()).enabled || !await G.isConfigured())
-      return console.log("TTS not enabled or not configured, falling back to normal sound"), await K();
-    const r = await ie.get();
-    if (!r.enabled) {
-      console.log("Notification sound is disabled");
-      return;
-    }
-    console.log("Generating TTS for text:", e);
-    const s = await Y.generateSpeech(e);
-    if (!s)
-      return console.log("TTS generation failed, falling back to normal sound"), await K();
-    await ae();
-    const n = await chrome.runtime.sendMessage({
-      type: "PLAY_TTS_SOUND",
-      volume: r.volume,
-      audioData: s
-    });
-    n && n.success ? console.log("TTS notification played successfully with volume:", r.volume) : (console.error("Failed to play TTS notification:", n == null ? void 0 : n.error), await K());
-  } catch (t) {
-    console.error("Error playing TTS notification:", t), await K();
+B(Z, "API_URL", Pe.API_URL);
+let X = Z;
+const F = class F {
+  constructor() {
   }
-}
-async function K() {
-  try {
-    const e = await ie.get();
-    if (!e.enabled) {
-      console.log("Notification sound is disabled");
-      return;
-    }
-    await ae();
-    const t = await chrome.runtime.sendMessage({
-      type: "PLAY_NOTIFICATION_SOUND",
-      volume: e.volume,
-      audioUrl: chrome.runtime.getURL("notification.mp3")
-    });
-    t && t.success ? console.log("Notification sound played successfully with volume:", e.volume) : console.error("Failed to play notification sound:", t == null ? void 0 : t.error);
-  } catch (e) {
-    console.error("Error playing notification sound:", e);
+  static getInstance() {
+    return F.instance || (F.instance = new F()), F.instance;
   }
-}
-async function ae() {
-  try {
+  /**
+   * 播放TTS语音通知
+   */
+  async playTTSNotification(e) {
     try {
-      if ((await chrome.runtime.getContexts({
-        contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
-        documentUrls: [chrome.runtime.getURL("offscreen.html")]
-      })).length > 0)
+      const t = await K.get();
+      if (!t.enabled || !await K.isConfigured())
+        return console.log("TTS not enabled or not configured, falling back to normal sound"), await this.playNotificationSound();
+      const s = await ge.get();
+      if (!s.enabled) {
+        console.log("Notification sound is disabled");
         return;
-    } catch {
-      console.log("getContexts not available, proceeding to create offscreen document");
-    }
-    await chrome.offscreen.createDocument({
-      url: chrome.runtime.getURL("offscreen.html"),
-      reasons: [chrome.offscreen.Reason.AUDIO_PLAYBACK],
-      justification: "Playing notification sounds for focus timer"
-    }), console.log("Offscreen document created for audio playback");
-  } catch (e) {
-    console.error("Error creating offscreen document:", e);
-  }
-}
-Ee.get().then((e) => {
-  console.log("Theme loaded:", e);
-});
-let S = !1, Z = [], J = [], U = {};
-async function ce(e) {
-  try {
-    const t = await q.get();
-    if (!t.enabled || !t.apiKey) {
-      console.log("AI service not enabled or no API key, skipping notification pre-generation");
-      return;
-    }
-    if (await E.getNotification()) {
-      console.log("Already have a cached notification, skipping pre-generation");
-      return;
-    }
-    if (await E.isGenerating()) {
-      console.log("Already generating a notification, skipping");
-      return;
-    }
-    if (await E.setGenerating(!0), console.log("Marked notification for pre-generation, duration:", e), !await Ue()) {
-      console.log("No popup open, using fallback message");
-      const o = [
-        "休息一下吧！你已经专注工作了一段时间。",
-        "该活动一下了！站起来伸展一下身体吧。",
-        "休息是为了更好的工作，现在是放松的时候了。",
-        "你的大脑需要休息，去喝杯水吧！",
-        "专注时间结束，给自己一个小奖励吧！"
-      ], d = Math.floor(Math.random() * o.length), c = o[d];
-      await E.saveNotification(c), await E.setGenerating(!1);
-    }
-    return !0;
-  } catch (t) {
-    return console.error("Error pre-generating notification:", t), await E.setGenerating(!1), !1;
-  }
-}
-async function Ue() {
-  try {
-    const e = await chrome.runtime.sendMessage({ type: "PING_POPUP" });
-    return e && e.type === "PONG_POPUP";
-  } catch {
-    return !1;
-  }
-}
-async function Ne() {
-  const e = await z.get();
-  S = e.isActive;
-  const t = await ne.get();
-  return Z = t.urls || [], J = t.studyModeUrls || [], U = t.studyModeSelectors || {}, console.log("Focus mode active:", S), console.log("Blocked URLs:", Z), console.log("Study Mode URLs:", J), console.log("Study Mode Selectors:", U), pe(S), { isFocusModeActive: S, focusConfig: e };
-}
-function pe(e) {
-  e ? (chrome.action.setBadgeBackgroundColor({ color: "#E53935" }), chrome.action.setBadgeText({ text: "专注" })) : chrome.action.setBadgeText({ text: "" });
-}
-chrome.storage.onChanged.addListener((e, t) => {
-  var r, s;
-  if (t === "local") {
-    if (e["focus-time-storage-key"]) {
-      const n = e["focus-time-storage-key"].newValue;
-      if (n) {
-        if (S = n.isActive, pe(S), S && !((r = e["focus-time-storage-key"].oldValue) != null && r.isActive)) {
-          const o = `专注模式已启动，专注时间：${n.duration}分钟。加油，保持专注！`;
-          chrome.notifications.create("focus-start", {
-            type: "basic",
-            iconUrl: chrome.runtime.getURL("spring-128.png"),
-            title: "专注模式已启动",
-            message: `专注时间：${n.duration}分钟`
-          }), ye(o), xe(), q.get().then((d) => {
-            d.enabled && ce(n.duration);
-          });
-        }
-        !S && ((s = e["focus-time-storage-key"].oldValue) != null && s.isActive) && (Ie(), E.clearNotification());
       }
+      console.log("Generating TTS for text:", e);
+      const o = this.isStartVoiceText(e);
+      let c = null;
+      if (o ? (c = await L.getStartVoice(t.voiceType), c ? console.log("Using cached start voice for voiceType:", t.voiceType) : (console.log("No cached start voice found, generating new one"), c = await X.generateSpeech("专注模式已启动，加油保持专注！"), c && (await L.cacheStartVoice(t.voiceType, c), console.log("Start voice generated and cached for voiceType:", t.voiceType)))) : c = await X.generateSpeech(e), !c)
+        return console.log("TTS generation failed, falling back to normal sound"), await this.playNotificationSound();
+      await this.ensureOffscreenDocument();
+      const l = await chrome.runtime.sendMessage({
+        type: oe.PLAY_TTS_SOUND,
+        volume: s.volume,
+        audioData: c
+      });
+      l && l.success ? console.log("TTS notification played successfully with volume:", s.volume) : (console.error("Failed to play TTS notification:", l == null ? void 0 : l.error), await this.playNotificationSound());
+    } catch (t) {
+      console.error("Error playing TTS notification:", t), await this.playNotificationSound();
     }
-    if (e["blocked-urls-storage-key"]) {
-      const n = e["blocked-urls-storage-key"].newValue;
-      n && (Z = n.urls || [], J = n.studyModeUrls || [], U = n.studyModeSelectors || {});
-    }
-    e["ai-config-storage-key"] && e["ai-config-storage-key"].newValue && console.log("AI configuration changed");
   }
-});
-chrome.tabs.onUpdated.addListener((e, t, r) => {
-  t.status === "complete" && r.url && he(e, r.url);
-});
-chrome.tabs.onActivated.addListener((e) => {
-  chrome.tabs.get(e.tabId, (t) => {
-    t.url && he(t.id, t.url);
-  });
-});
-async function he(e, t) {
-  if (!S) return;
-  const r = Pe(t), s = Le(t);
-  if (r)
-    await chrome.scripting.executeScript({
-      target: { tabId: e },
-      func: _e
-    });
-  else if (s) {
-    const n = Ae(t), o = Re(t);
-    o && o.length > 0 && (n && n.getCustomHandler ? await chrome.scripting.executeScript({
-      target: { tabId: e },
-      func: n.getCustomHandler(e),
-      args: [o]
-    }) : await chrome.scripting.executeScript({
-      target: { tabId: e },
-      func: Oe,
-      args: [o]
-    }));
-  }
-}
-function Pe(e) {
-  try {
-    const t = new URL(e);
-    return Z.some((r) => {
-      try {
-        const s = new URL(r);
-        return t.hostname.includes(s.hostname);
-      } catch {
-        return e.includes(r);
-      }
-    });
-  } catch {
-    return !1;
-  }
-}
-function Le(e) {
-  try {
-    const t = new URL(e);
-    return J.some((r) => {
-      try {
-        const s = new URL(r);
-        return t.hostname.includes(s.hostname);
-      } catch {
-        return e.includes(r);
-      }
-    });
-  } catch {
-    return !1;
-  }
-}
-function Re(e) {
-  try {
-    const t = new URL(e), r = Ae(e);
-    if (r)
-      return r.getSelectors();
-    for (const s in U)
-      if (e === s)
-        return U[s];
-    for (const s in U)
-      try {
-        const n = new URL(s);
-        if (t.hostname.includes(n.hostname))
-          return U[s];
-      } catch {
-        if (e.includes(s))
-          return U[s];
-      }
-    return [];
-  } catch {
-    return [];
-  }
-}
-function _e() {
-  const e = document.createElement("div");
-  e.style.position = "fixed", e.style.top = "0", e.style.left = "0", e.style.width = "100%", e.style.height = "100%", e.style.backgroundColor = "rgba(0, 0, 0, 0.9)", e.style.zIndex = "9999999", e.style.display = "flex", e.style.flexDirection = "column", e.style.alignItems = "center", e.style.justifyContent = "center", e.style.color = "white", e.style.fontFamily = "Arial, sans-serif", e.style.fontSize = "16px", e.style.padding = "20px", e.style.boxSizing = "border-box";
-  const t = document.createElement("h1");
-  t.textContent = "专注模式已启动", t.style.marginBottom = "20px", t.style.fontSize = "24px", t.style.fontWeight = "bold";
-  const r = document.createElement("p");
-  r.textContent = "当前网站在专注模式下被禁用", r.style.marginBottom = "30px", r.style.fontSize = "18px";
-  const s = document.createElement("button");
-  s.textContent = "返回上一页", s.style.padding = "10px 20px", s.style.backgroundColor = "#4A90E2", s.style.border = "none", s.style.borderRadius = "4px", s.style.color = "white", s.style.cursor = "pointer", s.style.fontSize = "16px", s.onclick = () => {
-    history.back(), document.body.removeChild(e);
-  }, e.appendChild(t), e.appendChild(r), e.appendChild(s), document.body.appendChild(e);
-}
-function Oe(e) {
-  console.log("Applying study mode with selectors:", e);
-  const t = document.createElement("div");
-  t.style.position = "fixed", t.style.top = "10px", t.style.right = "10px", t.style.backgroundColor = "rgba(0, 128, 0, 0.8)", t.style.color = "white", t.style.padding = "8px 12px", t.style.borderRadius = "4px", t.style.zIndex = "9999998", t.style.fontSize = "14px", t.style.fontFamily = "Arial, sans-serif", t.textContent = "学习模式已启用", document.body.appendChild(t), setTimeout(() => {
-    t.style.opacity = "0", t.style.transition = "opacity 0.5s", setTimeout(() => {
-      document.body.contains(t) && document.body.removeChild(t);
-    }, 500);
-  }, 5e3), e.forEach((s) => {
+  /**
+   * 播放普通通知音效
+   */
+  async playNotificationSound() {
     try {
-      const n = document.querySelectorAll(s);
-      n.forEach((o) => {
-        if (o instanceof HTMLElement) {
-          const d = o.style.pointerEvents, c = o.style.opacity, p = o.style.cursor;
-          o.style.pointerEvents = "none", o.style.opacity = "0.5", o.style.cursor = "not-allowed", (o.tagName === "INPUT" || o.tagName === "TEXTAREA" || o.tagName === "BUTTON") && (o.style.fontSize = o.style.fontSize || "inherit"), o.dataset.studyModeDisabled = "true", o.dataset.originalPointerEvents = d, o.dataset.originalOpacity = c, o.dataset.originalCursor = p;
-        }
-      }), console.log(`Disabled ${n.length} elements with selector: ${s}`);
-    } catch (n) {
-      console.error(`Error disabling elements with selector ${s}:`, n);
+      const e = await ge.get();
+      if (!e.enabled) {
+        console.log("Notification sound is disabled");
+        return;
+      }
+      await this.ensureOffscreenDocument();
+      const t = await chrome.runtime.sendMessage({
+        type: oe.PLAY_NOTIFICATION_SOUND,
+        volume: e.volume,
+        audioUrl: chrome.runtime.getURL("notification.mp3")
+      });
+      t && t.success ? console.log("Notification sound played successfully with volume:", e.volume) : console.error("Failed to play notification sound:", t == null ? void 0 : t.error);
+    } catch (e) {
+      console.error("Error playing notification sound:", e);
     }
-  });
-  const r = new MutationObserver((s) => {
-    let n = !1;
-    s.forEach((o) => {
-      o.type === "childList" && o.addedNodes.length > 0 && (n = !0);
-    }), n && e.forEach((o) => {
+  }
+  /**
+   * 测试TTS功能
+   */
+  async testTTS(e) {
+    try {
+      if (!(await K.get()).enabled || !await K.isConfigured())
+        return { success: !1, error: te.TTS_NOT_CONFIGURED };
+      const s = await X.generateSpeech(e);
+      if (!s)
+        return { success: !1, error: te.TTS_GENERATION_FAILED };
+      const o = await ge.get();
+      if (!o.enabled)
+        return { success: !1, error: te.SOUND_DISABLED };
+      await this.ensureOffscreenDocument(), await new Promise((c) => setTimeout(c, fe.OFFSCREEN_LOAD_DELAY));
       try {
-        document.querySelectorAll(o).forEach((c) => {
-          c instanceof HTMLElement && !c.dataset.studyModeDisabled && (c.style.pointerEvents = "none", c.style.opacity = "0.5", c.style.cursor = "not-allowed", (c.tagName === "INPUT" || c.tagName === "TEXTAREA" || c.tagName === "BUTTON") && (c.style.fontSize = c.style.fontSize || "inherit"), c.dataset.studyModeDisabled = "true");
+        const l = await new Promise((a, h) => {
+          const A = setTimeout(() => {
+            h(new Error(te.MESSAGE_TIMEOUT));
+          }, fe.MESSAGE_TIMEOUT);
+          chrome.runtime.sendMessage(
+            {
+              type: oe.PLAY_TTS_SOUND,
+              volume: o.volume,
+              audioData: s
+            },
+            (f) => {
+              clearTimeout(A), chrome.runtime.lastError ? h(new Error(chrome.runtime.lastError.message)) : a(f);
+            }
+          );
         });
-      } catch (d) {
-        console.error(`Error in mutation observer for selector ${o}:`, d);
+        return l && l.success ? { success: !0 } : { success: !1, error: (l == null ? void 0 : l.error) || "播放失败" };
+      } catch (c) {
+        return console.error("Message sending error:", c), { success: !1, error: "无法与音频播放器通信: " + c.message };
       }
-    });
-  });
-  r.observe(document.documentElement, {
-    childList: !0,
-    subtree: !0
-  }), window.__studyModeObserver = r;
-}
-async function Be() {
-  if (S)
+    } catch (t) {
+      return console.error("TTS test error:", t), { success: !1, error: t.message };
+    }
+  }
+  /**
+   * 检查是否为开始语音文本
+   */
+  isStartVoiceText(e) {
+    return e.includes("专注模式已启动") || e.includes("开始专注") || e.includes("加油，保持专注");
+  }
+  /**
+   * 清除语音缓存（当voiceType改变时调用）
+   */
+  async clearVoiceCacheOnVoiceTypeChange(e, t) {
+    e !== t && (console.log("VoiceType changed from", e, "to", t, ", clearing voice cache"), await L.clearAllVoiceCache());
+  }
+  /**
+   * 确保offscreen document存在
+   */
+  async ensureOffscreenDocument() {
     try {
-      const e = await z.getRemainingTime(), t = await q.get();
-      if (e <= 0 && S) {
-        console.log("Focus timer ended, stopping focus mode automatically");
-        let r = "休息一下吧！";
-        if (t.enabled)
+      try {
+        if ((await chrome.runtime.getContexts({
+          contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
+          documentUrls: [chrome.runtime.getURL("offscreen.html")]
+        })).length > 0)
+          return;
+      } catch {
+        console.log("getContexts not available, proceeding to create offscreen document");
+      }
+      await chrome.offscreen.createDocument({
+        url: chrome.runtime.getURL("offscreen.html"),
+        reasons: [chrome.offscreen.Reason.AUDIO_PLAYBACK],
+        justification: "Playing notification sounds for focus timer"
+      }), console.log("Offscreen document created for audio playback");
+    } catch (e) {
+      console.error("Error creating offscreen document:", e);
+    }
+  }
+};
+B(F, "instance");
+let J = F;
+const ke = [
+  "休息一下吧！你已经专注工作了一段时间。",
+  "该活动一下了！站起来伸展一下身体吧。",
+  "休息是为了更好的工作，现在是放松的时候了。",
+  "你的大脑需要休息，去喝杯水吧！",
+  "专注时间结束，给自己一个小奖励吧！",
+  "太棒了！你完成了一个专注周期，现在享受一下休息时光。",
+  "记得休息是工作的一部分，现在放松一下吧。",
+  "眨眨眼睛，活动一下，让身体放松一下吧！",
+  "专注时间已结束，深呼吸，放松一下。",
+  "恭喜完成专注时间！现在是休息和恢复的时候了。"
+];
+function Oe() {
+  const r = Math.floor(Math.random() * ke.length);
+  return ke[r];
+}
+const G = class G {
+  constructor() {
+  }
+  static getInstance() {
+    return G.instance || (G.instance = new G()), G.instance;
+  }
+  /**
+   * 获取专注结束通知消息
+   */
+  async getEndNotification() {
+    try {
+      if (!(await Y.get()).enabled)
+        return this.getDefaultEndMessage();
+      const t = await se.getNotification();
+      return t ? (console.log("Using cached AI notification"), t) : await this.generateAINotification();
+    } catch (e) {
+      return console.error("Error getting end notification:", e), this.getDefaultEndMessage();
+    }
+  }
+  /**
+   * 预生成AI通知
+   */
+  async preGenerateNotification(e) {
+    try {
+      if (!(await Y.get()).enabled)
+        return;
+      const s = Math.max(
+        me.MIN_PRE_GENERATE_MINUTES,
+        Math.min(me.MAX_PRE_GENERATE_MINUTES, e - me.DEFAULT_PRE_GENERATE_MINUTES)
+      );
+      setTimeout(
+        async () => {
           try {
-            const s = await E.getNotification();
-            s && (r = s, await E.clearNotification());
-          } catch (s) {
-            console.error("Error getting cached notification:", s);
+            await this.generateAINotification(), console.log("AI notification pre-generated successfully");
+          } catch (o) {
+            console.error("Error pre-generating AI notification:", o);
           }
-        await z.stopFocus(), chrome.notifications.create("focus-end", {
-          type: "basic",
-          iconUrl: chrome.runtime.getURL("spring-128.png"),
-          title: "专注模式已结束",
-          message: r
-        }), ye(r);
-      } else if (t.enabled && e > 0 && e <= t.preGenerateMinutes * 60 && !await E.getNotification()) {
-        const s = await z.get();
-        await ce(s.duration);
+        },
+        s * 60 * 1e3
+      );
+    } catch (t) {
+      console.error("Error setting up notification pre-generation:", t);
+    }
+  }
+  /**
+   * 生成AI通知
+   */
+  async generateAINotification() {
+    try {
+      const e = await Y.get();
+      if (!e.apiKey || !e.provider)
+        return console.log("AI configuration incomplete, using default message"), this.getDefaultEndMessage();
+      const t = await this.buildNotificationPrompt(), s = await this.callAIService(e, t);
+      return s ? (await se.saveNotification(s), console.log("AI notification generated and cached"), s) : this.getDefaultEndMessage();
+    } catch (e) {
+      return console.error("Error generating AI notification:", e), this.getDefaultEndMessage();
+    }
+  }
+  /**
+   * 构建AI提示词
+   */
+  async buildNotificationPrompt() {
+    const e = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit"
+    }), s = (await R.get()).duration;
+    return ((await Y.get()).promptTemplate || `现在是${e}，用户刚刚完成了{duration}分钟的专注时间段。请生成一条温暖、鼓励的休息提醒，内容要：
+1. 简洁明了（不超过50字）
+2. 积极正面，给用户成就感
+3. 建议适当的休息活动
+4. 语气亲切自然, 邻家女孩口吻或可爱学妹口吻, 带有情感色彩
+
+请直接返回通知内容，不要包含其他解释。`).replace("{duration}", s.toString());
+  }
+  /**
+   * 调用AI服务
+   */
+  async callAIService(e, t) {
+    try {
+      const s = this.getAPIEndpoint(e.provider), o = this.prepareRequestBody(e, t), c = new AbortController(), l = setTimeout(() => c.abort(), 1e4), a = await fetch(s, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${e.apiKey}`
+        },
+        body: JSON.stringify(o),
+        signal: c.signal
+      });
+      if (clearTimeout(l), !a.ok)
+        throw new Error(`AI API error: ${a.status} ${a.statusText}`);
+      const f = (await a.json()).choices[0].message.content.trim().replace(/^["']|["']$/g, "").replace(/\n+/g, " ").trim();
+      return f.length > 100 ? f.substring(0, 97) + "..." : f;
+    } catch (s) {
+      return console.error("Error calling AI service:", s), null;
+    }
+  }
+  /**
+   * 获取API端点
+   */
+  getAPIEndpoint(e) {
+    const t = {
+      deepseek: "https://api.deepseek.com/v1/chat/completions",
+      openai: "https://api.openai.com/v1/chat/completions"
+    };
+    return t[e] || t.deepseek;
+  }
+  /**
+   * 准备请求体
+   */
+  prepareRequestBody(e, t) {
+    const o = e.systemPrompt || `你是一个友好、积极的助手，负责在用户专注工作一段时间后提醒他们休息。
+你的消息应该：
+1. 简短（不超过50个字）
+2. 友好且鼓励性的
+3. 有时可以幽默或有趣
+4. 提醒用户休息的重要性
+5. 偶尔可以建议简单的伸展运动或放松技巧
+6. 语气自然，像朋友一样交流
+7. 不要重复相同的内容
+8. 不要使用过于正式或机械的语言`;
+    return {
+      model: e.model || "deepseek-chat",
+      messages: [
+        { role: "system", content: o },
+        { role: "user", content: t }
+      ],
+      temperature: 0.8,
+      max_tokens: 100
+    };
+  }
+  /**
+   * 获取默认结束消息
+   */
+  getDefaultEndMessage() {
+    return Oe();
+  }
+  /**
+   * 清除通知缓存
+   */
+  async clearNotificationCache() {
+    try {
+      await se.clearNotification(), console.log("Notification cache cleared");
+    } catch (e) {
+      console.error("Error clearing notification cache:", e);
+    }
+  }
+};
+B(G, "instance");
+let ne = G;
+const De = {
+  domain: "bilibili.com",
+  getSelectors() {
+    return ["#nav-searchform", ".center-search__bar"];
+  }
+}, Be = {
+  domain: "baidu.com",
+  getSelectors() {
+    return ["#s-hotsearch-wrapper", "#con-ceiling-wrapper"];
+  },
+  getCustomHandler(r) {
+    return function(t) {
+      console.log("Applying Baidu specific study mode with selectors:", t);
+      const s = document.createElement("div");
+      s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = "rgba(0, 128, 0, 0.8)", s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
+      const o = document.createElement("div");
+      o.textContent = "专注提醒", o.style.fontWeight = "bold", o.style.fontSize = "16px", o.style.marginBottom = "8px", s.appendChild(o);
+      const c = document.createElement("div");
+      c.textContent = "已为您屏蔽热搜和顶部导航，专注于当前任务", s.appendChild(c), document.body.appendChild(s), setTimeout(() => {
+        s.style.transition = "opacity 1s", s.style.opacity = "0", setTimeout(() => {
+          document.body.contains(s) && document.body.removeChild(s);
+        }, 1e3);
+      }, 3e4), t.forEach((a) => {
+        try {
+          const h = document.querySelectorAll(a);
+          h.forEach((A) => {
+            A instanceof HTMLElement && (A.style.display = "none", A.dataset.studyModeDisabled = "true");
+          }), console.log(`Disabled ${h.length} elements with selector: ${a}`);
+        } catch (h) {
+          console.error(`Error disabling elements with selector ${a}:`, h);
+        }
+      });
+      const l = new MutationObserver((a) => {
+        let h = !1;
+        a.forEach((A) => {
+          A.type === "childList" && A.addedNodes.length > 0 && (h = !0);
+        }), h && t.forEach((A) => {
+          try {
+            document.querySelectorAll(A).forEach((T) => {
+              T instanceof HTMLElement && !T.dataset.studyModeDisabled && (T.style.display = "none", T.dataset.studyModeDisabled = "true");
+            });
+          } catch (f) {
+            console.error(`Error in mutation observer for selector ${A}:`, f);
+          }
+        });
+      });
+      l.observe(document.documentElement, {
+        childList: !0,
+        subtree: !0
+      }), window.__studyModeObserver = l;
+    };
+  }
+}, he = [
+  De,
+  Be
+  // 在这里添加更多网站处理器
+];
+function Fe(r) {
+  try {
+    const t = new URL(r).hostname;
+    console.log("getSiteHandler: Checking URL:", r), console.log("getSiteHandler: Hostname:", t), console.log("getSiteHandler: Available handlers:", he.map((o) => o.domain));
+    const s = he.find((o) => !!(t === o.domain || t.endsWith("." + o.domain) || (t.startsWith("www.") ? t.substring(4) : t) === o.domain));
+    return console.log("getSiteHandler: Found handler:", (s == null ? void 0 : s.domain) || "none"), s;
+  } catch (e) {
+    console.error("getSiteHandler: Error:", e);
+    return;
+  }
+}
+const V = class V {
+  constructor() {
+  }
+  static getInstance() {
+    return V.instance || (V.instance = new V()), V.instance;
+  }
+  /**
+   * 检查并处理标签页URL
+   */
+  async checkTabUrl(e, t) {
+    try {
+      console.log("UrlBlocker: Checking tab URL:", t);
+      const s = await R.get();
+      if (console.log("UrlBlocker: Focus config:", s), !s.isActive) {
+        console.log("UrlBlocker: Focus mode not active, skipping URL check");
+        return;
+      }
+      const o = await C.get();
+      console.log("UrlBlocker: Blocked config:", o);
+      const c = this.isUrlBlocked(t, o.urls);
+      if (console.log("UrlBlocker: Is blocked?", c), c) {
+        console.log("UrlBlocker: Blocking URL:", t), await this.showBlockedWarning(e, t);
+        return;
+      }
+      const l = this.isUrlBlocked(t, o.studyModeUrls);
+      if (console.log("UrlBlocker: Is study mode?", l), l) {
+        console.log("UrlBlocker: Applying study mode to URL:", t), await this.handleStudyModeUrl(e, t, o.studyModeSelectors);
+        return;
+      }
+      console.log("UrlBlocker: URL is allowed:", t);
+    } catch (s) {
+      console.error("Error checking tab URL:", s);
+    }
+  }
+  /**
+   * 检查URL是否被阻止
+   */
+  isUrlBlocked(e, t) {
+    try {
+      const o = new URL(e).hostname;
+      console.log("UrlBlocker: Checking URL:", e), console.log("UrlBlocker: Domain:", o), console.log("UrlBlocker: Blocked URLs list:", t);
+      const c = t.some((l) => {
+        let a = l.trim();
+        if (a.startsWith("http://") || a.startsWith("https://"))
+          try {
+            a = new URL(a).hostname;
+          } catch {
+            a = a.replace(/^https?:\/\//, "").split("/")[0];
+          }
+        if (console.log("UrlBlocker: Comparing with cleaned URL:", a), a.startsWith("*.")) {
+          const k = a.substring(2), O = o.endsWith(k);
+          return console.log("UrlBlocker: Wildcard match result:", O), O;
+        }
+        if (l.includes("/") && !l.startsWith("http")) {
+          const k = e.includes(l);
+          return console.log("UrlBlocker: Full URL match result:", k), k;
+        }
+        const h = o === a, A = o.endsWith("." + a), f = a.endsWith("." + o), T = o.startsWith("www.") ? o.substring(4) : o, P = a.startsWith("www.") ? a.substring(4) : a, M = T === P, N = h || A || f || M;
+        return console.log("UrlBlocker: Domain match result:", {
+          domain: o,
+          cleanBlockedUrl: a,
+          domainWithoutWww: T,
+          cleanBlockedUrlWithoutWww: P,
+          exactMatch: h,
+          subdomainMatch: A,
+          parentDomainMatch: f,
+          wwwMatch: M,
+          finalResult: N
+        }), N;
+      });
+      return console.log("UrlBlocker: Final blocking result:", c), c;
+    } catch (s) {
+      return console.error("Error checking if URL is blocked:", s), !1;
+    }
+  }
+  /**
+   * 显示阻止警告页面
+   */
+  async showBlockedWarning(e, t) {
+    try {
+      const s = chrome.runtime.getURL("blocked.html") + "?url=" + encodeURIComponent(t);
+      await chrome.tabs.update(e, { url: s }), console.log("Blocked URL redirected to warning page:", t);
+    } catch (s) {
+      console.error("Error showing blocked warning:", s);
+    }
+  }
+  /**
+   * 处理学习模式URL
+   */
+  async handleStudyModeUrl(e, t, s) {
+    try {
+      const c = new URL(t).hostname;
+      console.log("UrlBlocker: Handling study mode for URL:", t), console.log("UrlBlocker: Domain:", c);
+      const l = Fe(t);
+      if (l) {
+        console.log("UrlBlocker: Found predefined site handler for domain:", l.domain), await this.applySiteHandler(e, l);
+        return;
+      }
+      console.log("UrlBlocker: No predefined site handler found, checking user selectors");
+      const a = s[c] || [];
+      if (console.log("UrlBlocker: User selectors for domain:", c, a), a.length === 0) {
+        console.log("UrlBlocker: No selectors configured for study mode URL:", t);
+        return;
+      }
+      await this.injectHideElements(e, a), console.log("UrlBlocker: Study mode applied to:", t, "with selectors:", a);
+    } catch (o) {
+      console.error("Error handling study mode URL:", o);
+    }
+  }
+  /**
+   * 注入CSS隐藏元素
+   */
+  async injectHideElements(e, t) {
+    try {
+      const s = t.map((o) => `${o} { display: none !important; }`).join(`
+`);
+      await chrome.scripting.insertCSS({
+        target: { tabId: e },
+        css: s
+      }), console.log("CSS injected to hide elements:", t);
+    } catch (s) {
+      console.error("Error injecting CSS:", s);
+    }
+  }
+  /**
+   * 应用网站特定处理器
+   */
+  async applySiteHandler(e, t) {
+    try {
+      const s = t.getSelectors();
+      if (t.getCustomHandler) {
+        const o = t.getCustomHandler(e);
+        await chrome.scripting.executeScript({
+          target: { tabId: e },
+          func: o,
+          args: [s]
+        }), console.log("UrlBlocker: Applied custom site handler for:", t.domain);
+      } else
+        await this.injectHideElements(e, s), console.log("UrlBlocker: Applied default site handler for:", t.domain);
+    } catch (s) {
+      console.error("Error applying site handler:", s);
+    }
+  }
+  /**
+   * 添加阻止的URL
+   */
+  async addBlockedUrl(e) {
+    try {
+      await C.addUrl(e), console.log("URL added to blocked list:", e);
+    } catch (t) {
+      throw console.error("Error adding blocked URL:", t), t;
+    }
+  }
+  /**
+   * 移除阻止的URL
+   */
+  async removeBlockedUrl(e) {
+    try {
+      await C.removeUrl(e), console.log("URL removed from blocked list:", e);
+    } catch (t) {
+      throw console.error("Error removing blocked URL:", t), t;
+    }
+  }
+  /**
+   * 添加学习模式URL
+   */
+  async addStudyModeUrl(e) {
+    try {
+      await C.addStudyModeUrl(e), console.log("URL added to study mode list:", e);
+    } catch (t) {
+      throw console.error("Error adding study mode URL:", t), t;
+    }
+  }
+  /**
+   * 移除学习模式URL
+   */
+  async removeStudyModeUrl(e) {
+    try {
+      await C.removeStudyModeUrl(e), console.log("URL removed from study mode list:", e);
+    } catch (t) {
+      throw console.error("Error removing study mode URL:", t), t;
+    }
+  }
+  /**
+   * 获取阻止的URL列表
+   */
+  async getBlockedUrls() {
+    try {
+      const e = await C.get();
+      return {
+        urls: e.urls,
+        studyModeUrls: e.studyModeUrls
+      };
+    } catch (e) {
+      return console.error("Error getting blocked URLs:", e), { urls: [], studyModeUrls: [] };
+    }
+  }
+  /**
+   * 初始化预设网站处理器
+   * 自动将有预设处理器的网站添加到学习模式列表
+   */
+  async initializePredefinedSites() {
+    try {
+      const e = await C.get();
+      let t = !1;
+      for (const s of he) {
+        const o = s.domain;
+        e.studyModeUrls.includes(o) || (e.studyModeUrls.push(o), t = !0, console.log("UrlBlocker: Added predefined site to study mode:", o));
+      }
+      t && (await C.set(e), console.log("UrlBlocker: Predefined sites initialized"));
+    } catch (e) {
+      console.error("Error initializing predefined sites:", e);
+    }
+  }
+};
+B(V, "instance");
+let ae = V;
+const W = class W {
+  constructor() {
+    B(this, "timerInterval", null);
+  }
+  static getInstance() {
+    return W.instance || (W.instance = new W()), W.instance;
+  }
+  /**
+   * 启动专注模式
+   */
+  async startFocus(e) {
+    try {
+      await R.startFocus(e);
+      const t = `专注模式已启动，专注时间：${e}分钟。加油，保持专注！`;
+      chrome.notifications.create(Ue.FOCUS_START, {
+        type: "basic",
+        iconUrl: chrome.runtime.getURL("spring-128.png"),
+        title: "专注模式已启动",
+        message: `专注时间：${e}分钟`
+      }), await J.getInstance().playTTSNotification(t), chrome.action.setBadgeText({ text: ee.BADGE_TEXT }), chrome.action.setBadgeBackgroundColor({ color: ee.BADGE_COLOR }), this.startTimerCheck(), await this.preGenerateNotification(e), await this.checkAllOpenTabs(), console.log(`Focus mode started for ${e} minutes`);
+    } catch (t) {
+      throw console.error("Error starting focus mode:", t), t;
+    }
+  }
+  /**
+   * 停止专注模式
+   */
+  async stopFocus() {
+    try {
+      await R.stopFocus(), chrome.action.setBadgeText({ text: "" }), this.stopTimerCheck(), console.log("Focus mode stopped");
+    } catch (e) {
+      throw console.error("Error stopping focus mode:", e), e;
+    }
+  }
+  /**
+   * 启动定时器检查
+   */
+  startTimerCheck() {
+    this.timerInterval && clearInterval(this.timerInterval), this.timerInterval = setInterval(async () => {
+      await this.checkFocusTimer();
+    }, fe.TIMER_CHECK_INTERVAL);
+  }
+  /**
+   * 停止定时器检查
+   */
+  stopTimerCheck() {
+    this.timerInterval && (clearInterval(this.timerInterval), this.timerInterval = null);
+  }
+  /**
+   * 检查专注计时器
+   */
+  async checkFocusTimer() {
+    try {
+      if (!(await R.get()).isActive) {
+        this.stopTimerCheck();
+        return;
+      }
+      const t = await R.getRemainingTime();
+      if (t <= 0)
+        await this.handleFocusEnd();
+      else {
+        const s = Math.ceil(t / 60);
+        chrome.action.setBadgeText({ text: s.toString() });
       }
     } catch (e) {
       console.error("Error checking focus timer:", e);
     }
-}
-let $ = null;
-function xe() {
-  $ || ($ = setInterval(Be, 1e3), console.log("Started focus timer check interval"));
-}
-function Ie() {
-  $ && (clearInterval($), $ = null, console.log("Stopped focus timer check interval"));
-}
-async function De() {
-  await Ne();
-  const e = await q.get();
-  if (console.log("AI notifications enabled:", e.enabled), S && (xe(), (await q.get()).enabled)) {
-    const r = await z.get();
-    await ce(r.duration);
   }
-  console.log("Focus mode background script loaded with AI integration");
-}
-chrome.runtime.onMessage.addListener((e, t, r) => e.type === "TEST_TTS" ? (Fe(e.text).then((s) => r(s)).catch((s) => {
-  console.error("TTS test error:", s), r({ success: !1, error: s.message });
-}), !0) : !1);
-async function Fe(e) {
-  try {
-    if (!(await G.get()).enabled || !await G.isConfigured())
-      return { success: !1, error: "TTS未启用或未配置" };
-    const r = await Y.generateSpeech(e);
-    if (!r)
-      return { success: !1, error: "语音生成失败" };
-    const s = await ie.get();
-    if (!s.enabled)
-      return { success: !1, error: "声音已禁用" };
-    await ae(), await new Promise((n) => setTimeout(n, 200));
+  /**
+   * 处理专注时间结束
+   */
+  async handleFocusEnd() {
     try {
-      const o = await new Promise((d, c) => {
-        const p = setTimeout(() => {
-          c(new Error("消息发送超时"));
-        }, 5e3);
-        chrome.runtime.sendMessage(
-          {
-            type: "PLAY_TTS_SOUND",
-            volume: s.volume,
-            audioData: r
-          },
-          (A) => {
-            clearTimeout(p), chrome.runtime.lastError ? c(new Error(chrome.runtime.lastError.message)) : d(A);
-          }
-        );
-      });
-      return o && o.success ? { success: !0 } : { success: !1, error: (o == null ? void 0 : o.error) || "播放失败" };
-    } catch (n) {
-      return console.error("Message sending error:", n), { success: !1, error: "无法与音频播放器通信: " + n.message };
+      await this.stopFocus();
+      const e = await ne.getInstance().getEndNotification();
+      chrome.notifications.create(Ue.FOCUS_END, {
+        type: "basic",
+        iconUrl: chrome.runtime.getURL("spring-128.png"),
+        title: "专注模式已结束",
+        message: e
+      }), await J.getInstance().playTTSNotification(e), console.log("Focus session completed");
+    } catch (e) {
+      console.error("Error handling focus end:", e);
     }
-  } catch (t) {
-    return console.error("TTS test error:", t), { success: !1, error: t.message };
+  }
+  /**
+   * 预生成AI通知
+   */
+  async preGenerateNotification(e) {
+    try {
+      if (!(await Y.get()).enabled)
+        return;
+      await ne.getInstance().preGenerateNotification(e);
+    } catch (t) {
+      console.error("Error pre-generating notification:", t);
+    }
+  }
+  /**
+   * 检查所有已打开的标签页
+   */
+  async checkAllOpenTabs() {
+    try {
+      console.log("FocusManager: Checking all open tabs for blocked URLs");
+      const e = await chrome.tabs.query({}), t = ae.getInstance();
+      for (const s of e)
+        s.id && s.url && !s.url.startsWith("chrome://") && !s.url.startsWith("chrome-extension://") && (console.log("FocusManager: Checking tab:", s.url), await t.checkTabUrl(s.id, s.url));
+      console.log("FocusManager: Finished checking all open tabs");
+    } catch (e) {
+      console.error("Error checking all open tabs:", e);
+    }
+  }
+  /**
+   * 获取当前专注状态
+   */
+  async getFocusStatus() {
+    const e = await R.get(), t = await R.getRemainingTime();
+    return {
+      isActive: e.isActive,
+      remainingTime: t
+    };
+  }
+  /**
+   * 初始化专注管理器
+   */
+  async initialize() {
+    try {
+      (await R.get()).isActive && (this.startTimerCheck(), chrome.action.setBadgeText({ text: ee.BADGE_TEXT }), chrome.action.setBadgeBackgroundColor({ color: ee.BADGE_COLOR }), console.log("Focus mode restored from storage"));
+    } catch (e) {
+      console.error("Error initializing focus manager:", e);
+    }
+  }
+};
+B(W, "instance");
+let ye = W;
+const pe = ye.getInstance(), ve = J.getInstance(), we = ae.getInstance();
+chrome.runtime.onMessage.addListener((r, e, t) => r.type === oe.TEST_TTS ? (ve.testTTS(r.text).then((s) => t(s)).catch((s) => {
+  console.error("TTS test error:", s), t({ success: !1, error: s.message });
+}), !0) : !1);
+chrome.storage.onChanged.addListener(async (r, e) => {
+  if (e === "local") {
+    if (r["focus-time-storage-key"]) {
+      const t = r["focus-time-storage-key"].newValue, s = r["focus-time-storage-key"].oldValue;
+      t != null && t.isActive && !(s != null && s.isActive) ? await pe.startFocus(t.duration) : !(t != null && t.isActive) && (s != null && s.isActive) && await pe.stopFocus();
+    }
+    if (r["tts-config-storage-key"]) {
+      const t = r["tts-config-storage-key"].newValue, s = r["tts-config-storage-key"].oldValue;
+      t != null && t.voiceType && (s != null && s.voiceType) && t.voiceType !== s.voiceType && (console.log("VoiceType changed, clearing voice cache"), await ve.clearVoiceCacheOnVoiceTypeChange(s.voiceType, t.voiceType));
+    }
+  }
+});
+chrome.tabs.onUpdated.addListener(async (r, e, t) => {
+  e.status === "complete" && t.url && await we.checkTabUrl(r, t.url);
+});
+chrome.tabs.onActivated.addListener(async (r) => {
+  try {
+    const e = await chrome.tabs.get(r.tabId);
+    e.url && await we.checkTabUrl(r.tabId, e.url);
+  } catch (e) {
+    console.error("Error handling tab activation:", e);
+  }
+});
+async function Ge() {
+  try {
+    console.log("Initializing background script...");
+    const r = await _e.get();
+    console.log("Theme loaded:", r), await pe.initialize(), await we.initializePredefinedSites(), console.log("Background script initialized successfully");
+  } catch (r) {
+    console.error("Error during initialization:", r);
   }
 }
-De().catch((e) => {
-  console.error("Error during initialization:", e);
-});
+Ge();

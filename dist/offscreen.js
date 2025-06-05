@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'PLAY_NOTIFICATION_SOUND') {
     playNotificationSound(message.volume, message.audioUrl)
       .then(() => sendResponse({ success: true }))
-      .catch((error) => {
+      .catch(error => {
         console.error('Error playing sound in offscreen:', error);
         sendResponse({ success: false, error: error.message });
       });
@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.type === 'PLAY_TTS_SOUND') {
     playTTSSound(message.volume, message.audioData)
       .then(() => sendResponse({ success: true }))
-      .catch((error) => {
+      .catch(error => {
         console.error('Error playing TTS sound in offscreen:', error);
         sendResponse({ success: false, error: error.message });
       });

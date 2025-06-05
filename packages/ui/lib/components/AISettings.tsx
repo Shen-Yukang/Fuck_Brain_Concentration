@@ -14,8 +14,11 @@ export const AISettings = ({ className }: AISettingsProps) => {
   const [provider, setProvider] = useState<AIProvider>(aiConfig.provider);
   const [model, setModel] = useState(aiConfig.model);
   const [preGenerateMinutes, setPreGenerateMinutes] = useState(aiConfig.preGenerateMinutes);
+  const [systemPrompt, setSystemPrompt] = useState(aiConfig.systemPrompt || '');
+  const [promptTemplate, setPromptTemplate] = useState(aiConfig.promptTemplate || '');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [isPromptSettingsOpen, setIsPromptSettingsOpen] = useState(false);
 
   // 同步状态
   useEffect(() => {
@@ -24,6 +27,8 @@ export const AISettings = ({ className }: AISettingsProps) => {
     setProvider(aiConfig.provider);
     setModel(aiConfig.model);
     setPreGenerateMinutes(aiConfig.preGenerateMinutes);
+    setSystemPrompt(aiConfig.systemPrompt || '');
+    setPromptTemplate(aiConfig.promptTemplate || '');
   }, [aiConfig]);
 
   // 更新启用状态
@@ -72,6 +77,28 @@ export const AISettings = ({ className }: AISettingsProps) => {
       setPreGenerateMinutes(value);
       aiConfigStorage.updatePreGenerateTime(value);
     }
+  };
+
+  // 更新系统提示词
+  const handleSystemPromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSystemPrompt(e.target.value);
+  };
+
+  // 更新用户提示词模板
+  const handlePromptTemplateChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPromptTemplate(e.target.value);
+  };
+
+  // 保存提示词设置
+  const handleSavePrompts = () => {
+    aiConfigStorage.updatePrompts(systemPrompt.trim() || undefined, promptTemplate.trim() || undefined);
+  };
+
+  // 重置提示词为默认值
+  const handleResetPrompts = () => {
+    setSystemPrompt('');
+    setPromptTemplate('');
+    aiConfigStorage.updatePrompts(undefined, undefined);
   };
 
   return (
@@ -190,6 +217,74 @@ export const AISettings = ({ className }: AISettingsProps) => {
                       onChange={handleModelChange}
                       className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none"
                     />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Prompt 设置 */}
+          <div className="mt-2">
+            <button
+              onClick={() => setIsPromptSettingsOpen(!isPromptSettingsOpen)}
+              className="flex items-center gap-1 text-purple-500 hover:text-purple-700">
+              <span>{isPromptSettingsOpen ? '收起' : '展开'}提示词设置</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-4 w-4 transition-transform ${isPromptSettingsOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {isPromptSettingsOpen && (
+              <div className="mt-3 p-3 bg-purple-50 rounded-md">
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <label htmlFor="system-prompt" className="block font-medium mb-2">
+                      系统提示词 (System Prompt)
+                    </label>
+                    <textarea
+                      id="system-prompt"
+                      value={systemPrompt}
+                      onChange={handleSystemPromptChange}
+                      placeholder="留空使用默认系统提示词..."
+                      rows={6}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none resize-vertical"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">定义 AI 助手的角色和行为规范，留空将使用默认设置</p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="prompt-template" className="block font-medium mb-2">
+                      用户提示词模板 (Prompt Template)
+                    </label>
+                    <textarea
+                      id="prompt-template"
+                      value={promptTemplate}
+                      onChange={handlePromptTemplateChange}
+                      placeholder="留空使用默认模板，可使用 {duration} 占位符..."
+                      rows={4}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none resize-vertical"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      生成通知的具体指令，可使用 {'{duration}'} 占位符表示专注时长
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSavePrompts}
+                      className="py-2 px-4 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors">
+                      保存设置
+                    </button>
+                    <button
+                      onClick={handleResetPrompts}
+                      className="py-2 px-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors">
+                      重置为默认
+                    </button>
                   </div>
                 </div>
               </div>

@@ -7,7 +7,7 @@ import {
   FocusTimer,
   BlockedUrlsList,
   AISettings,
-  AINotificationGenerator,
+  // AINotificationGenerator,
   SoundSettings,
   TTSSettings,
 } from '@extension/ui';
@@ -61,7 +61,7 @@ const Popup = () => {
           : 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
       }}>
       {/* 添加AI通知生成器组件（不可见） */}
-      <AINotificationGenerator />
+      {/* <AINotificationGenerator /> */}
 
       <div className={`App-content ${isLight ? 'text-gray-900' : 'text-gray-100'}`}>
         <div className="flex justify-between items-center mb-6">

@@ -66,6 +66,8 @@ const manifest = {
         'notification.mp3', // 添加音频文件
         'offscreen.html',
         'offscreen.js',
+        'blocked.html', // 添加阻止页面
+        'blocked.js', // 添加阻止页面的脚本文件
       ],
       matches: ['<all_urls>'],
     },

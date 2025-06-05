@@ -1,19 +1,11 @@
-import { notificationCacheStorage } from '@extension/storage';
-// 默认的系统提示词
-const DEFAULT_SYSTEM_PROMPT = `你是一个友好、积极的助手，负责在用户专注工作一段时间后提醒他们休息。
-你的消息应该：
-1. 简短（不超过50个字）
-2. 友好且鼓励性的
-3. 有时可以幽默或有趣
-4. 提醒用户休息的重要性
-5. 偶尔可以建议简单的伸展运动或放松技巧
-6. 语气自然，像朋友一样交流
-7. 不要重复相同的内容
-8. 不要使用过于正式或机械的语言`;
-// 默认的用户提示词模板
-const DEFAULT_PROMPT_TEMPLATE = `生成一条简短的休息提醒消息。用户已经专注工作了{duration}分钟，现在是休息的时候了。`;
+/**
+ * 通知生成器服务
+ *
+ * 注意：此服务已被弃用。AI通知生成逻辑已统一移至 Background Script 的 NotificationManager 中。
+ * 保留此文件是为了向后兼容和类型定义，但主要功能已不再使用。
+ */
 // 备用消息，当AI生成失败时使用
-const FALLBACK_MESSAGES = [
+export const FALLBACK_MESSAGES = [
     '休息一下吧！你已经专注工作了一段时间。',
     '该活动一下了！站起来伸展一下身体吧。',
     '休息是为了更好的工作，现在是放松的时候了。',
@@ -26,152 +18,43 @@ const FALLBACK_MESSAGES = [
     '恭喜完成专注时间！现在是休息和恢复的时候了。',
 ];
 /**
- * 通知生成器类 - 负责生成和管理通知消息
+ * 获取随机备用消息
+ * @returns 随机备用消息
+ */
+export function getRandomFallbackMessage() {
+    const index = Math.floor(Math.random() * FALLBACK_MESSAGES.length);
+    return FALLBACK_MESSAGES[index];
+}
+/**
+ * 通知生成器类 - 已弃用，保留用于向后兼容
+ * @deprecated 请使用 Background Script 中的 NotificationManager
  */
 export class NotificationGenerator {
-    aiService;
-    systemPrompt;
-    promptTemplate;
     /**
-     * 构造函数
-     * @param aiService AI服务实例
-     * @param systemPrompt 系统提示词
-     * @param promptTemplate 用户提示词模板
+     * @deprecated 此类已弃用，功能已移至 Background Script
      */
-    constructor(aiService, systemPrompt = DEFAULT_SYSTEM_PROMPT, promptTemplate = DEFAULT_PROMPT_TEMPLATE) {
-        this.aiService = aiService;
-        this.systemPrompt = systemPrompt;
-        this.promptTemplate = promptTemplate;
+    constructor() {
+        console.warn('NotificationGenerator is deprecated. Use Background Script NotificationManager instead.');
     }
     /**
-     * 生成通知消息
-     * @param duration 专注时长（分钟）
-     * @returns 生成的通知消息
+     * @deprecated 此方法已弃用
      */
     async generateNotification(duration) {
-        try {
-            // 检查是否已经在生成中
-            const isGenerating = await notificationCacheStorage.isGenerating();
-            if (isGenerating) {
-                console.log('Already generating a notification, skipping');
-                return this.getRandomFallbackMessage();
-            }
-            // 设置生成状态
-            await notificationCacheStorage.setGenerating(true);
-            // 准备提示词
-            const prompt = this.promptTemplate.replace('{duration}', duration.toString());
-            // 准备请求选项
-            const options = {
-                prompt,
-                systemPrompt: this.systemPrompt,
-                temperature: 0.8, // 增加一些随机性
-                maxTokens: 100,
-                timeout: 5000, // 5秒超时
-            };
-            // 调用AI服务生成文本
-            const response = await this.aiService.generateText(options);
-            // 清理和格式化响应文本
-            const notification = this.formatNotification(response.text);
-            // 重置生成状态
-            await notificationCacheStorage.setGenerating(false);
-            return notification;
-        }
-        catch (error) {
-            console.error('Error generating notification:', error);
-            // 重置生成状态
-            await notificationCacheStorage.setGenerating(false);
-            // 返回备用消息
-            return this.getRandomFallbackMessage();
-        }
+        console.warn('generateNotification is deprecated');
+        return getRandomFallbackMessage();
     }
     /**
-     * 格式化通知消息
-     * @param text 原始文本
-     * @returns 格式化后的文本
-     */
-    formatNotification(text) {
-        // 移除多余的引号、空格和换行符
-        let formatted = text
-            .trim()
-            .replace(/^["']|["']$/g, '')
-            .replace(/\n+/g, ' ')
-            .trim();
-        // 如果消息太长，截断它
-        if (formatted.length > 100) {
-            formatted = formatted.substring(0, 97) + '...';
-        }
-        return formatted;
-    }
-    /**
-     * 获取随机备用消息
-     * @returns 随机备用消息
-     */
-    getRandomFallbackMessage() {
-        const index = Math.floor(Math.random() * FALLBACK_MESSAGES.length);
-        return FALLBACK_MESSAGES[index];
-    }
-    /**
-     * 预生成通知并缓存
-     * @param duration 专注时长（分钟）
-     * @returns 是否成功预生成
-     */
-    async preGenerateNotification(duration) {
-        try {
-            // 生成通知
-            const notification = await this.generateNotification(duration);
-            // 缓存通知（默认60分钟过期）
-            await notificationCacheStorage.saveNotification(notification);
-            return true;
-        }
-        catch (error) {
-            console.error('Error pre-generating notification:', error);
-            return false;
-        }
-    }
-    /**
-     * 获取缓存的通知，如果没有则生成新的
-     * @param duration 专注时长（分钟）
-     * @returns 通知消息
+     * @deprecated 此方法已弃用
      */
     async getNotification(duration) {
-        try {
-            // 尝试获取缓存的通知
-            const cachedNotification = await notificationCacheStorage.getNotification();
-            // 如果有缓存的通知，使用它并清除缓存
-            if (cachedNotification) {
-                await notificationCacheStorage.clearNotification();
-                return cachedNotification;
-            }
-            // 否则生成新的通知
-            return await this.generateNotification(duration);
-        }
-        catch (error) {
-            console.error('Error getting notification:', error);
-            return this.getRandomFallbackMessage();
-        }
-    }
-    /**
-     * 更新系统提示词
-     * @param systemPrompt 新的系统提示词
-     */
-    updateSystemPrompt(systemPrompt) {
-        this.systemPrompt = systemPrompt;
-    }
-    /**
-     * 更新用户提示词模板
-     * @param promptTemplate 新的用户提示词模板
-     */
-    updatePromptTemplate(promptTemplate) {
-        this.promptTemplate = promptTemplate;
+        console.warn('getNotification is deprecated');
+        return getRandomFallbackMessage();
     }
 }
 /**
- * 创建通知生成器实例
- * @param aiService AI服务实例
- * @param systemPrompt 系统提示词
- * @param promptTemplate 用户提示词模板
- * @returns 通知生成器实例
+ * @deprecated 此函数已弃用
  */
-export function createNotificationGenerator(aiService, systemPrompt, promptTemplate) {
-    return new NotificationGenerator(aiService, systemPrompt, promptTemplate);
+export function createNotificationGenerator() {
+    console.warn('createNotificationGenerator is deprecated');
+    return new NotificationGenerator();
 }

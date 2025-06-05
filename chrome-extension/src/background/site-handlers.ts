@@ -51,7 +51,7 @@ export const baiduHandler: SiteHandler = {
   getSelectors() {
     return ['#s-hotsearch-wrapper', '#con-ceiling-wrapper'];
   },
-  getCustomHandler(tabId: number) {
+  getCustomHandler(_tabId: number) {
     // 返回一个函数，该函数将在页面上下文中执行
     return function customBaiduHandler(selectors: string[]) {
       console.log('Applying Baidu specific study mode with selectors:', selectors);
@@ -178,8 +178,39 @@ export const siteHandlers: SiteHandler[] = [
 export function getSiteHandler(url: string): SiteHandler | undefined {
   try {
     const urlObj = new URL(url);
-    return siteHandlers.find(handler => urlObj.hostname.includes(handler.domain));
-  } catch {
+    const hostname = urlObj.hostname;
+
+    console.log('getSiteHandler: Checking URL:', url);
+    console.log('getSiteHandler: Hostname:', hostname);
+    console.log(
+      'getSiteHandler: Available handlers:',
+      siteHandlers.map(h => h.domain),
+    );
+
+    const handler = siteHandlers.find(handler => {
+      // 精确匹配
+      if (hostname === handler.domain) {
+        return true;
+      }
+
+      // 子域名匹配 (www.baidu.com 匹配 baidu.com)
+      if (hostname.endsWith('.' + handler.domain)) {
+        return true;
+      }
+
+      // 移除 www 前缀后匹配
+      const hostnameWithoutWww = hostname.startsWith('www.') ? hostname.substring(4) : hostname;
+      if (hostnameWithoutWww === handler.domain) {
+        return true;
+      }
+
+      return false;
+    });
+
+    console.log('getSiteHandler: Found handler:', handler?.domain || 'none');
+    return handler;
+  } catch (error) {
+    console.error('getSiteHandler: Error:', error);
     return undefined;
   }
 }

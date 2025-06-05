@@ -1,4 +1,5 @@
 import { ttsConfigStorage } from '@extension/storage';
+import { TTS, ERROR_MESSAGES } from '../constants/index.js';
 
 // TTS API响应接口
 interface TTSResponse {
@@ -35,7 +36,7 @@ interface TTSRequest {
 }
 
 export class TTSService {
-  private static readonly API_URL = 'https://openspeech.bytedance.com/api/v1/tts';
+  private static readonly API_URL = TTS.API_URL;
 
   /**
    * 生成语音并返回base64音频数据
@@ -58,7 +59,7 @@ export class TTSService {
       }
 
       // 生成请求ID
-      const reqid = `chrome_ext_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const reqid = `chrome_ext_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
       // 构建请求数据
       const requestData: TTSRequest = {

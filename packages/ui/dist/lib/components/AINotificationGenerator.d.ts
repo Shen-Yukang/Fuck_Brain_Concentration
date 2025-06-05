@@ -1,7 +1,7 @@
 /**
  * AI通知生成器组件
  *
- * 这个组件不渲染任何UI，只在后台处理AI通知的生成
- * 当检测到需要生成通知时，会调用AI服务生成通知并缓存
+ * 注意：此组件已被弃用。AI通知生成逻辑已统一移至 Background Script 的 NotificationManager 中。
+ * 保留此文件是为了向后兼容，但实际功能已不再使用。
  */
 export declare const AINotificationGenerator: () => null;
