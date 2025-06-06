@@ -1,12 +1,12 @@
 var Me = Object.defineProperty;
-var Re = (r, e, t) => e in r ? Me(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
-var O = (r, e, t) => Re(r, typeof e != "symbol" ? e + "" : e, t);
-var re = { exports: {} }, Ne = re.exports, Se;
-function Le() {
-  return Se || (Se = 1, function(r, e) {
+var _e = (r, e, t) => e in r ? Me(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var P = (r, e, t) => _e(r, typeof e != "symbol" ? e + "" : e, t);
+var re = { exports: {} }, Re = re.exports, xe;
+function Ne() {
+  return xe || (xe = 1, function(r, e) {
     (function(t, o) {
       o(r);
-    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : Ne, function(t) {
+    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : Re, function(t) {
       if (!(globalThis.chrome && globalThis.chrome.runtime && globalThis.chrome.runtime.id))
         throw new Error("This script should only be loaded in a browser extension.");
       if (globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)
@@ -697,38 +697,38 @@ function Le() {
           }
           const f = (g) => g && typeof g == "object" && typeof g.then == "function", s = (g, d) => (...m) => {
             n.runtime.lastError ? g.reject(new Error(n.runtime.lastError.message)) : d.singleCallbackArg || m.length <= 1 && d.singleCallbackArg !== !1 ? g.resolve(m[0]) : g.resolve(m);
-          }, l = (g) => g == 1 ? "argument" : "arguments", A = (g, d) => function(h, ...w) {
-            if (w.length < d.minArgs)
-              throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${w.length}`);
-            if (w.length > d.maxArgs)
-              throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${w.length}`);
-            return new Promise((E, T) => {
+          }, l = (g) => g == 1 ? "argument" : "arguments", A = (g, d) => function(h, ...x) {
+            if (x.length < d.minArgs)
+              throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${x.length}`);
+            if (x.length > d.maxArgs)
+              throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${x.length}`);
+            return new Promise((T, E) => {
               if (d.fallbackToNoCallback)
                 try {
-                  h[g](...w, s({
-                    resolve: E,
-                    reject: T
+                  h[g](...x, s({
+                    resolve: T,
+                    reject: E
                   }, d));
                 } catch (u) {
-                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), h[g](...w), d.fallbackToNoCallback = !1, d.noCallback = !0, E();
+                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), h[g](...x), d.fallbackToNoCallback = !1, d.noCallback = !0, T();
                 }
-              else d.noCallback ? (h[g](...w), E()) : h[g](...w, s({
-                resolve: E,
-                reject: T
+              else d.noCallback ? (h[g](...x), T()) : h[g](...x, s({
+                resolve: T,
+                reject: E
               }, d));
             });
           }, y = (g, d, m) => new Proxy(d, {
-            apply(h, w, E) {
-              return m.call(w, g, ...E);
+            apply(h, x, T) {
+              return m.call(x, g, ...T);
             }
           });
-          let R = Function.call.bind(Object.prototype.hasOwnProperty);
-          const N = (g, d = {}, m = {}) => {
-            let h = /* @__PURE__ */ Object.create(null), w = {
-              has(T, u) {
+          let _ = Function.call.bind(Object.prototype.hasOwnProperty);
+          const R = (g, d = {}, m = {}) => {
+            let h = /* @__PURE__ */ Object.create(null), x = {
+              has(E, u) {
                 return u in g || u in h;
               },
-              get(T, u, b) {
+              get(E, u, b) {
                 if (u in h)
                   return h[u];
                 if (!(u in g))
@@ -737,15 +737,15 @@ function Le() {
                 if (typeof S == "function")
                   if (typeof d[u] == "function")
                     S = y(g, g[u], d[u]);
-                  else if (R(m, u)) {
-                    let z = A(u, m[u]);
-                    S = y(g, g[u], z);
+                  else if (_(m, u)) {
+                    let V = A(u, m[u]);
+                    S = y(g, g[u], V);
                   } else
                     S = S.bind(g);
-                else if (typeof S == "object" && S !== null && (R(d, u) || R(m, u)))
-                  S = N(S, d[u], m[u]);
-                else if (R(m, "*"))
-                  S = N(S, d[u], m["*"]);
+                else if (typeof S == "object" && S !== null && (_(d, u) || _(m, u)))
+                  S = R(S, d[u], m[u]);
+                else if (_(m, "*"))
+                  S = R(S, d[u], m["*"]);
                 else
                   return Object.defineProperty(h, u, {
                     configurable: !0,
@@ -753,24 +753,24 @@ function Le() {
                     get() {
                       return g[u];
                     },
-                    set(z) {
-                      g[u] = z;
+                    set(V) {
+                      g[u] = V;
                     }
                   }), S;
                 return h[u] = S, S;
               },
-              set(T, u, b, S) {
+              set(E, u, b, S) {
                 return u in h ? h[u] = b : g[u] = b, !0;
               },
-              defineProperty(T, u, b) {
+              defineProperty(E, u, b) {
                 return Reflect.defineProperty(h, u, b);
               },
-              deleteProperty(T, u) {
+              deleteProperty(E, u) {
                 return Reflect.deleteProperty(h, u);
               }
-            }, E = Object.create(g);
-            return new Proxy(E, w);
-          }, v = (g) => ({
+            }, T = Object.create(g);
+            return new Proxy(T, x);
+          }, C = (g) => ({
             addListener(d, m, ...h) {
               d.addListener(g.get(m), ...h);
             },
@@ -781,33 +781,33 @@ function Le() {
               d.removeListener(g.get(m));
             }
           }), D = new i((g) => typeof g != "function" ? g : function(m) {
-            const h = N(m, {}, {
+            const h = R(m, {}, {
               getContent: {
                 minArgs: 0,
                 maxArgs: 0
               }
             });
             g(h);
-          }), q = new i((g) => typeof g != "function" ? g : function(m, h, w) {
-            let E = !1, T, u = new Promise(($) => {
-              T = function(M) {
-                E = !0, $(M);
+          }), q = new i((g) => typeof g != "function" ? g : function(m, h, x) {
+            let T = !1, E, u = new Promise(($) => {
+              E = function(M) {
+                T = !0, $(M);
               };
             }), b;
             try {
-              b = g(m, h, T);
+              b = g(m, h, E);
             } catch ($) {
               b = Promise.reject($);
             }
             const S = b !== !0 && f(b);
-            if (b !== !0 && !S && !E)
+            if (b !== !0 && !S && !T)
               return !1;
-            const z = ($) => {
+            const V = ($) => {
               $.then((M) => {
-                w(M);
+                x(M);
               }, (M) => {
                 let ce;
-                M && (M instanceof Error || typeof M.message == "string") ? ce = M.message : ce = "An unexpected error occurred", w({
+                M && (M instanceof Error || typeof M.message == "string") ? ce = M.message : ce = "An unexpected error occurred", x({
                   __mozWebExtensionPolyfillReject__: !0,
                   message: ce
                 });
@@ -815,40 +815,40 @@ function Le() {
                 console.error("Failed to send onMessage rejected reply", M);
               });
             };
-            return z(S ? b : u), !0;
+            return V(S ? b : u), !0;
           }), p = ({
             reject: g,
             resolve: d
           }, m) => {
             n.runtime.lastError ? n.runtime.lastError.message === o ? d() : g(new Error(n.runtime.lastError.message)) : m && m.__mozWebExtensionPolyfillReject__ ? g(new Error(m.message)) : d(m);
-          }, P = (g, d, m, ...h) => {
+          }, O = (g, d, m, ...h) => {
             if (h.length < d.minArgs)
               throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${h.length}`);
             if (h.length > d.maxArgs)
               throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${h.length}`);
-            return new Promise((w, E) => {
-              const T = p.bind(null, {
-                resolve: w,
-                reject: E
+            return new Promise((x, T) => {
+              const E = p.bind(null, {
+                resolve: x,
+                reject: T
               });
-              h.push(T), m.sendMessage(...h);
+              h.push(E), m.sendMessage(...h);
             });
-          }, ve = {
+          }, Ce = {
             devtools: {
               network: {
-                onRequestFinished: v(D)
+                onRequestFinished: C(D)
               }
             },
             runtime: {
-              onMessage: v(q),
-              onMessageExternal: v(q),
-              sendMessage: P.bind(null, "sendMessage", {
+              onMessage: C(q),
+              onMessageExternal: C(q),
+              sendMessage: O.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
               })
             },
             tabs: {
-              sendMessage: P.bind(null, "sendMessage", {
+              sendMessage: O.bind(null, "sendMessage", {
                 minArgs: 2,
                 maxArgs: 3
               })
@@ -877,14 +877,14 @@ function Le() {
             websites: {
               "*": ie
             }
-          }, N(n, ve, c);
+          }, R(n, Ce, c);
         };
         t.exports = a(chrome);
       }
     });
   }(re)), re.exports;
 }
-Le();
+Ne();
 var k;
 (function(r) {
   r.Local = "local", r.Sync = "sync", r.Managed = "managed", r.Session = "session";
@@ -893,58 +893,58 @@ var me;
 (function(r) {
   r.ExtensionPagesOnly = "TRUSTED_CONTEXTS", r.ExtensionPagesAndContentScripts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
 })(me || (me = {}));
-const x = globalThis.chrome, we = async (r, e) => {
+const w = globalThis.chrome, we = async (r, e) => {
   const t = (a) => typeof a == "function", o = (a) => a instanceof Promise;
   return t(r) ? (o(r), r(e)) : r;
 };
-let xe = !1;
+let Te = !1;
 function Ee(r) {
-  if (x && x.storage[r] === void 0)
+  if (w && w.storage[r] === void 0)
     throw new Error(`Check your storage permission in manifest.json: ${r} is not defined`);
 }
 function I(r, e, t) {
   var D, q;
   let o = null, a = !1, n = [];
   const c = (t == null ? void 0 : t.storageEnum) ?? k.Local, i = (t == null ? void 0 : t.liveUpdate) ?? !1, f = ((D = t == null ? void 0 : t.serialization) == null ? void 0 : D.serialize) ?? ((p) => p), s = ((q = t == null ? void 0 : t.serialization) == null ? void 0 : q.deserialize) ?? ((p) => p);
-  xe === !1 && c === k.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ee(c), x == null || x.storage[c].setAccessLevel({
+  Te === !1 && c === k.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ee(c), w == null || w.storage[c].setAccessLevel({
     accessLevel: me.ExtensionPagesAndContentScripts
   }).catch((p) => {
     console.warn(p), console.warn("Please call setAccessLevel into different context, like a background script.");
-  }), xe = !0);
+  }), Te = !0);
   const l = async () => {
     Ee(c);
-    const p = await (x == null ? void 0 : x.storage[c].get([r]));
+    const p = await (w == null ? void 0 : w.storage[c].get([r]));
     return p ? s(p[r]) ?? e : e;
   }, A = () => {
     n.forEach((p) => p());
   }, y = async (p) => {
-    a || (o = await l()), o = await we(p, o), await (x == null ? void 0 : x.storage[c].set({ [r]: f(o) })), A();
-  }, R = (p) => (n = [...n, p], () => {
-    n = n.filter((P) => P !== p);
-  }), N = () => o;
+    a || (o = await l()), o = await we(p, o), await (w == null ? void 0 : w.storage[c].set({ [r]: f(o) })), A();
+  }, _ = (p) => (n = [...n, p], () => {
+    n = n.filter((O) => O !== p);
+  }), R = () => o;
   l().then((p) => {
     o = p, a = !0, A();
   });
-  async function v(p) {
+  async function C(p) {
     if (p[r] === void 0)
       return;
-    const P = s(p[r].newValue);
-    o !== P && (o = await we(P, o), A());
+    const O = s(p[r].newValue);
+    o !== O && (o = await we(O, o), A());
   }
-  return i && (x == null || x.storage[c].onChanged.addListener(v)), {
+  return i && (w == null || w.storage[c].onChanged.addListener(C)), {
     get: l,
     set: y,
-    getSnapshot: N,
-    subscribe: R
+    getSnapshot: R,
+    subscribe: _
   };
 }
-const Te = I("theme-storage-key", "light", {
+const be = I("theme-storage-key", "light", {
   storageEnum: k.Local,
   liveUpdate: !0
-}), _e = {
-  ...Te,
+}), Le = {
+  ...be,
   toggle: async () => {
-    await Te.set((r) => r === "light" ? "dark" : "light");
+    await be.set((r) => r === "light" ? "dark" : "light");
   }
 }, Q = I("focus-time-storage-key", {
   duration: 25,
@@ -953,7 +953,7 @@ const Te = I("theme-storage-key", "light", {
 }, {
   storageEnum: k.Local,
   liveUpdate: !0
-}), L = {
+}), N = {
   ...Q,
   startFocus: async (r) => {
     const e = Date.now();
@@ -979,7 +979,7 @@ const Te = I("theme-storage-key", "light", {
     const e = Math.max(0, r.endTime - Date.now());
     return Math.floor(e / 1e3);
   }
-}, U = I("blocked-urls-storage-key", {
+}, v = I("blocked-urls-storage-key", {
   urls: [],
   studyModeUrls: [],
   studyModeSelectors: {}
@@ -988,8 +988,8 @@ const Te = I("theme-storage-key", "light", {
   liveUpdate: !0
 }), Be = async () => {
   try {
-    const r = await U.get();
-    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await U.set((e) => ({
+    const r = await v.get();
+    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await v.set((e) => ({
       urls: e.urls || [],
       studyModeUrls: e.studyModeUrls || [],
       studyModeSelectors: e.studyModeSelectors || {}
@@ -999,10 +999,10 @@ const Te = I("theme-storage-key", "light", {
   }
 };
 Be();
-const C = {
-  ...U,
+const U = {
+  ...v,
   addUrl: async (r) => {
-    await U.set((e) => {
+    await v.set((e) => {
       if (e.urls.includes(r))
         return e;
       const t = e.studyModeUrls.filter((o) => o !== r);
@@ -1014,19 +1014,19 @@ const C = {
     });
   },
   removeUrl: async (r) => {
-    await U.set((e) => ({
+    await v.set((e) => ({
       ...e,
       urls: e.urls.filter((t) => t !== r)
     }));
   },
   clearUrls: async () => {
-    await U.set((r) => ({
+    await v.set((r) => ({
       ...r,
       urls: []
     }));
   },
   addStudyModeUrl: async (r) => {
-    await U.set((e) => {
+    await v.set((e) => {
       if (e.studyModeUrls.includes(r))
         return e;
       const t = e.urls.filter((o) => o !== r);
@@ -1038,16 +1038,16 @@ const C = {
     });
   },
   removeStudyModeUrl: async (r) => {
-    await U.set((e) => ({
+    await v.set((e) => ({
       ...e,
       studyModeUrls: e.studyModeUrls.filter((t) => t !== r)
     }));
   },
   toggleUrlMode: async (r, e) => {
-    e ? await C.addStudyModeUrl(r) : await C.addUrl(r);
+    e ? await U.addStudyModeUrl(r) : await U.addUrl(r);
   },
   addStudyModeSelector: async (r, e) => {
-    await U.set((t) => {
+    await v.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return o.includes(e) ? t : {
         ...t,
@@ -1059,7 +1059,7 @@ const C = {
     });
   },
   removeStudyModeSelector: async (r, e) => {
-    await U.set((t) => {
+    await v.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return {
         ...t,
@@ -1071,7 +1071,7 @@ const C = {
     });
   },
   clearStudyModeSelectors: async (r) => {
-    await U.set((e) => {
+    await v.set((e) => {
       const { [r]: t, ...o } = e.studyModeSelectors;
       return {
         ...e,
@@ -1079,17 +1079,17 @@ const C = {
       };
     });
   }
-}, W = I("notification-cache-storage-key", {
+}, j = I("notification-cache-storage-key", {
   isGenerating: !1
 }, {
   storageEnum: k.Local,
   liveUpdate: !0
 }), oe = {
-  ...W,
+  ...j,
   // 保存通知内容
   saveNotification: async (r, e = 60) => {
     const t = Date.now();
-    await W.set({
+    await j.set({
       pendingNotification: r,
       generatedAt: t,
       expiresAt: t + e * 60 * 1e3,
@@ -1098,12 +1098,12 @@ const C = {
   },
   // 获取通知内容（如果有效）
   getNotification: async () => {
-    const r = await W.get();
+    const r = await j.get();
     return r.pendingNotification ? r.expiresAt && r.expiresAt < Date.now() ? (await oe.clearNotification(), null) : r.pendingNotification : null;
   },
   // 清除通知缓存
   clearNotification: async () => {
-    await W.set((r) => ({
+    await j.set((r) => ({
       ...r,
       pendingNotification: void 0,
       generatedAt: void 0,
@@ -1113,19 +1113,19 @@ const C = {
   },
   // 设置生成状态
   setGenerating: async (r) => {
-    await W.set((e) => ({
+    await j.set((e) => ({
       ...e,
       isGenerating: r
     }));
   },
   // 检查是否正在生成中
-  isGenerating: async () => (await W.get()).isGenerating
+  isGenerating: async () => (await j.get()).isGenerating
 };
 var fe;
 (function(r) {
   r.DEEPSEEK = "deepseek", r.OPENAI = "openai";
 })(fe || (fe = {}));
-const j = I("ai-config-storage-key", {
+const W = I("ai-config-storage-key", {
   enabled: !1,
   provider: fe.DEEPSEEK,
   model: "deepseek-chat",
@@ -1136,24 +1136,24 @@ const j = I("ai-config-storage-key", {
   storageEnum: k.Local,
   liveUpdate: !0
 }), Y = {
-  ...j,
+  ...W,
   // 启用/禁用AI生成
   enableAI: async (r) => {
-    await j.set((e) => ({
+    await W.set((e) => ({
       ...e,
       enabled: r
     }));
   },
   // 更新API密钥
   updateAPIKey: async (r) => {
-    await j.set((e) => ({
+    await W.set((e) => ({
       ...e,
       apiKey: r
     }));
   },
   // 更新AI提供商
   updateProvider: async (r, e, t) => {
-    await j.set((o) => ({
+    await W.set((o) => ({
       ...o,
       provider: r,
       ...e ? { model: e } : {},
@@ -1162,7 +1162,7 @@ const j = I("ai-config-storage-key", {
   },
   // 更新提示词
   updatePrompts: async (r, e) => {
-    await j.set((t) => ({
+    await W.set((t) => ({
       ...t,
       ...r !== void 0 ? { systemPrompt: r } : {},
       ...e !== void 0 ? { promptTemplate: e } : {}
@@ -1170,7 +1170,7 @@ const j = I("ai-config-storage-key", {
   },
   // 更新预生成时间
   updatePreGenerateTime: async (r) => {
-    await j.set((e) => ({
+    await W.set((e) => ({
       ...e,
       preGenerateMinutes: Math.max(1, Math.min(30, r))
       // 限制在1-30分钟之间
@@ -1209,7 +1209,9 @@ const j = I("ai-config-storage-key", {
   voiceType: "zh_male_M392_conversation_wvae_bigtts",
   encoding: "mp3",
   speedRatio: 1,
-  uid: "chrome_extension_user"
+  uid: "chrome_extension_user",
+  defaultText: ""
+  // 默认为空，将根据语音类型自动设置
 }, {
   storageEnum: k.Local,
   liveUpdate: !0
@@ -1230,7 +1232,7 @@ const j = I("ai-config-storage-key", {
 }, B = I("voice-cache-storage-key", {}, {
   storageEnum: k.Local,
   liveUpdate: !0
-}), _ = {
+}), L = {
   ...B,
   // 缓存开始语音
   cacheStartVoice: async (r, e) => {
@@ -1249,9 +1251,9 @@ const j = I("ai-config-storage-key", {
     if (!e.startVoiceCache)
       return null;
     if (e.startVoiceCache.voiceType !== r)
-      return console.log("Start voice cache voiceType mismatch, clearing cache"), await _.clearStartVoice(), null;
+      return console.log("Start voice cache voiceType mismatch, clearing cache"), await L.clearStartVoice(), null;
     const t = Date.now() - e.startVoiceCache.cachedAt, o = 7 * 24 * 60 * 60 * 1e3;
-    return t > o ? (console.log("Start voice cache expired, clearing cache"), await _.clearStartVoice(), null) : (console.log("Using cached start voice for voiceType:", r), e.startVoiceCache.audioData);
+    return t > o ? (console.log("Start voice cache expired, clearing cache"), await L.clearStartVoice(), null) : (console.log("Using cached start voice for voiceType:", r), e.startVoiceCache.audioData);
   },
   // 清除开始语音缓存
   clearStartVoice: async () => {
@@ -1277,9 +1279,9 @@ const j = I("ai-config-storage-key", {
     if (!e.endVoiceCache)
       return null;
     if (e.endVoiceCache.voiceType !== r)
-      return console.log("End voice cache voiceType mismatch, clearing cache"), await _.clearEndVoice(), null;
+      return console.log("End voice cache voiceType mismatch, clearing cache"), await L.clearEndVoice(), null;
     const t = Date.now() - e.endVoiceCache.cachedAt, o = 7 * 24 * 60 * 60 * 1e3;
-    return t > o ? (console.log("End voice cache expired, clearing cache"), await _.clearEndVoice(), null) : (console.log("Using cached end voice for voiceType:", r), e.endVoiceCache.audioData);
+    return t > o ? (console.log("End voice cache expired, clearing cache"), await L.clearEndVoice(), null) : (console.log("Using cached end voice for voiceType:", r), e.endVoiceCache.audioData);
   },
   // 清除结束语音缓存
   clearEndVoice: async () => {
@@ -1293,9 +1295,9 @@ const j = I("ai-config-storage-key", {
     await B.set({}), console.log("All voice cache cleared");
   },
   // 检查开始语音缓存是否有效
-  isStartVoiceCacheValid: async (r) => await _.getStartVoice(r) !== null,
+  isStartVoiceCacheValid: async (r) => await L.getStartVoice(r) !== null,
   // 检查结束语音缓存是否有效
-  isEndVoiceCacheValid: async (r) => await _.getEndVoice(r) !== null
+  isEndVoiceCacheValid: async (r) => await L.getEndVoice(r) !== null
 }, he = {
   OFFSCREEN_LOAD_DELAY: 200,
   // offscreen document加载延迟
@@ -1322,7 +1324,7 @@ const j = I("ai-config-storage-key", {
   TEST_TTS: "TEST_TTS",
   PING_POPUP: "PING_POPUP",
   PONG_POPUP: "PONG_POPUP"
-}, be = {
+}, ke = {
   FOCUS_START: "focus-start",
   FOCUS_END: "focus-end"
 }, te = {
@@ -1399,7 +1401,7 @@ const j = I("ai-config-storage-key", {
     }
   }
 };
-O(Z, "API_URL", Ie.API_URL);
+P(Z, "API_URL", Ie.API_URL);
 let X = Z;
 const F = class F {
   constructor() {
@@ -1423,7 +1425,17 @@ const F = class F {
       console.log("Generating TTS for text:", e);
       const a = this.isStartVoiceText(e);
       let n = null;
-      if (a ? (n = await _.getStartVoice(t.voiceType), n ? console.log("Using cached start voice for voiceType:", t.voiceType) : (console.log("No cached start voice found, generating new one"), n = await X.generateSpeech("专注模式已启动，加油保持专注！"), n && (await _.cacheStartVoice(t.voiceType, n), console.log("Start voice generated and cached for voiceType:", t.voiceType)))) : n = await X.generateSpeech(e), !n)
+      if (a)
+        if (n = await L.getStartVoice(t.voiceType), n)
+          console.log("Using cached start voice for voiceType:", t.voiceType);
+        else {
+          console.log("No cached start voice found, generating new one");
+          const i = this.getStartVoiceText(t);
+          n = await X.generateSpeech(i), n && (await L.cacheStartVoice(t.voiceType, n), console.log("Start voice generated and cached for voiceType:", t.voiceType));
+        }
+      else
+        n = await X.generateSpeech(e);
+      if (!n)
         return console.log("TTS generation failed, falling back to normal sound"), await this.playNotificationSound();
       await this.ensureOffscreenDocument();
       const c = await chrome.runtime.sendMessage({
@@ -1496,16 +1508,54 @@ const F = class F {
     }
   }
   /**
+   * 获取开始语音文本
+   */
+  getStartVoiceText(e) {
+    if (e.defaultText && e.defaultText.trim())
+      return e.defaultText;
+    const o = [
+      {
+        value: "zh_female_linjianvhai_moon_bigtts",
+        defaultText: "呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！"
+      },
+      {
+        value: "zh_female_yuanqinvyou_moon_bigtts",
+        defaultText: "呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！"
+      },
+      {
+        value: "zh_female_gaolengyujie_moon_bigtts",
+        defaultText: "呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！"
+      },
+      {
+        value: "multi_female_shuangkuaisisi_moon_bigtts",
+        defaultText: "いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ"
+      },
+      {
+        value: "multi_female_gaolengyujie_moon_bigtts",
+        defaultText: "いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ"
+      },
+      {
+        value: "zh_female_tianmeixiaoyuan_moon_bigtts",
+        defaultText: "呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！"
+      },
+      {
+        value: "zh_female_kailangjiejie_moon_bigtts",
+        defaultText: "呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！"
+      }
+    ].find((a) => a.value === e.voiceType);
+    return (o == null ? void 0 : o.defaultText) || "专注模式已启动，加油保持专注！";
+  }
+  /**
    * 检查是否为开始语音文本
    */
   isStartVoiceText(e) {
-    return e.includes("专注模式已启动") || e.includes("开始专注") || e.includes("加油，保持专注");
+    return e.includes("专注模式已启动") || e.includes("开始专注") || e.includes("加油，保持专注") || e.includes("看你专注的样子") || e.includes("集中しているところを見ると") || e.includes("专注冲鸭") || e.includes("集中してアヒルを沖ます");
   }
   /**
    * 清除语音缓存（当voiceType改变时调用）
    */
   async clearVoiceCacheOnVoiceTypeChange(e, t) {
-    e !== t && (console.log("VoiceType changed from", e, "to", t, ", clearing voice cache"), await _.clearAllVoiceCache());
+    e !== t && (console.log("VoiceType changed from", e, "to", t, ", clearing voice cache"), await L.clearAllVoiceCache());
   }
   /**
    * 确保offscreen document存在
@@ -1531,9 +1581,9 @@ const F = class F {
     }
   }
 };
-O(F, "instance");
+P(F, "instance");
 let J = F;
-const ke = [
+const ve = [
   "休息一下吧！你已经专注工作了一段时间。",
   "该活动一下了！站起来伸展一下身体吧。",
   "休息是为了更好的工作，现在是放松的时候了。",
@@ -1546,8 +1596,8 @@ const ke = [
   "恭喜完成专注时间！现在是休息和恢复的时候了。"
 ];
 function De() {
-  const r = Math.floor(Math.random() * ke.length);
-  return ke[r];
+  const r = Math.floor(Math.random() * ve.length);
+  return ve[r];
 }
 const H = class H {
   constructor() {
@@ -1614,7 +1664,7 @@ const H = class H {
     const e = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", {
       hour: "2-digit",
       minute: "2-digit"
-    }), o = (await L.get()).duration;
+    }), o = (await N.get()).duration;
     return ((await Y.get()).promptTemplate || `现在是${e}，用户刚刚完成了{duration}分钟的专注时间段。请生成一条温暖、鼓励的休息提醒，内容要：
 1. 简洁明了（不超过50字）
 2. 积极正面，给用户成就感
@@ -1697,9 +1747,9 @@ const H = class H {
     }
   }
 };
-O(H, "instance");
+P(H, "instance");
 let ne = H;
-const Pe = {
+const Oe = {
   domain: "bilibili.com",
   getSelectors() {
     return ["#nav-searchform", ".center-search__bar"];
@@ -1768,7 +1818,7 @@ const Pe = {
       }
     };
   }
-}, Oe = {
+}, Pe = {
   domain: "baidu.com",
   getSelectors() {
     return ["#s-hotsearch-wrapper", "#con-ceiling-wrapper"];
@@ -1906,7 +1956,7 @@ const Pe = {
       }
     };
   }
-}, Ue = [Pe, Oe, Fe];
+}, Ue = [Oe, Pe, Fe];
 function He(r) {
   try {
     const t = new URL(r).hostname;
@@ -1930,12 +1980,12 @@ const G = class G {
   async checkTabUrl(e, t) {
     try {
       console.log("UrlBlocker: Checking tab URL:", t);
-      const o = await L.get();
+      const o = await N.get();
       if (console.log("UrlBlocker: Focus config:", o), !o.isActive) {
         console.log("UrlBlocker: Focus mode not active, skipping URL check");
         return;
       }
-      const a = await C.get();
+      const a = await U.get();
       console.log("UrlBlocker: Blocked config:", a);
       const n = this.isUrlBlocked(t, a.urls);
       if (console.log("UrlBlocker: Is blocked?", n), n) {
@@ -1968,14 +2018,14 @@ const G = class G {
             i = i.replace(/^https?:\/\//, "").split("/")[0];
           }
         if (console.log("UrlBlocker: Comparing with cleaned URL:", i), i.startsWith("*.")) {
-          const v = i.substring(2), D = a.endsWith(v);
+          const C = i.substring(2), D = a.endsWith(C);
           return console.log("UrlBlocker: Wildcard match result:", D), D;
         }
         if (c.includes("/") && !c.startsWith("http")) {
-          const v = e.includes(c);
-          return console.log("UrlBlocker: Full URL match result:", v), v;
+          const C = e.includes(c);
+          return console.log("UrlBlocker: Full URL match result:", C), C;
         }
-        const f = a === i, s = a.endsWith("." + i), l = i.endsWith("." + a), A = a.startsWith("www.") ? a.substring(4) : a, y = i.startsWith("www.") ? i.substring(4) : i, R = A === y, N = f || s || l || R;
+        const f = a === i, s = a.endsWith("." + i), l = i.endsWith("." + a), A = a.startsWith("www.") ? a.substring(4) : a, y = i.startsWith("www.") ? i.substring(4) : i, _ = A === y, R = f || s || l || _;
         return console.log("UrlBlocker: Domain match result:", {
           domain: a,
           cleanBlockedUrl: i,
@@ -1984,9 +2034,9 @@ const G = class G {
           exactMatch: f,
           subdomainMatch: s,
           parentDomainMatch: l,
-          wwwMatch: R,
-          finalResult: N
-        }), N;
+          wwwMatch: _,
+          finalResult: R
+        }), R;
       });
       return console.log("UrlBlocker: Final blocking result:", n), n;
     } catch (o) {
@@ -2077,7 +2127,7 @@ const G = class G {
    */
   async addBlockedUrl(e) {
     try {
-      await C.addUrl(e), console.log("URL added to blocked list:", e);
+      await U.addUrl(e), console.log("URL added to blocked list:", e);
     } catch (t) {
       throw console.error("Error adding blocked URL:", t), t;
     }
@@ -2087,7 +2137,7 @@ const G = class G {
    */
   async removeBlockedUrl(e) {
     try {
-      await C.removeUrl(e), console.log("URL removed from blocked list:", e);
+      await U.removeUrl(e), console.log("URL removed from blocked list:", e);
     } catch (t) {
       throw console.error("Error removing blocked URL:", t), t;
     }
@@ -2097,7 +2147,7 @@ const G = class G {
    */
   async addStudyModeUrl(e) {
     try {
-      await C.addStudyModeUrl(e), console.log("URL added to study mode list:", e);
+      await U.addStudyModeUrl(e), console.log("URL added to study mode list:", e);
     } catch (t) {
       throw console.error("Error adding study mode URL:", t), t;
     }
@@ -2107,7 +2157,7 @@ const G = class G {
    */
   async removeStudyModeUrl(e) {
     try {
-      await C.removeStudyModeUrl(e), console.log("URL removed from study mode list:", e);
+      await U.removeStudyModeUrl(e), console.log("URL removed from study mode list:", e);
     } catch (t) {
       throw console.error("Error removing study mode URL:", t), t;
     }
@@ -2117,7 +2167,7 @@ const G = class G {
    */
   async getBlockedUrls() {
     try {
-      const e = await C.get();
+      const e = await U.get();
       return {
         urls: e.urls,
         studyModeUrls: e.studyModeUrls
@@ -2132,38 +2182,38 @@ const G = class G {
    */
   async initializePredefinedSites() {
     try {
-      const e = await C.get();
+      const e = await U.get();
       console.log("UrlBlocker: Current config before initialization:", e);
       let t = !1;
       for (const a of Ue) {
         const n = a.domain;
         e.studyModeUrls.includes(n) ? console.log("UrlBlocker: Predefined site already in study mode:", n) : (e.studyModeUrls.push(n), t = !0, console.log("UrlBlocker: Added predefined site to study mode:", n));
       }
-      t ? (await C.set(e), console.log("UrlBlocker: Predefined sites initialized")) : console.log("UrlBlocker: No changes needed, all predefined sites already configured");
-      const o = await C.get();
+      t ? (await U.set(e), console.log("UrlBlocker: Predefined sites initialized")) : console.log("UrlBlocker: No changes needed, all predefined sites already configured");
+      const o = await U.get();
       console.log("UrlBlocker: Final config after initialization:", o);
     } catch (e) {
       console.error("Error initializing predefined sites:", e);
     }
   }
 };
-O(G, "instance");
+P(G, "instance");
 let ae = G;
-const V = class V {
+const z = class z {
   constructor() {
-    O(this, "timerInterval", null);
+    P(this, "timerInterval", null);
   }
   static getInstance() {
-    return V.instance || (V.instance = new V()), V.instance;
+    return z.instance || (z.instance = new z()), z.instance;
   }
   /**
    * 启动专注模式
    */
   async startFocus(e) {
     try {
-      await L.startFocus(e);
+      await N.startFocus(e);
       const t = `专注模式已启动，专注时间：${e}分钟。加油，保持专注！`;
-      chrome.notifications.create(be.FOCUS_START, {
+      chrome.notifications.create(ke.FOCUS_START, {
         type: "basic",
         iconUrl: chrome.runtime.getURL("spring-128.png"),
         title: "专注模式已启动",
@@ -2178,7 +2228,7 @@ const V = class V {
    */
   async stopFocus() {
     try {
-      await L.stopFocus(), chrome.action.setBadgeText({ text: "" }), this.stopTimerCheck(), console.log("Focus mode stopped");
+      await N.stopFocus(), chrome.action.setBadgeText({ text: "" }), this.stopTimerCheck(), console.log("Focus mode stopped");
     } catch (e) {
       throw console.error("Error stopping focus mode:", e), e;
     }
@@ -2202,11 +2252,11 @@ const V = class V {
    */
   async checkFocusTimer() {
     try {
-      if (!(await L.get()).isActive) {
+      if (!(await N.get()).isActive) {
         this.stopTimerCheck();
         return;
       }
-      const t = await L.getRemainingTime();
+      const t = await N.getRemainingTime();
       if (t <= 0)
         await this.handleFocusEnd();
       else {
@@ -2224,7 +2274,7 @@ const V = class V {
     try {
       await this.stopFocus();
       const e = await ne.getInstance().getEndNotification();
-      chrome.notifications.create(be.FOCUS_END, {
+      chrome.notifications.create(ke.FOCUS_END, {
         type: "basic",
         iconUrl: chrome.runtime.getURL("spring-128.png"),
         title: "专注模式已结束",
@@ -2264,7 +2314,7 @@ const V = class V {
    * 获取当前专注状态
    */
   async getFocusStatus() {
-    const e = await L.get(), t = await L.getRemainingTime();
+    const e = await N.get(), t = await N.getRemainingTime();
     return {
       isActive: e.isActive,
       remainingTime: t
@@ -2275,16 +2325,16 @@ const V = class V {
    */
   async initialize() {
     try {
-      (await L.get()).isActive && (this.startTimerCheck(), chrome.action.setBadgeText({ text: ee.BADGE_TEXT }), chrome.action.setBadgeBackgroundColor({ color: ee.BADGE_COLOR }), console.log("Focus mode restored from storage"));
+      (await N.get()).isActive && (this.startTimerCheck(), chrome.action.setBadgeText({ text: ee.BADGE_TEXT }), chrome.action.setBadgeBackgroundColor({ color: ee.BADGE_COLOR }), console.log("Focus mode restored from storage"));
     } catch (e) {
       console.error("Error initializing focus manager:", e);
     }
   }
 };
-O(V, "instance");
-let Ae = V;
-const ye = Ae.getInstance(), Ce = J.getInstance(), pe = ae.getInstance();
-chrome.runtime.onMessage.addListener((r, e, t) => r.type === se.TEST_TTS ? (Ce.testTTS(r.text).then((o) => t(o)).catch((o) => {
+P(z, "instance");
+let Ae = z;
+const ye = Ae.getInstance(), pe = J.getInstance(), Se = ae.getInstance();
+chrome.runtime.onMessage.addListener((r, e, t) => r.type === se.TEST_TTS ? (pe.testTTS(r.text).then((o) => t(o)).catch((o) => {
   console.error("TTS test error:", o), t({ success: !1, error: o.message });
 }), !0) : !1);
 chrome.storage.onChanged.addListener(async (r, e) => {
@@ -2295,17 +2345,17 @@ chrome.storage.onChanged.addListener(async (r, e) => {
     }
     if (r["tts-config-storage-key"]) {
       const t = r["tts-config-storage-key"].newValue, o = r["tts-config-storage-key"].oldValue;
-      t != null && t.voiceType && (o != null && o.voiceType) && t.voiceType !== o.voiceType && (console.log("VoiceType changed, clearing voice cache"), await Ce.clearVoiceCacheOnVoiceTypeChange(o.voiceType, t.voiceType));
+      t != null && t.voiceType && (o != null && o.voiceType) && t.voiceType !== o.voiceType && (console.log("VoiceType changed, clearing voice cache"), await pe.clearVoiceCacheOnVoiceTypeChange(o.voiceType, t.voiceType)), (t == null ? void 0 : t.defaultText) !== (o == null ? void 0 : o.defaultText) && (console.log("DefaultText changed, clearing start voice cache"), await pe.clearVoiceCacheOnVoiceTypeChange("", ""));
     }
   }
 });
 chrome.tabs.onUpdated.addListener(async (r, e, t) => {
-  e.status === "complete" && t.url && await pe.checkTabUrl(r, t.url);
+  e.status === "complete" && t.url && await Se.checkTabUrl(r, t.url);
 });
 chrome.tabs.onActivated.addListener(async (r) => {
   try {
     const e = await chrome.tabs.get(r.tabId);
-    e.url && await pe.checkTabUrl(r.tabId, e.url);
+    e.url && await Se.checkTabUrl(r.tabId, e.url);
   } catch (e) {
     console.error("Error handling tab activation:", e);
   }
@@ -2313,8 +2363,8 @@ chrome.tabs.onActivated.addListener(async (r) => {
 async function Ge() {
   try {
     console.log("Initializing background script...");
-    const r = await _e.get();
-    console.log("Theme loaded:", r), await ye.initialize(), await pe.initializePredefinedSites(), console.log("Background script initialized successfully");
+    const r = await Le.get();
+    console.log("Theme loaded:", r), await ye.initialize(), await Se.initializePredefinedSites(), console.log("Background script initialized successfully");
   } catch (r) {
     console.error("Error during initialization:", r);
   }

@@ -54,6 +54,12 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
         console.log('VoiceType changed, clearing voice cache');
         await audioManager.clearVoiceCacheOnVoiceTypeChange(oldValue.voiceType, newValue.voiceType);
       }
+
+      // 如果defaultText发生变化，也清除开始语音缓存
+      if (newValue?.defaultText !== oldValue?.defaultText) {
+        console.log('DefaultText changed, clearing start voice cache');
+        await audioManager.clearVoiceCacheOnVoiceTypeChange('', ''); // 这会清除所有缓存
+      }
     }
   }
 });

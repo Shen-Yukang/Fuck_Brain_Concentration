@@ -9,6 +9,7 @@ const ttsConfigBaseStorage = createStorage('tts-config-storage-key', {
     encoding: 'mp3',
     speedRatio: 1.0,
     uid: 'chrome_extension_user',
+    defaultText: '', // 默认为空，将根据语音类型自动设置
 }, {
     storageEnum: StorageEnum.Local,
     liveUpdate: true,

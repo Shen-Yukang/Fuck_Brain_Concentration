@@ -11,6 +11,7 @@ export type TTSConfig = {
   encoding: string; // 音频编码格式
   speedRatio: number; // 语速比例
   uid: string; // 用户ID
+  defaultText: string; // 默认语音文本
 };
 
 // TTS配置存储
@@ -31,6 +32,7 @@ const ttsConfigBaseStorage = createStorage<TTSConfig>(
     encoding: 'mp3',
     speedRatio: 1.0,
     uid: 'chrome_extension_user',
+    defaultText: '', // 默认为空，将根据语音类型自动设置
   },
   {
     storageEnum: StorageEnum.Local,
