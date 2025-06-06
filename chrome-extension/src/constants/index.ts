@@ -46,6 +46,9 @@ export const MESSAGE_TYPES = {
   TEST_TTS: 'TEST_TTS',
   PING_POPUP: 'PING_POPUP',
   PONG_POPUP: 'PONG_POPUP',
+  CHARACTER_SEND_MESSAGE: 'CHARACTER_SEND_MESSAGE',
+  CHARACTER_GET_STATE: 'CHARACTER_GET_STATE',
+  CHARACTER_TOGGLE_CHAT: 'CHARACTER_TOGGLE_CHAT',
 } as const;
 
 // 通知ID常量
@@ -63,6 +66,8 @@ export const STORAGE_KEYS = {
   SOUND_SETTINGS: 'sound-settings-storage-key',
   TTS_CONFIG: 'tts-config-storage-key',
   NOTIFICATION_CACHE: 'notification-cache-storage-key',
+  CHARACTER_CONFIG: 'character-config-storage-key',
+  CHARACTER_CHAT_HISTORY: 'character-chat-history-storage-key',
 } as const;
 
 // 错误消息常量

@@ -336,6 +336,16 @@ importers:
         version: link:../../packages/vite-config
 
   pages/content-runtime:
+    dependencies:
+      '@extension/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@extension/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@extension/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
     devDependencies:
       '@extension/tsconfig':
         specifier: workspace:*

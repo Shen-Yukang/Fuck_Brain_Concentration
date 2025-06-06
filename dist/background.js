@@ -702,24 +702,24 @@ function Ne() {
               throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${x.length}`);
             if (x.length > d.maxArgs)
               throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${x.length}`);
-            return new Promise((T, E) => {
+            return new Promise((w, E) => {
               if (d.fallbackToNoCallback)
                 try {
                   h[g](...x, s({
-                    resolve: T,
+                    resolve: w,
                     reject: E
                   }, d));
                 } catch (u) {
-                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), h[g](...x), d.fallbackToNoCallback = !1, d.noCallback = !0, T();
+                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), h[g](...x), d.fallbackToNoCallback = !1, d.noCallback = !0, w();
                 }
-              else d.noCallback ? (h[g](...x), T()) : h[g](...x, s({
-                resolve: T,
+              else d.noCallback ? (h[g](...x), w()) : h[g](...x, s({
+                resolve: w,
                 reject: E
               }, d));
             });
           }, y = (g, d, m) => new Proxy(d, {
-            apply(h, x, T) {
-              return m.call(x, g, ...T);
+            apply(h, x, w) {
+              return m.call(x, g, ...w);
             }
           });
           let _ = Function.call.bind(Object.prototype.hasOwnProperty);
@@ -768,9 +768,9 @@ function Ne() {
               deleteProperty(E, u) {
                 return Reflect.deleteProperty(h, u);
               }
-            }, T = Object.create(g);
-            return new Proxy(T, x);
-          }, C = (g) => ({
+            }, w = Object.create(g);
+            return new Proxy(w, x);
+          }, U = (g) => ({
             addListener(d, m, ...h) {
               d.addListener(g.get(m), ...h);
             },
@@ -780,7 +780,7 @@ function Ne() {
             removeListener(d, m) {
               d.removeListener(g.get(m));
             }
-          }), D = new i((g) => typeof g != "function" ? g : function(m) {
+          }), I = new i((g) => typeof g != "function" ? g : function(m) {
             const h = R(m, {}, {
               getContent: {
                 minArgs: 0,
@@ -789,9 +789,9 @@ function Ne() {
             });
             g(h);
           }), q = new i((g) => typeof g != "function" ? g : function(m, h, x) {
-            let T = !1, E, u = new Promise(($) => {
+            let w = !1, E, u = new Promise(($) => {
               E = function(M) {
-                T = !0, $(M);
+                w = !0, $(M);
               };
             }), b;
             try {
@@ -800,7 +800,7 @@ function Ne() {
               b = Promise.reject($);
             }
             const S = b !== !0 && f(b);
-            if (b !== !0 && !S && !T)
+            if (b !== !0 && !S && !w)
               return !1;
             const V = ($) => {
               $.then((M) => {
@@ -826,22 +826,22 @@ function Ne() {
               throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${h.length}`);
             if (h.length > d.maxArgs)
               throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${h.length}`);
-            return new Promise((x, T) => {
+            return new Promise((x, w) => {
               const E = p.bind(null, {
                 resolve: x,
-                reject: T
+                reject: w
               });
               h.push(E), m.sendMessage(...h);
             });
-          }, Ce = {
+          }, Ue = {
             devtools: {
               network: {
-                onRequestFinished: C(D)
+                onRequestFinished: U(I)
               }
             },
             runtime: {
-              onMessage: C(q),
-              onMessageExternal: C(q),
+              onMessage: U(q),
+              onMessageExternal: U(q),
               sendMessage: O.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
@@ -877,7 +877,7 @@ function Ne() {
             websites: {
               "*": ie
             }
-          }, R(n, Ce, c);
+          }, R(n, Ue, c);
         };
         t.exports = a(chrome);
       }
@@ -885,73 +885,73 @@ function Ne() {
   }(re)), re.exports;
 }
 Ne();
-var k;
+var C;
 (function(r) {
   r.Local = "local", r.Sync = "sync", r.Managed = "managed", r.Session = "session";
-})(k || (k = {}));
+})(C || (C = {}));
 var me;
 (function(r) {
   r.ExtensionPagesOnly = "TRUSTED_CONTEXTS", r.ExtensionPagesAndContentScripts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
 })(me || (me = {}));
-const w = globalThis.chrome, we = async (r, e) => {
+const T = globalThis.chrome, Te = async (r, e) => {
   const t = (a) => typeof a == "function", o = (a) => a instanceof Promise;
   return t(r) ? (o(r), r(e)) : r;
 };
-let Te = !1;
+let we = !1;
 function Ee(r) {
-  if (w && w.storage[r] === void 0)
+  if (T && T.storage[r] === void 0)
     throw new Error(`Check your storage permission in manifest.json: ${r} is not defined`);
 }
-function I(r, e, t) {
-  var D, q;
+function D(r, e, t) {
+  var I, q;
   let o = null, a = !1, n = [];
-  const c = (t == null ? void 0 : t.storageEnum) ?? k.Local, i = (t == null ? void 0 : t.liveUpdate) ?? !1, f = ((D = t == null ? void 0 : t.serialization) == null ? void 0 : D.serialize) ?? ((p) => p), s = ((q = t == null ? void 0 : t.serialization) == null ? void 0 : q.deserialize) ?? ((p) => p);
-  Te === !1 && c === k.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ee(c), w == null || w.storage[c].setAccessLevel({
+  const c = (t == null ? void 0 : t.storageEnum) ?? C.Local, i = (t == null ? void 0 : t.liveUpdate) ?? !1, f = ((I = t == null ? void 0 : t.serialization) == null ? void 0 : I.serialize) ?? ((p) => p), s = ((q = t == null ? void 0 : t.serialization) == null ? void 0 : q.deserialize) ?? ((p) => p);
+  we === !1 && c === C.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ee(c), T == null || T.storage[c].setAccessLevel({
     accessLevel: me.ExtensionPagesAndContentScripts
   }).catch((p) => {
     console.warn(p), console.warn("Please call setAccessLevel into different context, like a background script.");
-  }), Te = !0);
+  }), we = !0);
   const l = async () => {
     Ee(c);
-    const p = await (w == null ? void 0 : w.storage[c].get([r]));
+    const p = await (T == null ? void 0 : T.storage[c].get([r]));
     return p ? s(p[r]) ?? e : e;
   }, A = () => {
     n.forEach((p) => p());
   }, y = async (p) => {
-    a || (o = await l()), o = await we(p, o), await (w == null ? void 0 : w.storage[c].set({ [r]: f(o) })), A();
+    a || (o = await l()), o = await Te(p, o), await (T == null ? void 0 : T.storage[c].set({ [r]: f(o) })), A();
   }, _ = (p) => (n = [...n, p], () => {
     n = n.filter((O) => O !== p);
   }), R = () => o;
   l().then((p) => {
     o = p, a = !0, A();
   });
-  async function C(p) {
+  async function U(p) {
     if (p[r] === void 0)
       return;
     const O = s(p[r].newValue);
-    o !== O && (o = await we(O, o), A());
+    o !== O && (o = await Te(O, o), A());
   }
-  return i && (w == null || w.storage[c].onChanged.addListener(C)), {
+  return i && (T == null || T.storage[c].onChanged.addListener(U)), {
     get: l,
     set: y,
     getSnapshot: R,
     subscribe: _
   };
 }
-const be = I("theme-storage-key", "light", {
-  storageEnum: k.Local,
+const be = D("theme-storage-key", "light", {
+  storageEnum: C.Local,
   liveUpdate: !0
 }), Le = {
   ...be,
   toggle: async () => {
     await be.set((r) => r === "light" ? "dark" : "light");
   }
-}, Q = I("focus-time-storage-key", {
+}, Q = D("focus-time-storage-key", {
   duration: 25,
   // 默认25分钟
   isActive: !1
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), N = {
   ...Q,
@@ -979,17 +979,17 @@ const be = I("theme-storage-key", "light", {
     const e = Math.max(0, r.endTime - Date.now());
     return Math.floor(e / 1e3);
   }
-}, v = I("blocked-urls-storage-key", {
+}, k = D("blocked-urls-storage-key", {
   urls: [],
   studyModeUrls: [],
   studyModeSelectors: {}
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), Be = async () => {
   try {
-    const r = await v.get();
-    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await v.set((e) => ({
+    const r = await k.get();
+    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await k.set((e) => ({
       urls: e.urls || [],
       studyModeUrls: e.studyModeUrls || [],
       studyModeSelectors: e.studyModeSelectors || {}
@@ -999,10 +999,10 @@ const be = I("theme-storage-key", "light", {
   }
 };
 Be();
-const U = {
-  ...v,
+const v = {
+  ...k,
   addUrl: async (r) => {
-    await v.set((e) => {
+    await k.set((e) => {
       if (e.urls.includes(r))
         return e;
       const t = e.studyModeUrls.filter((o) => o !== r);
@@ -1014,19 +1014,19 @@ const U = {
     });
   },
   removeUrl: async (r) => {
-    await v.set((e) => ({
+    await k.set((e) => ({
       ...e,
       urls: e.urls.filter((t) => t !== r)
     }));
   },
   clearUrls: async () => {
-    await v.set((r) => ({
+    await k.set((r) => ({
       ...r,
       urls: []
     }));
   },
   addStudyModeUrl: async (r) => {
-    await v.set((e) => {
+    await k.set((e) => {
       if (e.studyModeUrls.includes(r))
         return e;
       const t = e.urls.filter((o) => o !== r);
@@ -1038,16 +1038,16 @@ const U = {
     });
   },
   removeStudyModeUrl: async (r) => {
-    await v.set((e) => ({
+    await k.set((e) => ({
       ...e,
       studyModeUrls: e.studyModeUrls.filter((t) => t !== r)
     }));
   },
   toggleUrlMode: async (r, e) => {
-    e ? await U.addStudyModeUrl(r) : await U.addUrl(r);
+    e ? await v.addStudyModeUrl(r) : await v.addUrl(r);
   },
   addStudyModeSelector: async (r, e) => {
-    await v.set((t) => {
+    await k.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return o.includes(e) ? t : {
         ...t,
@@ -1059,7 +1059,7 @@ const U = {
     });
   },
   removeStudyModeSelector: async (r, e) => {
-    await v.set((t) => {
+    await k.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return {
         ...t,
@@ -1071,7 +1071,7 @@ const U = {
     });
   },
   clearStudyModeSelectors: async (r) => {
-    await v.set((e) => {
+    await k.set((e) => {
       const { [r]: t, ...o } = e.studyModeSelectors;
       return {
         ...e,
@@ -1079,10 +1079,10 @@ const U = {
       };
     });
   }
-}, j = I("notification-cache-storage-key", {
+}, j = D("notification-cache-storage-key", {
   isGenerating: !1
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), oe = {
   ...j,
@@ -1125,7 +1125,7 @@ var fe;
 (function(r) {
   r.DEEPSEEK = "deepseek", r.OPENAI = "openai";
 })(fe || (fe = {}));
-const W = I("ai-config-storage-key", {
+const W = D("ai-config-storage-key", {
   enabled: !1,
   provider: fe.DEEPSEEK,
   model: "deepseek-chat",
@@ -1133,7 +1133,7 @@ const W = I("ai-config-storage-key", {
   preGenerateMinutes: 5
   // 默认提前5分钟生成
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), Y = {
   ...W,
@@ -1176,13 +1176,13 @@ const W = I("ai-config-storage-key", {
       // 限制在1-30分钟之间
     }));
   }
-}, le = I("sound-settings-storage-key", {
+}, le = D("sound-settings-storage-key", {
   enabled: !0,
   // 默认启用声音
   volume: 0.5
   // 默认音量50%
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), ge = {
   ...le,
@@ -1201,7 +1201,7 @@ const W = I("ai-config-storage-key", {
       volume: e
     }));
   }
-}, de = I("tts-config-storage-key", {
+}, de = D("tts-config-storage-key", {
   enabled: !1,
   appid: "",
   token: "",
@@ -1213,7 +1213,7 @@ const W = I("ai-config-storage-key", {
   defaultText: ""
   // 默认为空，将根据语音类型自动设置
 }, {
-  storageEnum: k.Local,
+  storageEnum: C.Local,
   liveUpdate: !0
 }), K = {
   ...de,
@@ -1229,8 +1229,8 @@ const W = I("ai-config-storage-key", {
     const r = await de.get();
     return r.enabled && r.appid.length > 0 && r.token.length > 0;
   }
-}, B = I("voice-cache-storage-key", {}, {
-  storageEnum: k.Local,
+}, B = D("voice-cache-storage-key", {}, {
+  storageEnum: C.Local,
   liveUpdate: !0
 }), L = {
   ...B,
@@ -1305,7 +1305,7 @@ const W = I("ai-config-storage-key", {
   // 消息发送超时时间
   TIMER_CHECK_INTERVAL: 1e3
   // 定时器检查间隔
-}, Ie = {
+}, De = {
   API_URL: "https://openspeech.bytedance.com/api/v1/tts"
 }, ee = {
   DEFAULT_DURATION: 25,
@@ -1323,8 +1323,11 @@ const W = I("ai-config-storage-key", {
   PLAY_TTS_SOUND: "PLAY_TTS_SOUND",
   TEST_TTS: "TEST_TTS",
   PING_POPUP: "PING_POPUP",
-  PONG_POPUP: "PONG_POPUP"
-}, ke = {
+  PONG_POPUP: "PONG_POPUP",
+  CHARACTER_SEND_MESSAGE: "CHARACTER_SEND_MESSAGE",
+  CHARACTER_GET_STATE: "CHARACTER_GET_STATE",
+  CHARACTER_TOGGLE_CHAT: "CHARACTER_TOGGLE_CHAT"
+}, Ce = {
   FOCUS_START: "focus-start",
   FOCUS_END: "focus-end"
 }, te = {
@@ -1401,7 +1404,7 @@ const W = I("ai-config-storage-key", {
     }
   }
 };
-P(Z, "API_URL", Ie.API_URL);
+P(Z, "API_URL", De.API_URL);
 let X = Z;
 const F = class F {
   constructor() {
@@ -1583,7 +1586,7 @@ const F = class F {
 };
 P(F, "instance");
 let J = F;
-const ve = [
+const ke = [
   "休息一下吧！你已经专注工作了一段时间。",
   "该活动一下了！站起来伸展一下身体吧。",
   "休息是为了更好的工作，现在是放松的时候了。",
@@ -1595,9 +1598,9 @@ const ve = [
   "专注时间已结束，深呼吸，放松一下。",
   "恭喜完成专注时间！现在是休息和恢复的时候了。"
 ];
-function De() {
-  const r = Math.floor(Math.random() * ve.length);
-  return ve[r];
+function Ie() {
+  const r = Math.floor(Math.random() * ke.length);
+  return ke[r];
 }
 const H = class H {
   constructor() {
@@ -1734,7 +1737,7 @@ const H = class H {
    * 获取默认结束消息
    */
   getDefaultEndMessage() {
-    return De();
+    return Ie();
   }
   /**
    * 清除通知缓存
@@ -1956,12 +1959,12 @@ const Oe = {
       }
     };
   }
-}, Ue = [Oe, Pe, Fe];
+}, ve = [Oe, Pe, Fe];
 function He(r) {
   try {
     const t = new URL(r).hostname;
     console.log("getSiteHandler: Checking URL:", r), console.log("getSiteHandler: Hostname:", t);
-    const o = Ue.find((a) => !!(t === a.domain || t.endsWith("." + a.domain) || (t.startsWith("www.") ? t.substring(4) : t) === a.domain));
+    const o = ve.find((a) => !!(t === a.domain || t.endsWith("." + a.domain) || (t.startsWith("www.") ? t.substring(4) : t) === a.domain));
     return console.log("getSiteHandler: Found handler:", (o == null ? void 0 : o.domain) || "none"), o;
   } catch (e) {
     console.error("getSiteHandler: Error:", e);
@@ -1985,7 +1988,7 @@ const G = class G {
         console.log("UrlBlocker: Focus mode not active, skipping URL check");
         return;
       }
-      const a = await U.get();
+      const a = await v.get();
       console.log("UrlBlocker: Blocked config:", a);
       const n = this.isUrlBlocked(t, a.urls);
       if (console.log("UrlBlocker: Is blocked?", n), n) {
@@ -2018,12 +2021,12 @@ const G = class G {
             i = i.replace(/^https?:\/\//, "").split("/")[0];
           }
         if (console.log("UrlBlocker: Comparing with cleaned URL:", i), i.startsWith("*.")) {
-          const C = i.substring(2), D = a.endsWith(C);
-          return console.log("UrlBlocker: Wildcard match result:", D), D;
+          const U = i.substring(2), I = a.endsWith(U);
+          return console.log("UrlBlocker: Wildcard match result:", I), I;
         }
         if (c.includes("/") && !c.startsWith("http")) {
-          const C = e.includes(c);
-          return console.log("UrlBlocker: Full URL match result:", C), C;
+          const U = e.includes(c);
+          return console.log("UrlBlocker: Full URL match result:", U), U;
         }
         const f = a === i, s = a.endsWith("." + i), l = i.endsWith("." + a), A = a.startsWith("www.") ? a.substring(4) : a, y = i.startsWith("www.") ? i.substring(4) : i, _ = A === y, R = f || s || l || _;
         return console.log("UrlBlocker: Domain match result:", {
@@ -2127,7 +2130,7 @@ const G = class G {
    */
   async addBlockedUrl(e) {
     try {
-      await U.addUrl(e), console.log("URL added to blocked list:", e);
+      await v.addUrl(e), console.log("URL added to blocked list:", e);
     } catch (t) {
       throw console.error("Error adding blocked URL:", t), t;
     }
@@ -2137,7 +2140,7 @@ const G = class G {
    */
   async removeBlockedUrl(e) {
     try {
-      await U.removeUrl(e), console.log("URL removed from blocked list:", e);
+      await v.removeUrl(e), console.log("URL removed from blocked list:", e);
     } catch (t) {
       throw console.error("Error removing blocked URL:", t), t;
     }
@@ -2147,7 +2150,7 @@ const G = class G {
    */
   async addStudyModeUrl(e) {
     try {
-      await U.addStudyModeUrl(e), console.log("URL added to study mode list:", e);
+      await v.addStudyModeUrl(e), console.log("URL added to study mode list:", e);
     } catch (t) {
       throw console.error("Error adding study mode URL:", t), t;
     }
@@ -2157,7 +2160,7 @@ const G = class G {
    */
   async removeStudyModeUrl(e) {
     try {
-      await U.removeStudyModeUrl(e), console.log("URL removed from study mode list:", e);
+      await v.removeStudyModeUrl(e), console.log("URL removed from study mode list:", e);
     } catch (t) {
       throw console.error("Error removing study mode URL:", t), t;
     }
@@ -2167,7 +2170,7 @@ const G = class G {
    */
   async getBlockedUrls() {
     try {
-      const e = await U.get();
+      const e = await v.get();
       return {
         urls: e.urls,
         studyModeUrls: e.studyModeUrls
@@ -2182,15 +2185,15 @@ const G = class G {
    */
   async initializePredefinedSites() {
     try {
-      const e = await U.get();
+      const e = await v.get();
       console.log("UrlBlocker: Current config before initialization:", e);
       let t = !1;
-      for (const a of Ue) {
+      for (const a of ve) {
         const n = a.domain;
         e.studyModeUrls.includes(n) ? console.log("UrlBlocker: Predefined site already in study mode:", n) : (e.studyModeUrls.push(n), t = !0, console.log("UrlBlocker: Added predefined site to study mode:", n));
       }
-      t ? (await U.set(e), console.log("UrlBlocker: Predefined sites initialized")) : console.log("UrlBlocker: No changes needed, all predefined sites already configured");
-      const o = await U.get();
+      t ? (await v.set(e), console.log("UrlBlocker: Predefined sites initialized")) : console.log("UrlBlocker: No changes needed, all predefined sites already configured");
+      const o = await v.get();
       console.log("UrlBlocker: Final config after initialization:", o);
     } catch (e) {
       console.error("Error initializing predefined sites:", e);
@@ -2213,7 +2216,7 @@ const z = class z {
     try {
       await N.startFocus(e);
       const t = `专注模式已启动，专注时间：${e}分钟。加油，保持专注！`;
-      chrome.notifications.create(ke.FOCUS_START, {
+      chrome.notifications.create(Ce.FOCUS_START, {
         type: "basic",
         iconUrl: chrome.runtime.getURL("spring-128.png"),
         title: "专注模式已启动",
@@ -2274,7 +2277,7 @@ const z = class z {
     try {
       await this.stopFocus();
       const e = await ne.getInstance().getEndNotification();
-      chrome.notifications.create(ke.FOCUS_END, {
+      chrome.notifications.create(Ce.FOCUS_END, {
         type: "basic",
         iconUrl: chrome.runtime.getURL("spring-128.png"),
         title: "专注模式已结束",

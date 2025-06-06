@@ -10,6 +10,7 @@ import {
   // AINotificationGenerator,
   SoundSettings,
   TTSSettings,
+  CharacterSettings,
 } from '@extension/ui';
 import { useEffect } from 'react';
 
@@ -87,6 +88,9 @@ const Popup = () => {
         <div className="flex flex-col gap-6">
           {/* 专注时间设置 */}
           <FocusTimer />
+
+          {/* 虚拟助手设置 */}
+          <CharacterSettings />
 
           {/* 声音设置 */}
           <SoundSettings />

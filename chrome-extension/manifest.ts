@@ -54,6 +54,10 @@ const manifest = {
     },
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      js: ['content-runtime/index.iife.js'],
+    },
+    {
+      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
       css: ['content.css'],
     },
   ],
