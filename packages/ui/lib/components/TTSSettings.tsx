@@ -43,9 +43,12 @@ export const TTSSettings = () => {
 
   const voiceOptions = [
     { value: 'zh_female_linjianvhai_moon_bigtts', label: '领家女孩' },
-    { value: 'zh_male_yangguangqingnian_moon_bigtts', label: '阳光男孩' },
-    { value: 'multi_female_shuangkuaisisi_moon_bigtts', label: '日语女孩' },
-    { value: 'zh_female_tianmeixiaoyuan_moon_bigtts', label: '甜美小袁' },
+    { value: 'zh_female_yuanqinvyou_moon_bigtts', label: '撒娇学妹' },
+    { value: 'zh_female_gaolengyujie_moon_bigtts', label: '高冷御姐' },
+    { value: 'multi_female_shuangkuaisisi_moon_bigtts', label: 'はるこ' },
+    { value: 'multi_female_gaolengyujie_moon_bigtts', label: 'あけみ' },
+    { value: 'zh_female_tianmeixiaoyuan_moon_bigtts', label: '甜美小源' },
+    { value: 'zh_female_kailangjiejie_moon_bigtts', label: '开朗姐姐' },
   ];
 
   return (

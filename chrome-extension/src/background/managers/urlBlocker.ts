@@ -37,10 +37,11 @@ export class UrlBlocker {
       const isBlocked = this.isUrlBlocked(url, blockedConfig.urls);
       console.log('UrlBlocker: Is blocked?', isBlocked);
 
+      // 如果是完全阻止的URL，显示警告页面
       if (isBlocked) {
         console.log('UrlBlocker: Blocking URL:', url);
         await this.showBlockedWarning(tabId, url);
-        return;
+        return; // 完全阻止的URL不再继续处理....--------stop
       }
 
       // 检查是否为学习模式URL
@@ -227,17 +228,41 @@ export class UrlBlocker {
     try {
       const selectors = siteHandler.getSelectors();
 
+      // 检查标签页状态
+      const tab = await chrome.tabs.get(tabId);
+      console.log('UrlBlocker: Tab status before injection:', {
+        tabId,
+        status: tab.status,
+        url: tab.url,
+        domain: siteHandler.domain,
+      });
+
+      // 如果页面还在加载，等待一下
+      if (tab.status === 'loading') {
+        console.log('UrlBlocker: Page is loading, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
       // 如果有自定义处理函数，使用自定义处理函数
       if (siteHandler.getCustomHandler) {
         const customHandler = siteHandler.getCustomHandler(tabId);
+        console.log('UrlBlocker: Executing custom handler for:', tabId, siteHandler.domain, selectors);
 
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          func: customHandler,
-          args: [selectors],
-        });
+        try {
+          const result = await chrome.scripting.executeScript({
+            target: { tabId },
+            func: customHandler,
+            args: [selectors],
+          });
 
-        console.log('UrlBlocker: Applied custom site handler for:', siteHandler.domain);
+          console.log('UrlBlocker: Script injection result:', result);
+          console.log('UrlBlocker: Applied custom site handler for:', siteHandler.domain);
+        } catch (injectionError) {
+          console.error('UrlBlocker: Script injection failed:', injectionError);
+          // 降级到CSS注入
+          console.log('UrlBlocker: Falling back to CSS injection');
+          await this.injectHideElements(tabId, selectors);
+        }
       } else {
         // 否则使用默认的CSS隐藏方式
         await this.injectHideElements(tabId, selectors);
@@ -323,6 +348,7 @@ export class UrlBlocker {
   async initializePredefinedSites(): Promise<void> {
     try {
       const config = await blockedUrlsStorage.get();
+      console.log('UrlBlocker: Current config before initialization:', config);
       let hasChanges = false;
 
       // 检查每个预设网站处理器
@@ -334,6 +360,8 @@ export class UrlBlocker {
           config.studyModeUrls.push(domain);
           hasChanges = true;
           console.log('UrlBlocker: Added predefined site to study mode:', domain);
+        } else {
+          console.log('UrlBlocker: Predefined site already in study mode:', domain);
         }
       }
 
@@ -341,7 +369,13 @@ export class UrlBlocker {
       if (hasChanges) {
         await blockedUrlsStorage.set(config);
         console.log('UrlBlocker: Predefined sites initialized');
+      } else {
+        console.log('UrlBlocker: No changes needed, all predefined sites already configured');
       }
+
+      // 输出最终配置用于调试
+      const finalConfig = await blockedUrlsStorage.get();
+      console.log('UrlBlocker: Final config after initialization:', finalConfig);
     } catch (error) {
       console.error('Error initializing predefined sites:', error);
     }
