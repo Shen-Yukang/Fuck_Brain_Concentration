@@ -6,6 +6,114 @@
  */
 
 /**
+ * 创建通用的网站处理器函数
+ * @param message 专注提醒消息
+ * @param backgroundColor 提醒卡片背景色
+ * @returns 处理器函数
+ */
+function createCommonHandler(message: string, backgroundColor: string) {
+  return function (selectors: string[]) {
+    console.log('Applying site-specific study mode with selectors:', selectors);
+
+    // 创建专注提醒小卡片
+    function createFocusReminder(msg: string, bgColor: string) {
+      const focusReminder = document.createElement('div');
+      focusReminder.style.position = 'fixed';
+      focusReminder.style.top = '70px';
+      focusReminder.style.right = '10px';
+      focusReminder.style.backgroundColor = bgColor;
+      focusReminder.style.color = 'white';
+      focusReminder.style.padding = '12px 16px';
+      focusReminder.style.borderRadius = '8px';
+      focusReminder.style.zIndex = '9999999';
+      focusReminder.style.fontSize = '14px';
+      focusReminder.style.fontFamily = 'Arial, sans-serif';
+      focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+      focusReminder.style.width = '200px';
+      focusReminder.style.textAlign = 'center';
+
+      const title = document.createElement('div');
+      title.textContent = '专注提醒';
+      title.style.fontWeight = 'bold';
+      title.style.fontSize = '16px';
+      title.style.marginBottom = '8px';
+      focusReminder.appendChild(title);
+
+      const content = document.createElement('div');
+      content.textContent = msg;
+      focusReminder.appendChild(content);
+
+      document.body.appendChild(focusReminder);
+
+      setTimeout(() => {
+        focusReminder.style.transition = 'opacity 1s';
+        focusReminder.style.opacity = '0';
+        setTimeout(() => {
+          if (document.body.contains(focusReminder)) {
+            document.body.removeChild(focusReminder);
+          }
+        }, 1000);
+      }, 30000);
+    }
+
+    // 处理选择器并监听DOM变化
+    function applySelectors(sels: string[]) {
+      sels.forEach(selector => {
+        try {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(element => {
+            if (element instanceof HTMLElement) {
+              element.style.display = 'none';
+              element.dataset.studyModeDisabled = 'true';
+            }
+          });
+          console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
+        } catch (error) {
+          console.error(`Error disabling elements with selector ${selector}:`, error);
+        }
+      });
+
+      const observer = new MutationObserver(mutations => {
+        let shouldReapply = false;
+        mutations.forEach(mutation => {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            shouldReapply = true;
+          }
+        });
+
+        if (shouldReapply) {
+          sels.forEach(selector => {
+            try {
+              const elements = document.querySelectorAll(selector);
+              elements.forEach(element => {
+                if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
+                  element.style.display = 'none';
+                  element.dataset.studyModeDisabled = 'true';
+                }
+              });
+            } catch (error) {
+              console.error(`Error in mutation observer for selector ${selector}:`, error);
+            }
+          });
+        }
+      });
+
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).__studyModeObserver = observer;
+    }
+
+    // 执行处理
+    createFocusReminder(message, backgroundColor);
+    applySelectors(selectors);
+  };
+}
+
+/**
  * 网站处理器接口
  * 每个网站处理器都应该实现这个接口
  */
@@ -40,6 +148,11 @@ export const bilibiliHandler: SiteHandler = {
   getSelectors() {
     return ['#nav-searchform', '.center-search__bar'];
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getCustomHandler(_tabId: number) {
+    // 使用通用处理器函数
+    return createCommonHandler('已为您屏蔽搜索功能，专注于观看学习内容', 'rgba(255, 105, 180, 0.8)');
+  },
 };
 
 /**
@@ -51,106 +164,10 @@ export const baiduHandler: SiteHandler = {
   getSelectors() {
     return ['#s-hotsearch-wrapper', '#con-ceiling-wrapper'];
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getCustomHandler(_tabId: number) {
-    // 返回一个函数，该函数将在页面上下文中执行
-    return function customBaiduHandler(selectors: string[]) {
-      console.log('Applying Baidu specific study mode with selectors:', selectors);
-
-      // 内嵌通用函数定义
-      function createFocusReminder(message: string, backgroundColor = 'rgba(0, 128, 0, 0.8)') {
-        const focusReminder = document.createElement('div');
-        focusReminder.style.position = 'fixed';
-        focusReminder.style.top = '70px';
-        focusReminder.style.right = '10px';
-        focusReminder.style.backgroundColor = backgroundColor;
-        focusReminder.style.color = 'white';
-        focusReminder.style.padding = '12px 16px';
-        focusReminder.style.borderRadius = '8px';
-        focusReminder.style.zIndex = '9999999';
-        focusReminder.style.fontSize = '14px';
-        focusReminder.style.fontFamily = 'Arial, sans-serif';
-        focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-        focusReminder.style.width = '200px';
-        focusReminder.style.textAlign = 'center';
-
-        const title = document.createElement('div');
-        title.textContent = '专注提醒';
-        title.style.fontWeight = 'bold';
-        title.style.fontSize = '16px';
-        title.style.marginBottom = '8px';
-        focusReminder.appendChild(title);
-
-        const content = document.createElement('div');
-        content.textContent = message;
-        focusReminder.appendChild(content);
-
-        document.body.appendChild(focusReminder);
-
-        setTimeout(() => {
-          focusReminder.style.transition = 'opacity 1s';
-          focusReminder.style.opacity = '0';
-          setTimeout(() => {
-            if (document.body.contains(focusReminder)) {
-              document.body.removeChild(focusReminder);
-            }
-          }, 1000);
-        }, 30000);
-      }
-
-      function applySelectorsWithObserver(selectors: string[]) {
-        selectors.forEach(selector => {
-          try {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-              if (element instanceof HTMLElement) {
-                element.style.display = 'none';
-                element.dataset.studyModeDisabled = 'true';
-              }
-            });
-            console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
-          } catch (error) {
-            console.error(`Error disabling elements with selector ${selector}:`, error);
-          }
-        });
-
-        const observer = new MutationObserver(mutations => {
-          let shouldReapply = false;
-          mutations.forEach(mutation => {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-              shouldReapply = true;
-            }
-          });
-
-          if (shouldReapply) {
-            selectors.forEach(selector => {
-              try {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                  if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
-                    element.style.display = 'none';
-                    element.dataset.studyModeDisabled = 'true';
-                  }
-                });
-              } catch (error) {
-                console.error(`Error in mutation observer for selector ${selector}:`, error);
-              }
-            });
-          }
-        });
-
-        observer.observe(document.documentElement, {
-          childList: true,
-          subtree: true,
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).__studyModeObserver = observer;
-      }
-
-      // 使用通用函数
-      createFocusReminder('已为您屏蔽热搜和顶部导航，专注于当前任务', 'rgba(0, 128, 0, 0.8)');
-      applySelectorsWithObserver(selectors);
-    };
+    // 使用通用处理器函数
+    return createCommonHandler('已为您屏蔽热搜和顶部导航，专注于当前任务', 'rgba(0, 128, 0, 0.8)');
   },
 };
 
@@ -163,106 +180,10 @@ export const zhihuHandler: SiteHandler = {
   getSelectors() {
     return ['.Topstory'];
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getCustomHandler(_tabId: number) {
-    // 返回一个函数，该函数将在页面上下文中执行
-    return function customZhihuHandler(selectors: string[]) {
-      console.log('Applying Zhihu specific study mode with selectors:', selectors);
-
-      // 内嵌通用函数定义
-      function createFocusReminder(message: string, backgroundColor = 'rgba(0, 128, 0, 0.8)') {
-        const focusReminder = document.createElement('div');
-        focusReminder.style.position = 'fixed';
-        focusReminder.style.top = '70px';
-        focusReminder.style.right = '10px';
-        focusReminder.style.backgroundColor = backgroundColor;
-        focusReminder.style.color = 'white';
-        focusReminder.style.padding = '12px 16px';
-        focusReminder.style.borderRadius = '8px';
-        focusReminder.style.zIndex = '9999999';
-        focusReminder.style.fontSize = '14px';
-        focusReminder.style.fontFamily = 'Arial, sans-serif';
-        focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-        focusReminder.style.width = '200px';
-        focusReminder.style.textAlign = 'center';
-
-        const title = document.createElement('div');
-        title.textContent = '专注提醒';
-        title.style.fontWeight = 'bold';
-        title.style.fontSize = '16px';
-        title.style.marginBottom = '8px';
-        focusReminder.appendChild(title);
-
-        const content = document.createElement('div');
-        content.textContent = message;
-        focusReminder.appendChild(content);
-
-        document.body.appendChild(focusReminder);
-
-        setTimeout(() => {
-          focusReminder.style.transition = 'opacity 1s';
-          focusReminder.style.opacity = '0';
-          setTimeout(() => {
-            if (document.body.contains(focusReminder)) {
-              document.body.removeChild(focusReminder);
-            }
-          }, 1000);
-        }, 30000);
-      }
-
-      function applySelectorsWithObserver(selectors: string[]) {
-        selectors.forEach(selector => {
-          try {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-              if (element instanceof HTMLElement) {
-                element.style.display = 'none';
-                element.dataset.studyModeDisabled = 'true';
-              }
-            });
-            console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
-          } catch (error) {
-            console.error(`Error disabling elements with selector ${selector}:`, error);
-          }
-        });
-
-        const observer = new MutationObserver(mutations => {
-          let shouldReapply = false;
-          mutations.forEach(mutation => {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-              shouldReapply = true;
-            }
-          });
-
-          if (shouldReapply) {
-            selectors.forEach(selector => {
-              try {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                  if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
-                    element.style.display = 'none';
-                    element.dataset.studyModeDisabled = 'true';
-                  }
-                });
-              } catch (error) {
-                console.error(`Error in mutation observer for selector ${selector}:`, error);
-              }
-            });
-          }
-        });
-
-        observer.observe(document.documentElement, {
-          childList: true,
-          subtree: true,
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).__studyModeObserver = observer;
-      }
-
-      // 使用通用函数
-      createFocusReminder('已为您屏蔽热门话题推荐，专注于学习和阅读', 'rgba(0, 123, 255, 0.8)');
-      applySelectorsWithObserver(selectors);
-    };
+    // 使用通用处理器函数
+    return createCommonHandler('已为您屏蔽热门话题推荐，专注于学习和阅读', 'rgba(0, 123, 255, 0.8)');
   },
 };
 
