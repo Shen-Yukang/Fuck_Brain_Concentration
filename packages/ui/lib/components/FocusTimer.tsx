@@ -82,9 +82,11 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
 
   return (
     <div
-      className={cn('flex flex-col gap-4 p-4 rounded-lg shadow-md transition-all duration-300', className)}
-      style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-      <h2 className="text-lg font-bold flex items-center gap-2">
+      className={cn(
+        'flex flex-col gap-4 p-4 rounded-lg shadow-md transition-all duration-300 bg-gray-50 dark:bg-gray-800',
+        className,
+      )}>
+      <h2 className="text-lg font-bold flex items-center gap-2 text-gray-900 dark:text-white">
         <span className="inline-block w-1.5 h-5 bg-blue-500 rounded-sm"></span>
         专注时间设置
       </h2>
@@ -108,7 +110,7 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
                 style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
               />
             </svg>
-            <div className="text-3xl font-bold z-10">{formatTime(remainingTime)}</div>
+            <div className="text-3xl font-bold z-10 text-gray-900 dark:text-white">{formatTime(remainingTime)}</div>
           </div>
           <button
             onClick={handleStopFocus}
@@ -120,7 +122,7 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
       ) : (
         <div className="flex flex-col gap-4 py-2">
           <div className="flex items-center gap-3">
-            <label htmlFor="duration" className="whitespace-nowrap font-medium">
+            <label htmlFor="duration" className="whitespace-nowrap font-medium text-gray-700 dark:text-gray-300">
               专注时长 (分钟):
             </label>
             <div className="relative">
@@ -131,8 +133,7 @@ export const FocusTimer = ({ className }: FocusTimerProps) => {
                 max="180"
                 value={duration}
                 onChange={handleDurationChange}
-                className="border border-gray-300 rounded-md px-3 py-2 w-20 text-center outline-none"
-                style={{ transition: 'all 0.3s ease' }}
+                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-20 text-center outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
               />
             </div>
           </div>

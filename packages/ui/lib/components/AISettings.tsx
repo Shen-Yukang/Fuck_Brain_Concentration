@@ -103,15 +103,17 @@ export const AISettings = ({ className }: AISettingsProps) => {
 
   return (
     <div
-      className={cn('flex flex-col gap-4 p-4 rounded-lg shadow-md transition-all duration-300', className)}
-      style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
-      <h2 className="text-lg font-bold flex items-center gap-2">
+      className={cn(
+        'flex flex-col gap-4 p-4 rounded-lg shadow-md transition-all duration-300 bg-gray-50 dark:bg-gray-800',
+        className,
+      )}>
+      <h2 className="text-lg font-bold flex items-center gap-2 text-gray-900 dark:text-white">
         <span className="inline-block w-1.5 h-5 bg-purple-500 rounded-sm"></span>
         AI 通知设置
       </h2>
 
       <div className="flex items-center justify-between">
-        <label htmlFor="ai-enabled" className="font-medium">
+        <label htmlFor="ai-enabled" className="font-medium text-gray-700 dark:text-gray-300">
           启用 AI 生成通知
         </label>
         <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
@@ -132,7 +134,7 @@ export const AISettings = ({ className }: AISettingsProps) => {
       {enabled && (
         <>
           <div className="flex flex-col gap-2">
-            <label htmlFor="api-key" className="font-medium">
+            <label htmlFor="api-key" className="font-medium text-gray-700 dark:text-gray-300">
               API 密钥
             </label>
             <div className="flex gap-2">
@@ -142,12 +144,12 @@ export const AISettings = ({ className }: AISettingsProps) => {
                 value={apiKey}
                 onChange={handleApiKeyChange}
                 placeholder="输入 API 密钥"
-                className="flex-1 border border-gray-300 rounded-md px-3 py-2 outline-none"
+                className="flex-1 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               />
               <button
                 type="button"
                 onClick={() => setShowApiKey(!showApiKey)}
-                className="px-2 py-1 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">
+                className="px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-gray-700 dark:text-gray-300">
                 {showApiKey ? '隐藏' : '显示'}
               </button>
             </div>
@@ -159,7 +161,7 @@ export const AISettings = ({ className }: AISettingsProps) => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="pre-generate-minutes" className="font-medium">
+            <label htmlFor="pre-generate-minutes" className="font-medium text-gray-700 dark:text-gray-300">
               提前生成通知时间（分钟）
             </label>
             <input
@@ -169,9 +171,9 @@ export const AISettings = ({ className }: AISettingsProps) => {
               max="30"
               value={preGenerateMinutes}
               onChange={handlePreGenerateMinutesChange}
-              className="border border-gray-300 rounded-md px-3 py-2 outline-none"
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
-            <p className="text-sm text-gray-500">在倒计时结束前多少分钟预生成通知内容</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">在倒计时结束前多少分钟预生成通知内容</p>
           </div>
 
           <div className="mt-2">
@@ -190,24 +192,24 @@ export const AISettings = ({ className }: AISettingsProps) => {
             </button>
 
             {isAdvancedOpen && (
-              <div className="mt-3 p-3 bg-gray-50 rounded-md">
+              <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
                 <div className="flex flex-col gap-3">
                   <div>
-                    <label htmlFor="ai-provider" className="block font-medium mb-1">
+                    <label htmlFor="ai-provider" className="block font-medium mb-1 text-gray-700 dark:text-gray-300">
                       AI 提供商
                     </label>
                     <select
                       id="ai-provider"
                       value={provider}
                       onChange={handleProviderChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none">
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
                       <option value={AIProvider.DEEPSEEK}>DeepSeek</option>
                       <option value={AIProvider.OPENAI}>OpenAI</option>
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="ai-model" className="block font-medium mb-1">
+                    <label htmlFor="ai-model" className="block font-medium mb-1 text-gray-700 dark:text-gray-300">
                       模型
                     </label>
                     <input
@@ -215,7 +217,7 @@ export const AISettings = ({ className }: AISettingsProps) => {
                       type="text"
                       value={model}
                       onChange={handleModelChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none bg-white dark:bg-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -240,10 +242,10 @@ export const AISettings = ({ className }: AISettingsProps) => {
             </button>
 
             {isPromptSettingsOpen && (
-              <div className="mt-3 p-3 bg-purple-50 rounded-md">
+              <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-md">
                 <div className="flex flex-col gap-4">
                   <div>
-                    <label htmlFor="system-prompt" className="block font-medium mb-2">
+                    <label htmlFor="system-prompt" className="block font-medium mb-2 text-gray-700 dark:text-gray-300">
                       系统提示词 (System Prompt)
                     </label>
                     <textarea
@@ -252,13 +254,17 @@ export const AISettings = ({ className }: AISettingsProps) => {
                       onChange={handleSystemPromptChange}
                       placeholder="留空使用默认系统提示词..."
                       rows={6}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none resize-vertical"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none resize-vertical bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
-                    <p className="text-xs text-gray-500 mt-1">定义 AI 助手的角色和行为规范，留空将使用默认设置</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      定义 AI 助手的角色和行为规范，留空将使用默认设置
+                    </p>
                   </div>
 
                   <div>
-                    <label htmlFor="prompt-template" className="block font-medium mb-2">
+                    <label
+                      htmlFor="prompt-template"
+                      className="block font-medium mb-2 text-gray-700 dark:text-gray-300">
                       用户提示词模板 (Prompt Template)
                     </label>
                     <textarea
@@ -267,9 +273,9 @@ export const AISettings = ({ className }: AISettingsProps) => {
                       onChange={handlePromptTemplateChange}
                       placeholder="留空使用默认模板，可使用 {duration} 占位符..."
                       rows={4}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 outline-none resize-vertical"
+                      className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 outline-none resize-vertical bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       生成通知的具体指令，可使用 {'{duration}'} 占位符表示专注时长
                     </p>
                   </div>

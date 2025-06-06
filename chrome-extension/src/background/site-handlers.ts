@@ -56,107 +56,212 @@ export const baiduHandler: SiteHandler = {
     return function customBaiduHandler(selectors: string[]) {
       console.log('Applying Baidu specific study mode with selectors:', selectors);
 
-      // 创建专注提醒小卡片
-      const focusReminder = document.createElement('div');
-      focusReminder.style.position = 'fixed';
-      focusReminder.style.top = '70px';
-      focusReminder.style.right = '10px';
-      focusReminder.style.backgroundColor = 'rgba(0, 128, 0, 0.8)';
-      focusReminder.style.color = 'white';
-      focusReminder.style.padding = '12px 16px';
-      focusReminder.style.borderRadius = '8px';
-      focusReminder.style.zIndex = '9999999';
-      focusReminder.style.fontSize = '14px';
-      focusReminder.style.fontFamily = 'Arial, sans-serif';
-      focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-      focusReminder.style.width = '200px';
-      focusReminder.style.textAlign = 'center';
+      // 内嵌通用函数定义
+      function createFocusReminder(message: string, backgroundColor = 'rgba(0, 128, 0, 0.8)') {
+        const focusReminder = document.createElement('div');
+        focusReminder.style.position = 'fixed';
+        focusReminder.style.top = '70px';
+        focusReminder.style.right = '10px';
+        focusReminder.style.backgroundColor = backgroundColor;
+        focusReminder.style.color = 'white';
+        focusReminder.style.padding = '12px 16px';
+        focusReminder.style.borderRadius = '8px';
+        focusReminder.style.zIndex = '9999999';
+        focusReminder.style.fontSize = '14px';
+        focusReminder.style.fontFamily = 'Arial, sans-serif';
+        focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+        focusReminder.style.width = '200px';
+        focusReminder.style.textAlign = 'center';
 
-      // 添加标题
-      const title = document.createElement('div');
-      title.textContent = '专注提醒';
-      title.style.fontWeight = 'bold';
-      title.style.fontSize = '16px';
-      title.style.marginBottom = '8px';
-      focusReminder.appendChild(title);
+        const title = document.createElement('div');
+        title.textContent = '专注提醒';
+        title.style.fontWeight = 'bold';
+        title.style.fontSize = '16px';
+        title.style.marginBottom = '8px';
+        focusReminder.appendChild(title);
 
-      // 添加内容
-      const content = document.createElement('div');
-      content.textContent = '已为您屏蔽热搜和顶部导航，专注于当前任务';
-      focusReminder.appendChild(content);
+        const content = document.createElement('div');
+        content.textContent = message;
+        focusReminder.appendChild(content);
 
-      // 添加到页面
-      document.body.appendChild(focusReminder);
+        document.body.appendChild(focusReminder);
 
-      // 30秒后淡出
-      setTimeout(() => {
-        focusReminder.style.transition = 'opacity 1s';
-        focusReminder.style.opacity = '0';
         setTimeout(() => {
-          if (document.body.contains(focusReminder)) {
-            document.body.removeChild(focusReminder);
-          }
-        }, 1000);
-      }, 30000);
-
-      // 处理选择器
-      selectors.forEach(selector => {
-        try {
-          const elements = document.querySelectorAll(selector);
-          elements.forEach(element => {
-            if (element instanceof HTMLElement) {
-              // 完全隐藏元素
-              element.style.display = 'none';
-
-              // 标记为已处理
-              element.dataset.studyModeDisabled = 'true';
+          focusReminder.style.transition = 'opacity 1s';
+          focusReminder.style.opacity = '0';
+          setTimeout(() => {
+            if (document.body.contains(focusReminder)) {
+              document.body.removeChild(focusReminder);
             }
-          });
-          console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
-        } catch (error) {
-          console.error(`Error disabling elements with selector ${selector}:`, error);
-        }
-      });
+          }, 1000);
+        }, 30000);
+      }
 
-      // 监听DOM变化，对新添加的元素也应用禁用
-      const observer = new MutationObserver(mutations => {
-        let shouldReapply = false;
-
-        mutations.forEach(mutation => {
-          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            shouldReapply = true;
+      function applySelectorsWithObserver(selectors: string[]) {
+        selectors.forEach(selector => {
+          try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+              if (element instanceof HTMLElement) {
+                element.style.display = 'none';
+                element.dataset.studyModeDisabled = 'true';
+              }
+            });
+            console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
+          } catch (error) {
+            console.error(`Error disabling elements with selector ${selector}:`, error);
           }
         });
 
-        if (shouldReapply) {
-          selectors.forEach(selector => {
-            try {
-              const elements = document.querySelectorAll(selector);
-              elements.forEach(element => {
-                if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
-                  // 完全隐藏元素
-                  element.style.display = 'none';
-
-                  // 标记为已处理
-                  element.dataset.studyModeDisabled = 'true';
-                }
-              });
-            } catch (error) {
-              console.error(`Error in mutation observer for selector ${selector}:`, error);
+        const observer = new MutationObserver(mutations => {
+          let shouldReapply = false;
+          mutations.forEach(mutation => {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              shouldReapply = true;
             }
           });
-        }
-      });
 
-      // 开始观察整个文档
-      observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-      });
+          if (shouldReapply) {
+            selectors.forEach(selector => {
+              try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                  if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
+                    element.style.display = 'none';
+                    element.dataset.studyModeDisabled = 'true';
+                  }
+                });
+              } catch (error) {
+                console.error(`Error in mutation observer for selector ${selector}:`, error);
+              }
+            });
+          }
+        });
 
-      // 将观察器保存到window对象，以便以后可以断开连接
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).__studyModeObserver = observer;
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).__studyModeObserver = observer;
+      }
+
+      // 使用通用函数
+      createFocusReminder('已为您屏蔽热搜和顶部导航，专注于当前任务', 'rgba(0, 128, 0, 0.8)');
+      applySelectorsWithObserver(selectors);
+    };
+  },
+};
+
+/**
+ * 知乎网站处理器
+ * 屏蔽热门话题推荐区域
+ */
+export const zhihuHandler: SiteHandler = {
+  domain: 'zhihu.com',
+  getSelectors() {
+    return ['.Topstory'];
+  },
+  getCustomHandler(_tabId: number) {
+    // 返回一个函数，该函数将在页面上下文中执行
+    return function customZhihuHandler(selectors: string[]) {
+      console.log('Applying Zhihu specific study mode with selectors:', selectors);
+
+      // 内嵌通用函数定义
+      function createFocusReminder(message: string, backgroundColor = 'rgba(0, 128, 0, 0.8)') {
+        const focusReminder = document.createElement('div');
+        focusReminder.style.position = 'fixed';
+        focusReminder.style.top = '70px';
+        focusReminder.style.right = '10px';
+        focusReminder.style.backgroundColor = backgroundColor;
+        focusReminder.style.color = 'white';
+        focusReminder.style.padding = '12px 16px';
+        focusReminder.style.borderRadius = '8px';
+        focusReminder.style.zIndex = '9999999';
+        focusReminder.style.fontSize = '14px';
+        focusReminder.style.fontFamily = 'Arial, sans-serif';
+        focusReminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+        focusReminder.style.width = '200px';
+        focusReminder.style.textAlign = 'center';
+
+        const title = document.createElement('div');
+        title.textContent = '专注提醒';
+        title.style.fontWeight = 'bold';
+        title.style.fontSize = '16px';
+        title.style.marginBottom = '8px';
+        focusReminder.appendChild(title);
+
+        const content = document.createElement('div');
+        content.textContent = message;
+        focusReminder.appendChild(content);
+
+        document.body.appendChild(focusReminder);
+
+        setTimeout(() => {
+          focusReminder.style.transition = 'opacity 1s';
+          focusReminder.style.opacity = '0';
+          setTimeout(() => {
+            if (document.body.contains(focusReminder)) {
+              document.body.removeChild(focusReminder);
+            }
+          }, 1000);
+        }, 30000);
+      }
+
+      function applySelectorsWithObserver(selectors: string[]) {
+        selectors.forEach(selector => {
+          try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+              if (element instanceof HTMLElement) {
+                element.style.display = 'none';
+                element.dataset.studyModeDisabled = 'true';
+              }
+            });
+            console.log(`Disabled ${elements.length} elements with selector: ${selector}`);
+          } catch (error) {
+            console.error(`Error disabling elements with selector ${selector}:`, error);
+          }
+        });
+
+        const observer = new MutationObserver(mutations => {
+          let shouldReapply = false;
+          mutations.forEach(mutation => {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              shouldReapply = true;
+            }
+          });
+
+          if (shouldReapply) {
+            selectors.forEach(selector => {
+              try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                  if (element instanceof HTMLElement && !element.dataset.studyModeDisabled) {
+                    element.style.display = 'none';
+                    element.dataset.studyModeDisabled = 'true';
+                  }
+                });
+              } catch (error) {
+                console.error(`Error in mutation observer for selector ${selector}:`, error);
+              }
+            });
+          }
+        });
+
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).__studyModeObserver = observer;
+      }
+
+      // 使用通用函数
+      createFocusReminder('已为您屏蔽热门话题推荐，专注于学习和阅读', 'rgba(0, 123, 255, 0.8)');
+      applySelectorsWithObserver(selectors);
     };
   },
 };
@@ -167,6 +272,7 @@ export const baiduHandler: SiteHandler = {
 export const siteHandlers: SiteHandler[] = [
   bilibiliHandler,
   baiduHandler,
+  zhihuHandler,
   // 在这里添加更多网站处理器
 ];
 
