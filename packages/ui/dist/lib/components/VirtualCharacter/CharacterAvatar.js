@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState } from 'react';
 import { useStorage } from '@extension/shared';
 import { characterStorage } from '@extension/storage';
-export const CharacterAvatar = ({ onCharacterClick, characterState, }) => {
+export const CharacterAvatar = ({ onCharacterClick, characterState }) => {
     const config = useStorage(characterStorage);
     const [isHovered, setIsHovered] = useState(false);
     // Don't render if character is not visible
@@ -22,8 +22,7 @@ export const CharacterAvatar = ({ onCharacterClick, characterState, }) => {
     const getCharacterStyle = () => {
         const size = getCharacterSize();
         const isDark = config.appearance.theme === 'dark' ||
-            (config.appearance.theme === 'auto' &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches);
+            (config.appearance.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         return {
             width: `${size}px`,
             height: `${size}px`,
@@ -59,15 +58,20 @@ export const CharacterAvatar = ({ onCharacterClick, characterState, }) => {
     // Render character based on style
     const renderCharacterContent = () => {
         const isDark = config.appearance.theme === 'dark' ||
-            (config.appearance.theme === 'auto' &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches);
+            (config.appearance.theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         switch (config.appearance.style) {
             case 'cute-mascot':
-                return (_jsx("div", { className: "flex items-center justify-center w-full h-full", children: _jsx("span", { style: { fontSize: '24px' }, children: characterState.currentAnimation === 'sleeping' ? '😴' :
-                            characterState.currentAnimation === 'thinking' ? '🤔' :
-                                characterState.currentAnimation === 'celebrating' ? '🎉' :
-                                    characterState.currentAnimation === 'encouraging' ? '💪' :
-                                        characterState.isChatOpen ? '😊' : '🤖' }) }));
+                return (_jsx("div", { className: "flex items-center justify-center w-full h-full", children: _jsx("span", { style: { fontSize: '24px' }, children: characterState.currentAnimation === 'sleeping'
+                            ? '😴'
+                            : characterState.currentAnimation === 'thinking'
+                                ? '🤔'
+                                : characterState.currentAnimation === 'celebrating'
+                                    ? '🎉'
+                                    : characterState.currentAnimation === 'encouraging'
+                                        ? '💪'
+                                        : characterState.isChatOpen
+                                            ? '😊'
+                                            : '🤖' }) }));
             case 'simple-geometric':
                 return (_jsx("div", { className: "flex items-center justify-center w-full h-full", children: _jsx("div", { style: {
                             width: '60%',

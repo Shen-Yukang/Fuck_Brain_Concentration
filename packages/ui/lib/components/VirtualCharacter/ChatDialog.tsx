@@ -1,21 +1,49 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStorage } from '@extension/shared';
-import { characterStorage, chatHistoryStorage } from '@extension/storage';
+import { characterStorage, chatHistoryStorage, mcpConfigStorage } from '@extension/storage';
 import type { ChatMessage } from '@extension/storage';
+import { TaskSelector } from './TaskSelector.js';
+import { TaskProgress } from './TaskProgress.js';
+
+// Task execution state type (simplified for UI)
+type TaskExecutionState = {
+  id: string;
+  taskId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'timeout';
+  progress: number;
+  startTime: number;
+  endTime?: number;
+  currentSite?: string;
+  message?: string;
+  error?: string;
+};
 
 type ChatDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   onSendMessage: (message: string, type: 'text' | 'voice') => Promise<void>;
+  onTaskExecute?: (taskId: string, query: string) => Promise<void>;
   characterPosition: { x: number; y: number };
 };
 
-export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendMessage, characterPosition }) => {
+export const ChatDialog: React.FC<ChatDialogProps> = ({
+  isOpen,
+  onClose,
+  onSendMessage,
+  onTaskExecute,
+  characterPosition,
+}) => {
   const config = useStorage(characterStorage);
+  const mcpConfig = useStorage(mcpConfigStorage);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [showTaskSelector, setShowTaskSelector] = useState(false);
+  const [showTaskProgress, setShowTaskProgress] = useState(false);
+  const [currentTaskState, setCurrentTaskState] = useState<TaskExecutionState | undefined>();
+  const [suggestedTask, setSuggestedTask] = useState<string>('');
+  const [suggestedQuery, setSuggestedQuery] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -48,6 +76,73 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendM
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Detect research requests in messages
+  const detectResearchRequest = (message: string) => {
+    const lowerMessage = message.toLowerCase();
+
+    // Research keywords
+    const researchKeywords = [
+      '研究',
+      '搜索',
+      '查找',
+      '寻找',
+      '帮我找',
+      '需要',
+      '论文',
+      'research',
+      'search',
+      'find',
+      'look for',
+      'help me find',
+      'papers',
+    ];
+
+    // Academic keywords
+    const academicKeywords = ['论文', '学术', '研究', '期刊', 'paper', 'academic', 'journal', 'arxiv'];
+
+    // Code keywords
+    const codeKeywords = ['代码', '库', '项目', '开源', 'code', 'library', 'project', 'github', 'repository'];
+
+    const hasResearchKeyword = researchKeywords.some(keyword => lowerMessage.includes(keyword));
+
+    if (!hasResearchKeyword) {
+      return { isResearch: false };
+    }
+
+    // Determine suggested task
+    let suggestedTaskId = 'general_research';
+    if (academicKeywords.some(keyword => lowerMessage.includes(keyword))) {
+      suggestedTaskId = 'research_papers';
+    } else if (codeKeywords.some(keyword => lowerMessage.includes(keyword))) {
+      suggestedTaskId = 'code_search';
+    }
+
+    // Extract query (simplified)
+    let query = message
+      .replace(/^(请|帮我|帮忙|能否|可以|我想|我需要|help me|can you|please)/i, '')
+      .replace(/(搜索|查找|寻找|找到|research|search|find)/i, '')
+      .replace(/(相关的|关于|有关|related to|about)/i, '')
+      .replace(/(论文|资料|信息|papers|information|data)/i, '')
+      .trim();
+
+    // Extract content within brackets or quotes
+    const bracketMatch = query.match(/[\[【]([^】\]]+)[\]】]/);
+    if (bracketMatch) {
+      query = bracketMatch[1];
+    }
+
+    const quoteMatch = query.match(/["'"]([^"'"]+)["'"]/);
+    if (quoteMatch) {
+      query = quoteMatch[1];
+    }
+
+    return {
+      isResearch: true,
+      suggestedTask: suggestedTaskId,
+      query: query.trim() || message.trim(),
+    };
+  };
+
   const handleSendMessage = async () => {
     if (!inputText.trim() || isLoading) return;
 
@@ -56,6 +151,19 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendM
     setIsLoading(true);
 
     try {
+      // Check if MCP is enabled and detect research requests
+      if (mcpConfig.enabled) {
+        const detection = detectResearchRequest(messageText);
+        if (detection.isResearch) {
+          // Show task selector with suggestions
+          setSuggestedTask(detection.suggestedTask || '');
+          setSuggestedQuery(detection.query || '');
+          setShowTaskSelector(true);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       await onSendMessage(messageText, 'text');
       // Reload messages to get the latest
       await loadRecentMessages();
@@ -63,6 +171,27 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendM
       console.error('Error sending message:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleTaskSelect = async (taskId: string, query: string) => {
+    try {
+      if (onTaskExecute) {
+        await onTaskExecute(taskId, query);
+      }
+      setShowTaskSelector(false);
+    } catch (error) {
+      console.error('Error executing task:', error);
+    }
+  };
+
+  const handleTaskCancel = async (executionId: string) => {
+    try {
+      // This would be handled by the character manager
+      console.log('Cancelling task:', executionId);
+      setShowTaskProgress(false);
+    } catch (error) {
+      console.error('Error cancelling task:', error);
     }
   };
 
@@ -370,6 +499,23 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendM
               outline: 'none',
             }}
           />
+          {mcpConfig.enabled && (
+            <button
+              onClick={() => setShowTaskSelector(true)}
+              disabled={isLoading}
+              style={{
+                padding: '8px',
+                border: 'none',
+                borderRadius: '8px',
+                backgroundColor: isDark ? '#4b5563' : '#e5e7eb',
+                color: isDark ? '#f9fafb' : '#374151',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+              }}
+              title="研究任务">
+              🤖
+            </button>
+          )}
           <button
             onClick={handleVoiceInput}
             disabled={isLoading}
@@ -402,6 +548,25 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({ isOpen, onClose, onSendM
           </button>
         </div>
       </div>
+
+      {/* Task Selector Modal */}
+      <TaskSelector
+        isOpen={showTaskSelector}
+        onClose={() => setShowTaskSelector(false)}
+        onTaskSelect={handleTaskSelect}
+        suggestedTask={suggestedTask}
+        suggestedQuery={suggestedQuery}
+        isDark={isDark}
+      />
+
+      {/* Task Progress Modal */}
+      <TaskProgress
+        isOpen={showTaskProgress}
+        onClose={() => setShowTaskProgress(false)}
+        onCancel={handleTaskCancel}
+        taskState={currentTaskState}
+        isDark={isDark}
+      />
     </div>
   );
 };

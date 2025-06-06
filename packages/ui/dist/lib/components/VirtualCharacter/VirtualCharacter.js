@@ -88,27 +88,27 @@ export const VirtualCharacter = ({ className }) => {
             case 'bottom-right':
                 return {
                     x: window.innerWidth - characterSize - padding,
-                    y: window.innerHeight - characterSize - padding
+                    y: window.innerHeight - characterSize - padding,
                 };
             case 'bottom-left':
                 return {
                     x: padding,
-                    y: window.innerHeight - characterSize - padding
+                    y: window.innerHeight - characterSize - padding,
                 };
             case 'top-right':
                 return {
                     x: window.innerWidth - characterSize - padding,
-                    y: padding
+                    y: padding,
                 };
             case 'top-left':
                 return {
                     x: padding,
-                    y: padding
+                    y: padding,
                 };
             default:
                 return {
                     x: window.innerWidth - characterSize - padding,
-                    y: window.innerHeight - characterSize - padding
+                    y: window.innerHeight - characterSize - padding,
                 };
         }
     };
@@ -220,6 +220,20 @@ export const VirtualCharacter = ({ className }) => {
             console.error('Error sending message:', error);
         }
     };
+    const handleTaskExecute = async (taskId, query) => {
+        try {
+            // Execute task through character manager if available
+            if (typeof window !== 'undefined' && window.characterManager) {
+                await window.characterManager.executeTask(taskId, query);
+            }
+            else {
+                console.log('Task execution requested:', { taskId, query });
+            }
+        }
+        catch (error) {
+            console.error('Error executing task:', error);
+        }
+    };
     // Handle window resize to update character position
     useEffect(() => {
         const handleResize = () => {
@@ -234,5 +248,5 @@ export const VirtualCharacter = ({ className }) => {
     if (!config.enabled) {
         return null;
     }
-    return (_jsxs("div", { className: className, children: [_jsx(CharacterAvatar, { onCharacterClick: handleCharacterClick, characterState: characterState }), _jsx(ChatDialog, { isOpen: characterState.isChatOpen, onClose: handleCloseChatDialog, onSendMessage: handleSendMessage, characterPosition: characterState.position })] }));
+    return (_jsxs("div", { className: className, children: [_jsx(CharacterAvatar, { onCharacterClick: handleCharacterClick, characterState: characterState }), _jsx(ChatDialog, { isOpen: characterState.isChatOpen, onClose: handleCloseChatDialog, onSendMessage: handleSendMessage, onTaskExecute: handleTaskExecute, characterPosition: characterState.position })] }));
 };

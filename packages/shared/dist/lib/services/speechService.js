@@ -25,8 +25,7 @@ export class SpeechService {
     initializeSpeechRecognition() {
         try {
             // 检查浏览器支持
-            const SpeechRecognition = window.SpeechRecognition ||
-                window.webkitSpeechRecognition;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 console.warn('Speech recognition not supported in this browser');
                 return;
@@ -165,8 +164,7 @@ export class SpeechService {
      * 检查浏览器是否支持语音识别
      */
     isSupported() {
-        const SpeechRecognition = window.SpeechRecognition ||
-            window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         return !!SpeechRecognition;
     }
     /**

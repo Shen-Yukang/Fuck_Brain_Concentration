@@ -68,6 +68,8 @@ export const STORAGE_KEYS = {
   NOTIFICATION_CACHE: 'notification-cache-storage-key',
   CHARACTER_CONFIG: 'character-config-storage-key',
   CHARACTER_CHAT_HISTORY: 'character-chat-history-storage-key',
+  MCP_CONFIG: 'mcp-config-storage-key',
+  MCP_TASK_HISTORY: 'mcp-task-history-storage-key',
 } as const;
 
 // 错误消息常量

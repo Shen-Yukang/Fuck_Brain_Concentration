@@ -132,9 +132,7 @@ export const chatHistoryStorage = {
     },
     endSession: async (sessionId) => {
         await chatHistoryBaseStorage.set(current => {
-            const updatedSessions = current.sessions.map(session => session.id === sessionId
-                ? { ...session, endTime: Date.now() }
-                : session);
+            const updatedSessions = current.sessions.map(session => session.id === sessionId ? { ...session, endTime: Date.now() } : session);
             return {
                 ...current,
                 sessions: updatedSessions,
@@ -154,9 +152,7 @@ export const chatHistoryStorage = {
             allMessages.push(...session.messages);
         }
         // Sort by timestamp (most recent first) and limit
-        return allMessages
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, limit);
+        return allMessages.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
     },
     clearHistory: async () => {
         await chatHistoryBaseStorage.set(defaultChatHistory);

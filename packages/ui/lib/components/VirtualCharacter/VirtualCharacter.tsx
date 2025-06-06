@@ -253,6 +253,19 @@ export const VirtualCharacter: React.FC<VirtualCharacterProps> = ({ className })
     }
   };
 
+  const handleTaskExecute = async (taskId: string, query: string) => {
+    try {
+      // Execute task through character manager if available
+      if (typeof window !== 'undefined' && (window as any).characterManager) {
+        await (window as any).characterManager.executeTask(taskId, query);
+      } else {
+        console.log('Task execution requested:', { taskId, query });
+      }
+    } catch (error) {
+      console.error('Error executing task:', error);
+    }
+  };
+
   // Handle window resize to update character position
   useEffect(() => {
     const handleResize = () => {
@@ -280,6 +293,7 @@ export const VirtualCharacter: React.FC<VirtualCharacterProps> = ({ className })
         isOpen={characterState.isChatOpen}
         onClose={handleCloseChatDialog}
         onSendMessage={handleSendMessage}
+        onTaskExecute={handleTaskExecute}
         characterPosition={characterState.position}
       />
     </div>

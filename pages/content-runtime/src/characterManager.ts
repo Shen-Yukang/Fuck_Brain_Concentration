@@ -1,5 +1,7 @@
-import { characterStorage, chatHistoryStorage, focusStorage } from '@extension/storage';
+import { characterStorage, chatHistoryStorage, focusStorage, mcpConfigStorage } from '@extension/storage';
 import { CharacterAIService } from '../../../chrome-extension/src/services/characterAIService.js';
+import { MCPService } from '../../../chrome-extension/src/services/mcpService.js';
+import { TaskManagerImpl } from '../../../chrome-extension/src/tasks/taskManager.js';
 
 // Character state management for content scripts
 export type CharacterState = {
@@ -19,9 +21,13 @@ export class ContentCharacterManager {
   private state: CharacterState;
   private animationTimer?: NodeJS.Timeout;
   private aiService: CharacterAIService;
+  private mcpService: MCPService;
+  private taskManager: TaskManagerImpl;
 
   private constructor() {
     this.aiService = CharacterAIService.getInstance();
+    this.mcpService = MCPService.getInstance();
+    this.taskManager = TaskManagerImpl.getInstance();
     this.state = {
       isVisible: false,
       isAnimating: false,
@@ -43,6 +49,10 @@ export class ContentCharacterManager {
     try {
       // Initialize AI service
       await this.aiService.initialize();
+
+      // Initialize MCP service and task manager
+      await this.mcpService.initialize();
+      await this.taskManager.initialize();
 
       const config = await characterStorage.get();
 
@@ -255,10 +265,86 @@ export class ContentCharacterManager {
         },
       });
 
+      // Check for research requests if MCP is enabled
+      const mcpConfig = await mcpConfigStorage.get();
+      if (mcpConfig.enabled && mcpConfig.autoExecute) {
+        const detection = this.mcpService.detectResearchRequest(content);
+        if (detection.isResearch && detection.suggestedTask && detection.query) {
+          // Auto-execute research task
+          await this.executeTask(detection.suggestedTask, detection.query);
+          return;
+        }
+      }
+
       // Generate character response
       await this.generateCharacterResponse(content);
     } catch (error) {
       console.error('Error sending message:', error);
+    }
+  }
+
+  // Execute MCP task
+  async executeTask(taskId: string, query: string): Promise<void> {
+    try {
+      await this.playAnimation('thinking');
+
+      // Add system message about starting task
+      await chatHistoryStorage.addMessage({
+        sender: 'character',
+        content: `🤖 开始执行研究任务: "${query}"`,
+        type: 'text',
+        metadata: {
+          website: window.location.hostname,
+          focusMode: (await focusStorage.get()).isActive,
+          context: 'task_start',
+        },
+      });
+
+      // Create task execution context
+      const context = {
+        taskId,
+        query,
+        userMessage: query,
+        website: window.location.hostname,
+        focusMode: (await focusStorage.get()).isActive,
+        timestamp: Date.now(),
+      };
+
+      // Execute task
+      const result = await this.taskManager.executeTask(context);
+
+      // Format and add results to chat
+      const formattedResults = this.mcpService.formatResultsForChat(result.results);
+
+      await chatHistoryStorage.addMessage({
+        sender: 'character',
+        content: `✅ 研究任务完成！\n\n${formattedResults}`,
+        type: 'text',
+        metadata: {
+          website: window.location.hostname,
+          focusMode: (await focusStorage.get()).isActive,
+          context: 'task_complete',
+          taskResult: result,
+        },
+      });
+
+      await this.playAnimation('celebrating');
+
+      console.log('Task executed successfully:', result);
+    } catch (error) {
+      console.error('Error executing task:', error);
+
+      // Add error message to chat
+      await chatHistoryStorage.addMessage({
+        sender: 'character',
+        content: `❌ 研究任务执行失败: ${error instanceof Error ? error.message : '未知错误'}`,
+        type: 'text',
+        metadata: {
+          website: window.location.hostname,
+          focusMode: (await focusStorage.get()).isActive,
+          context: 'task_error',
+        },
+      });
     }
   }
 

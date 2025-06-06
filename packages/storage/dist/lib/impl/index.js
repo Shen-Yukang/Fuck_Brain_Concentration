@@ -7,3 +7,4 @@ export * from './soundSettings.js';
 export * from './ttsConfigStorage.js';
 export * from './voiceCacheStorage.js';
 export * from './characterStorage.js';
+export * from './mcpConfigStorage.js';
