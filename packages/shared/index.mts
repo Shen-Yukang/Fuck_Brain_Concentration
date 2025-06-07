@@ -11,3 +11,14 @@ export type {
   SpeechRecognitionOptions,
   SpeechRecognitionCallbacks
 } from './lib/services/speechService.js';
+
+// Re-export voice configuration constants
+export {
+  VOICE_OPTIONS,
+  DEFAULT_TEXTS,
+  VoiceType,
+  getDefaultTextByVoiceType,
+  isStartVoiceText,
+  getVoiceLabelByType,
+} from './lib/constants/voiceConfig.js';
+export type { VoiceOption } from './lib/constants/voiceConfig.js';

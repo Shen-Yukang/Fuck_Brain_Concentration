@@ -38,6 +38,7 @@ export type ChatMessage = {
     website?: string;
     focusMode?: boolean;
     context?: string;
+    taskResult?: any; // For storing task execution results
   };
 };
 

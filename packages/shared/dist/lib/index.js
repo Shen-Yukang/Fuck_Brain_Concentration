@@ -3,3 +3,5 @@ export * from './hooks/index.js';
 export { AIService, createAIService } from './services/aiService.js';
 export { NotificationGenerator, createNotificationGenerator } from './services/notificationGenerator.js';
 export { SpeechService } from './services/speechService.js';
+// Re-export voice configuration constants
+export { VOICE_OPTIONS, DEFAULT_TEXTS, VoiceType, getDefaultTextByVoiceType, isStartVoiceText, getVoiceLabelByType, } from './constants/voiceConfig.js';

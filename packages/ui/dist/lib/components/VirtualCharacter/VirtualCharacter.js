@@ -13,8 +13,36 @@ export const VirtualCharacter = ({ className }) => {
         currentAnimation: 'idle',
         position: { x: 0, y: 0 },
     });
+    const [extensionContextValid, setExtensionContextValid] = useState(true);
+    // Check extension context validity
+    useEffect(() => {
+        const checkExtensionContext = () => {
+            try {
+                // Check if chrome runtime is available
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                    setExtensionContextValid(true);
+                }
+                else {
+                    setExtensionContextValid(false);
+                    console.warn('Extension context is not valid');
+                }
+            }
+            catch (error) {
+                setExtensionContextValid(false);
+                console.warn('Extension context check failed:', error);
+            }
+        };
+        checkExtensionContext();
+        // Check periodically in case context becomes invalid
+        const interval = setInterval(checkExtensionContext, 5000);
+        return () => clearInterval(interval);
+    }, []);
     // Initialize character when component mounts
     useEffect(() => {
+        if (!extensionContextValid) {
+            console.warn('Skipping character initialization - extension context invalid');
+            return;
+        }
         initializeCharacter();
         // Listen for character state changes from the service
         const handleStateChange = (event) => {
@@ -24,7 +52,7 @@ export const VirtualCharacter = ({ className }) => {
         return () => {
             window.removeEventListener('characterStateChange', handleStateChange);
         };
-    }, []);
+    }, [extensionContextValid]);
     // Update character visibility when config changes
     useEffect(() => {
         if (config.enabled && !characterState.isVisible) {
@@ -244,8 +272,8 @@ export const VirtualCharacter = ({ className }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [characterState.isVisible, config.appearance.position, config.appearance.size]);
-    // Don't render anything if character is not enabled
-    if (!config.enabled) {
+    // Don't render anything if character is not enabled or extension context is invalid
+    if (!config.enabled || !extensionContextValid) {
         return null;
     }
     return (_jsxs("div", { className: className, children: [_jsx(CharacterAvatar, { onCharacterClick: handleCharacterClick, characterState: characterState }), _jsx(ChatDialog, { isOpen: characterState.isChatOpen, onClose: handleCloseChatDialog, onSendMessage: handleSendMessage, onTaskExecute: handleTaskExecute, characterPosition: characterState.position })] }));

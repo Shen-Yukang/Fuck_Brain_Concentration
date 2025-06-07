@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStorage } from '@extension/shared';
-import { characterStorage, chatHistoryStorage, mcpConfigStorage } from '@extension/storage';
+import { characterStorage, chatHistoryStorage, mcpConfigStorage, speechChatConfigStorage } from '@extension/storage';
 import type { ChatMessage } from '@extension/storage';
 import { TaskSelector } from './TaskSelector.js';
 import { TaskProgress } from './TaskProgress.js';
@@ -35,15 +35,20 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
 }) => {
   const config = useStorage(characterStorage);
   const mcpConfig = useStorage(mcpConfigStorage);
+  const speechConfig = useStorage(speechChatConfigStorage);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [showTaskSelector, setShowTaskSelector] = useState(false);
   const [showTaskProgress, setShowTaskProgress] = useState(false);
   const [currentTaskState, setCurrentTaskState] = useState<TaskExecutionState | undefined>();
   const [suggestedTask, setSuggestedTask] = useState<string>('');
   const [suggestedQuery, setSuggestedQuery] = useState<string>('');
+  const [recognition, setRecognition] = useState<any>(null);
+  const [conversationSession, setConversationSession] = useState(false);
+  const [hasRecognitionResult, setHasRecognitionResult] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +67,37 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Cleanup when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Stop all speech activities when dialog closes
+      if (recognition) {
+        recognition.abort();
+        setRecognition(null);
+      }
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+      setIsListening(false);
+      setIsSpeaking(false);
+      setConversationSession(false);
+      setHasRecognitionResult(false);
+    }
+  }, [isOpen, recognition]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup speech recognition when component unmounts
+      if (recognition) {
+        recognition.abort();
+      }
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+    };
+  }, [recognition]);
 
   const loadRecentMessages = async () => {
     try {
@@ -167,10 +203,142 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
       await onSendMessage(messageText, 'text');
       // Reload messages to get the latest
       await loadRecentMessages();
+
+      // If speech output is enabled and auto-play is on, play the assistant's response
+      if (speechConfig.output.enabled && speechConfig.output.autoPlay) {
+        // Get the latest character message and play it
+        const recentMessages = await chatHistoryStorage.getRecentMessages(1);
+        if (recentMessages.length > 0 && recentMessages[0].sender === 'character') {
+          await playAssistantMessage(recentMessages[0].content);
+        }
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Play assistant message using TTS or Web Speech API
+  const playAssistantMessage = async (text: string) => {
+    try {
+      setIsSpeaking(true);
+
+      if (speechConfig.output.useTTS && typeof chrome !== 'undefined' && chrome.runtime) {
+        // Use TTS service
+        chrome.runtime.sendMessage({
+          type: 'PLAY_TTS_SOUND',
+          text: text,
+        });
+
+        // Simulate speaking duration (TTS doesn't provide end callback)
+        const estimatedDuration = text.length * 100; // Rough estimate
+        setTimeout(() => {
+          setIsSpeaking(false);
+        }, estimatedDuration);
+      } else {
+        // Use Web Speech API
+        await playWithWebSpeechAPI(text);
+      }
+    } catch (error) {
+      console.error('Error playing assistant message:', error);
+      setIsSpeaking(false);
+    }
+  };
+
+  // Play text using Web Speech API
+  const playWithWebSpeechAPI = async (text: string): Promise<void> => {
+    return new Promise(resolve => {
+      try {
+        if (!('speechSynthesis' in window)) {
+          resolve();
+          return;
+        }
+
+        // Stop any current speech
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = speechConfig.input.language;
+        utterance.rate = speechConfig.output.playSpeed;
+        utterance.volume = speechConfig.output.volume;
+
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          resolve();
+        };
+
+        utterance.onerror = () => {
+          setIsSpeaking(false);
+          resolve();
+        };
+
+        speechSynthesis.speak(utterance);
+      } catch (error) {
+        console.error('Error with Web Speech API:', error);
+        setIsSpeaking(false);
+        resolve();
+      }
+    });
+  };
+
+  // Toggle conversation mode
+  const toggleConversationMode = async () => {
+    const newMode = !conversationSession;
+    console.log('Toggling conversation mode:', newMode);
+
+    if (newMode) {
+      // Start conversation session
+      setConversationSession(true);
+      await speechChatConfigStorage.enableConversationMode(true);
+      setHasRecognitionResult(false); // Reset result flag
+
+      // Start with voice input
+      handleVoiceInput();
+    } else {
+      // End conversation session
+      console.log('Ending conversation session');
+      setConversationSession(false);
+      await speechChatConfigStorage.enableConversationMode(false);
+
+      // Stop all speech activities
+      if (recognition) {
+        recognition.abort();
+        setRecognition(null);
+      }
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+      setIsListening(false);
+      setIsSpeaking(false);
+      setHasRecognitionResult(false);
+    }
+  };
+
+  // Stop all speech activities
+  const stopAllSpeech = () => {
+    console.log('Stopping all speech activities');
+
+    // Stop speech recognition
+    if (recognition) {
+      recognition.abort(); // Use abort for immediate stop
+      setRecognition(null);
+    }
+
+    // Stop speech synthesis
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+    }
+
+    // Reset all states
+    setIsListening(false);
+    setIsSpeaking(false);
+    setHasRecognitionResult(false);
+
+    // If in conversation mode, end it
+    if (conversationSession) {
+      setConversationSession(false);
+      speechChatConfigStorage.enableConversationMode(false);
     }
   };
 
@@ -204,6 +372,11 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
 
   const handleVoiceInput = async () => {
     try {
+      if (!speechConfig.input.enabled) {
+        alert('语音录入功能已禁用，请在设置中启用');
+        return;
+      }
+
       // Check if browser supports speech recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -213,9 +386,19 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
       }
 
       if (isListening) {
-        // Stop listening (will be handled by recognition.stop())
+        // Stop current recognition
+        if (recognition) {
+          recognition.abort(); // Use abort instead of stop for immediate termination
+        }
         setIsListening(false);
+        setHasRecognitionResult(false);
         return;
+      }
+
+      // Clean up any existing recognition
+      if (recognition) {
+        recognition.abort();
+        setRecognition(null);
       }
 
       // Request microphone permission first
@@ -227,24 +410,38 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
         return;
       }
 
-      // Create and configure speech recognition
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'zh-CN';
-      recognition.maxAlternatives = 1;
+      // Create and configure speech recognition with user settings
+      const newRecognition = new SpeechRecognition();
+      newRecognition.continuous = speechConfig.input.continuous;
+      newRecognition.interimResults = speechConfig.input.interimResults;
+      newRecognition.lang = speechConfig.input.language;
+      newRecognition.maxAlternatives = speechConfig.input.maxAlternatives;
 
-      recognition.onstart = () => {
+      newRecognition.onstart = () => {
         setIsListening(true);
         console.log('Speech recognition started');
       };
 
-      recognition.onend = () => {
+      newRecognition.onend = () => {
         setIsListening(false);
         console.log('Speech recognition ended');
+
+        // Only continue listening in conversation mode if we got a valid result
+        // and the user hasn't manually stopped the conversation
+        if (conversationSession && speechConfig.conversationMode && hasRecognitionResult) {
+          console.log('Conversation mode: scheduling next listening session');
+          setTimeout(() => {
+            // Double-check states before restarting
+            if (conversationSession && !isListening && !isLoading) {
+              console.log('Conversation mode: starting next listening session');
+              setHasRecognitionResult(false); // Reset for next round
+              handleVoiceInput();
+            }
+          }, 2000); // Wait 2 seconds before starting next listening session
+        }
       };
 
-      recognition.onresult = (event: any) => {
+      newRecognition.onresult = (event: any) => {
         try {
           const result = event.results[event.results.length - 1];
           const transcript = result[0].transcript;
@@ -253,20 +450,39 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
           if (isFinal && transcript.trim()) {
             setInputText(transcript.trim());
             setIsListening(false);
+            setHasRecognitionResult(true); // Mark that we got a valid result
+
+            // Auto-send if enabled
+            if (speechConfig.input.autoSend) {
+              setTimeout(() => {
+                handleSendMessage();
+              }, 500);
+            }
           }
         } catch (error) {
           console.error('Error processing speech result:', error);
+          setHasRecognitionResult(false); // Reset on error
         }
       };
 
-      recognition.onerror = (event: any) => {
+      newRecognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        setHasRecognitionResult(false); // Reset on error
 
         let errorMessage = '语音识别出错';
+        let shouldShowAlert = true;
+
         switch (event.error) {
           case 'no-speech':
             errorMessage = '没有检测到语音，请重试';
+            // In conversation mode, no-speech is normal, don't show alert
+            shouldShowAlert = !conversationSession;
+            break;
+          case 'aborted':
+            errorMessage = '语音识别被中断';
+            // Aborted is usually intentional, don't show alert
+            shouldShowAlert = false;
             break;
           case 'audio-capture':
             errorMessage = '无法访问麦克风，请检查权限';
@@ -279,11 +495,14 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
             break;
         }
 
-        alert(`语音识别错误: ${errorMessage}`);
+        // Only show alert for serious errors or when not in conversation mode
+        if (shouldShowAlert && !conversationSession) {
+          alert(`语音识别错误: ${errorMessage}`);
+        }
       };
 
-      // Start recognition
-      recognition.start();
+      setRecognition(newRecognition);
+      newRecognition.start();
     } catch (error) {
       console.error('Error with voice input:', error);
       setIsListening(false);
@@ -472,6 +691,55 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Speech Status Bar */}
+      {(isListening || isSpeaking || conversationSession) && (
+        <div
+          style={{
+            padding: '8px 12px',
+            backgroundColor: isDark ? '#1f2937' : '#f0f9ff',
+            borderTop: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '12px',
+          }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isListening && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444' }}>
+                <span>🎤</span>
+                <span>正在监听...</span>
+              </div>
+            )}
+            {isSpeaking && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981' }}>
+                <span>🔊</span>
+                <span>正在播放...</span>
+              </div>
+            )}
+            {conversationSession && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3b82f6' }}>
+                <span>💬</span>
+                <span>对话模式</span>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={stopAllSpeech}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: isDark ? '#9ca3af' : '#6b7280',
+              fontSize: '12px',
+              padding: '2px 6px',
+              borderRadius: '4px',
+            }}
+            title="停止所有语音活动">
+            ⏹️
+          </button>
+        </div>
+      )}
+
       {/* Input */}
       <div
         style={{
@@ -479,6 +747,29 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
           borderTop: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
           backgroundColor: isDark ? '#374151' : '#f9fafb',
         }}>
+        {/* Conversation Mode Toggle */}
+        {speechConfig.input.enabled && speechConfig.output.enabled && (
+          <div style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '12px', color: isDark ? '#9ca3af' : '#6b7280' }}>连续语音对话</span>
+            <button
+              onClick={toggleConversationMode}
+              disabled={isLoading}
+              style={{
+                padding: '4px 8px',
+                border: 'none',
+                borderRadius: '6px',
+                backgroundColor: conversationSession ? '#3b82f6' : isDark ? '#4b5563' : '#e5e7eb',
+                color: conversationSession ? '#ffffff' : isDark ? '#f9fafb' : '#374151',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '11px',
+                fontWeight: '500',
+              }}
+              title={conversationSession ? '结束对话模式' : '开始对话模式'}>
+              {conversationSession ? '结束对话' : '开始对话'}
+            </button>
+          </div>
+        )}
+
         <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
           <input
             ref={inputRef}
@@ -486,8 +777,8 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="输入消息..."
-            disabled={isLoading}
+            placeholder={isListening ? '正在监听语音...' : '输入消息...'}
+            disabled={isLoading || isListening}
             style={{
               flex: 1,
               padding: '8px 12px',
@@ -497,50 +788,90 @@ export const ChatDialog: React.FC<ChatDialogProps> = ({
               color: isDark ? '#f9fafb' : '#111827',
               fontSize: '14px',
               outline: 'none',
+              opacity: isListening ? 0.7 : 1,
             }}
           />
           {mcpConfig.enabled && (
             <button
               onClick={() => setShowTaskSelector(true)}
-              disabled={isLoading}
+              disabled={isLoading || isListening}
               style={{
                 padding: '8px',
                 border: 'none',
                 borderRadius: '8px',
                 backgroundColor: isDark ? '#4b5563' : '#e5e7eb',
                 color: isDark ? '#f9fafb' : '#374151',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
+                cursor: isLoading || isListening ? 'not-allowed' : 'pointer',
                 fontSize: '14px',
               }}
               title="研究任务">
               🤖
             </button>
           )}
-          <button
-            onClick={handleVoiceInput}
-            disabled={isLoading}
-            style={{
-              padding: '8px',
-              border: 'none',
-              borderRadius: '8px',
-              backgroundColor: isListening ? '#ef4444' : isDark ? '#4b5563' : '#e5e7eb',
-              color: isListening ? '#ffffff' : isDark ? '#f9fafb' : '#374151',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              fontSize: '14px',
-            }}
-            title="语音输入">
-            🎤
-          </button>
+          {speechConfig.input.enabled && (
+            <button
+              onClick={handleVoiceInput}
+              disabled={isLoading}
+              style={{
+                padding: '8px',
+                border: 'none',
+                borderRadius: '8px',
+                backgroundColor: isListening ? '#ef4444' : isDark ? '#4b5563' : '#e5e7eb',
+                color: isListening ? '#ffffff' : isDark ? '#f9fafb' : '#374151',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                position: 'relative',
+              }}
+              title={isListening ? '停止语音输入' : '开始语音输入'}>
+              🎤
+              {isListening && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#ef4444',
+                    borderRadius: '50%',
+                    animation: 'pulse 1s infinite',
+                  }}
+                />
+              )}
+            </button>
+          )}
+          {speechConfig.output.enabled && isSpeaking && (
+            <button
+              onClick={() => {
+                if ('speechSynthesis' in window) {
+                  speechSynthesis.cancel();
+                }
+                setIsSpeaking(false);
+              }}
+              style={{
+                padding: '8px',
+                border: 'none',
+                borderRadius: '8px',
+                backgroundColor: '#10b981',
+                color: '#ffffff',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+              title="停止播放">
+              🔊
+            </button>
+          )}
           <button
             onClick={handleSendMessage}
-            disabled={!inputText.trim() || isLoading}
+            disabled={!inputText.trim() || isLoading || isListening}
             style={{
               padding: '8px 12px',
               border: 'none',
               borderRadius: '8px',
-              backgroundColor: !inputText.trim() || isLoading ? (isDark ? '#4b5563' : '#e5e7eb') : '#3b82f6',
-              color: !inputText.trim() || isLoading ? (isDark ? '#9ca3af' : '#9ca3af') : '#ffffff',
-              cursor: !inputText.trim() || isLoading ? 'not-allowed' : 'pointer',
+              backgroundColor:
+                !inputText.trim() || isLoading || isListening ? (isDark ? '#4b5563' : '#e5e7eb') : '#3b82f6',
+              color: !inputText.trim() || isLoading || isListening ? (isDark ? '#9ca3af' : '#9ca3af') : '#ffffff',
+              cursor: !inputText.trim() || isLoading || isListening ? 'not-allowed' : 'pointer',
               fontSize: '14px',
               fontWeight: '500',
             }}>

@@ -147,7 +147,7 @@ export const mcpConfigStorage = {
     updateTask: async (taskId, updates) => {
         await mcpConfigBaseStorage.set(current => ({
             ...current,
-            tasks: current.tasks.map(task => task.id === taskId ? { ...task, ...updates } : task),
+            tasks: current.tasks.map(task => (task.id === taskId ? { ...task, ...updates } : task)),
         }));
     },
     addCustomSite: async (site) => {
@@ -195,8 +195,6 @@ export const mcpTaskHistoryStorage = {
     },
     getExecutionsByTask: async (taskId, limit = 10) => {
         const history = await mcpTaskHistoryBaseStorage.get();
-        return history.executions
-            .filter(execution => execution.taskId === taskId)
-            .slice(0, limit);
+        return history.executions.filter(execution => execution.taskId === taskId).slice(0, limit);
     },
 };

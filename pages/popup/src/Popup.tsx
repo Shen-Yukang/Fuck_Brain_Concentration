@@ -10,6 +10,7 @@ import {
   // AINotificationGenerator,
   SoundSettings,
   TTSSettings,
+  SpeechChatSettings,
   CharacterSettings,
 } from '@extension/ui';
 import { useEffect } from 'react';
@@ -97,6 +98,9 @@ const Popup = () => {
 
           {/* 语音合成设置 */}
           <TTSSettings />
+
+          {/* 语音对话设置 */}
+          <SpeechChatSettings />
 
           {/* AI通知设置 */}
           <AISettings />

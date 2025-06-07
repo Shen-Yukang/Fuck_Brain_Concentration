@@ -1,4 +1,5 @@
 import { characterStorage, chatHistoryStorage, focusStorage, mcpConfigStorage } from '@extension/storage';
+import type { TaskResult } from '@extension/storage';
 import { CharacterAIService } from '../../../chrome-extension/src/services/characterAIService.js';
 import { MCPService } from '../../../chrome-extension/src/services/mcpService.js';
 import { TaskManagerImpl } from '../../../chrome-extension/src/tasks/taskManager.js';
@@ -399,20 +400,36 @@ export class ContentCharacterManager {
 
   // Setup focus mode listener
   private setupFocusModeListener(): void {
-    // Listen for focus mode changes
-    chrome.storage.onChanged.addListener(async (changes, areaName) => {
-      if (areaName === 'local' && changes['focus-time-storage-key']) {
-        const newValue = changes['focus-time-storage-key'].newValue;
-        const oldValue = changes['focus-time-storage-key'].oldValue;
-
-        // React to focus mode changes
-        if (newValue?.isActive && !oldValue?.isActive) {
-          await this.onFocusModeStart();
-        } else if (!newValue?.isActive && oldValue?.isActive) {
-          await this.onFocusModeEnd();
-        }
+    try {
+      // Check if chrome.storage is available (extension context is valid)
+      if (!chrome?.storage?.onChanged) {
+        console.warn('Chrome storage API not available, skipping focus mode listener setup');
+        return;
       }
-    });
+
+      // Listen for focus mode changes
+      chrome.storage.onChanged.addListener(async (changes, areaName) => {
+        try {
+          if (areaName === 'local' && changes['focus-time-storage-key']) {
+            const newValue = changes['focus-time-storage-key'].newValue;
+            const oldValue = changes['focus-time-storage-key'].oldValue;
+
+            // React to focus mode changes
+            if (newValue?.isActive && !oldValue?.isActive) {
+              await this.onFocusModeStart();
+            } else if (!newValue?.isActive && oldValue?.isActive) {
+              await this.onFocusModeEnd();
+            }
+          }
+        } catch (error) {
+          console.error('Error in focus mode listener:', error);
+          // If extension context is invalidated, the listener will fail
+          // This is expected behavior when extension is reloaded
+        }
+      });
+    } catch (error) {
+      console.error('Error setting up focus mode listener:', error);
+    }
   }
 
   // Handle focus mode start

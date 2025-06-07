@@ -1,4 +1,4 @@
-import { useStorage } from '@extension/shared';
+import { useStorage, VOICE_OPTIONS, TTSTextProcessor } from '@extension/shared';
 import { ttsConfigStorage } from '@extension/storage';
 import { useState } from 'react';
 
@@ -17,13 +17,14 @@ export const TTSSettings = () => {
 
   // 获取当前语音类型的默认文本
   const getCurrentDefaultText = () => {
-    const currentVoice = voiceOptions.find(option => option.value === ttsConfig.voiceType);
-    return currentVoice?.defaultText || '';
+    // 创建一个临时配置，清空用户自定义文本，获取语音类型的默认文本
+    const tempConfig = { ...ttsConfig, defaultText: '' };
+    return TTSTextProcessor.getDisplayDefaultText(tempConfig);
   };
 
   // 获取显示的默认文本（用户自定义 > 语音类型默认）
   const getDisplayDefaultText = () => {
-    return ttsConfig.defaultText || getCurrentDefaultText();
+    return TTSTextProcessor.getDisplayDefaultText(ttsConfig);
   };
 
   const handleTestTTS = async () => {
@@ -54,51 +55,6 @@ export const TTSSettings = () => {
       setIsTestPlaying(false);
     }
   };
-
-  const voiceOptions = [
-    {
-      value: 'zh_female_linjianvhai_moon_bigtts',
-      label: '领家女孩',
-      defaultText:
-        '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-    },
-    {
-      value: 'zh_female_yuanqinvyou_moon_bigtts',
-      label: '撒娇学妹',
-      defaultText:
-        '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-    },
-    {
-      value: 'zh_female_gaolengyujie_moon_bigtts',
-      label: '高冷御姐',
-      defaultText:
-        '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-    },
-    {
-      value: 'multi_female_shuangkuaisisi_moon_bigtts',
-      label: 'はるこ',
-      defaultText:
-        'いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ',
-    },
-    {
-      value: 'multi_female_gaolengyujie_moon_bigtts',
-      label: 'あけみ',
-      defaultText:
-        'いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ',
-    },
-    {
-      value: 'zh_female_tianmeixiaoyuan_moon_bigtts',
-      label: '甜美小源',
-      defaultText:
-        '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-    },
-    {
-      value: 'zh_female_kailangjiejie_moon_bigtts',
-      label: '开朗姐姐',
-      defaultText:
-        '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-    },
-  ];
 
   return (
     <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
@@ -160,7 +116,7 @@ export const TTSSettings = () => {
                 value={ttsConfig.voiceType}
                 onChange={e => handleConfigChange('voiceType', e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                {voiceOptions.map(option => (
+                {VOICE_OPTIONS.map(option => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>

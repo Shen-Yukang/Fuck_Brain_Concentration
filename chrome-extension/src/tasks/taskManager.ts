@@ -1,13 +1,12 @@
 import { MCPService } from '../services/mcpService.js';
 import { mcpConfigStorage } from '@extension/storage';
+import { TaskStatus, TaskEventType } from './taskTypes.js';
 import type {
   TaskManager,
   TaskExecutionContext,
   TaskExecutionOptions,
   TaskExecutionState,
-  TaskStatus,
   TaskEvent,
-  TaskEventType,
   TaskEventListener,
   TaskEventEmitter,
   TaskResult,

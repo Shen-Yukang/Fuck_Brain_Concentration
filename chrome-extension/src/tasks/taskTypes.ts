@@ -3,6 +3,16 @@
  * Defines the structure and types for MCP task system
  */
 
+// Import types from storage for use in interfaces
+import type {
+  MCPTaskType,
+  ResearchStrategy,
+  TaskConfig,
+  TaskResult,
+  SearchResult,
+  SearchSiteConfig,
+} from '@extension/storage';
+
 // Re-export types from storage for convenience
 export type {
   MCPTaskType,

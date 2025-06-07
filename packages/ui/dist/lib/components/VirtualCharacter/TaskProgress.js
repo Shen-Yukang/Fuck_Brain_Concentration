@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from 'react';
-export const TaskProgress = ({ isOpen, onClose, onCancel, taskState, isDark = false, }) => {
+export const TaskProgress = ({ isOpen, onClose, onCancel, taskState, isDark = false }) => {
     const [dots, setDots] = useState('');
     // Animate loading dots
     useEffect(() => {
@@ -171,7 +171,7 @@ export const TaskProgress = ({ isOpen, onClose, onCancel, taskState, isDark = fa
                                     fontSize: '11px',
                                     color: isDark ? '#9ca3af' : '#6b7280',
                                     lineHeight: '1.4',
-                                }, children: [_jsxs("div", { children: ["\u4EFB\u52A1ID: ", taskState.taskId] }), _jsxs("div", { children: ["\u6267\u884CID: ", taskState.id] }), _jsxs("div", { children: ["\u5F00\u59CB\u65F6\u95F4: ", new Date(taskState.startTime).toLocaleTimeString()] }), _jsxs("div", { children: ["\u6301\u7EED\u65F6\u95F4: ", formatDuration(taskState.startTime, taskState.endTime)] }), taskState.currentSite && (_jsxs("div", { children: ["\u5F53\u524D\u641C\u7D22: ", taskState.currentSite] }))] })] }), taskState.error && (_jsxs("div", { style: {
+                                }, children: [_jsxs("div", { children: ["\u4EFB\u52A1ID: ", taskState.taskId] }), _jsxs("div", { children: ["\u6267\u884CID: ", taskState.id] }), _jsxs("div", { children: ["\u5F00\u59CB\u65F6\u95F4: ", new Date(taskState.startTime).toLocaleTimeString()] }), _jsxs("div", { children: ["\u6301\u7EED\u65F6\u95F4: ", formatDuration(taskState.startTime, taskState.endTime)] }), taskState.currentSite && _jsxs("div", { children: ["\u5F53\u524D\u641C\u7D22: ", taskState.currentSite] })] })] }), taskState.error && (_jsxs("div", { style: {
                             padding: '12px',
                             backgroundColor: isDark ? '#7f1d1d' : '#fef2f2',
                             border: `1px solid ${isDark ? '#dc2626' : '#fecaca'}`,

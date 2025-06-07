@@ -102,19 +102,9 @@ export const TaskSelector = ({ isOpen, onClose, onTaskSelect, suggestedTask, sug
                                     marginBottom: '8px',
                                 }, children: "\u4EFB\u52A1\u7C7B\u578B" }), _jsx("div", { style: { display: 'grid', gap: '8px' }, children: availableTasks.map(task => (_jsxs("div", { onClick: () => setSelectedTaskId(task.id), style: {
                                         padding: '12px 16px',
-                                        border: `2px solid ${selectedTaskId === task.id
-                                            ? '#3b82f6'
-                                            : isDark
-                                                ? '#374151'
-                                                : '#e5e7eb'}`,
+                                        border: `2px solid ${selectedTaskId === task.id ? '#3b82f6' : isDark ? '#374151' : '#e5e7eb'}`,
                                         borderRadius: '8px',
-                                        backgroundColor: selectedTaskId === task.id
-                                            ? isDark
-                                                ? '#1e3a8a'
-                                                : '#eff6ff'
-                                            : isDark
-                                                ? '#374151'
-                                                : '#ffffff',
+                                        backgroundColor: selectedTaskId === task.id ? (isDark ? '#1e3a8a' : '#eff6ff') : isDark ? '#374151' : '#ffffff',
                                         cursor: 'pointer',
                                         transition: 'all 0.2s',
                                     }, onMouseEnter: e => {
@@ -198,7 +188,10 @@ export const TaskSelector = ({ isOpen, onClose, onTaskSelect, suggestedTask, sug
                                     fontSize: '11px',
                                     color: isDark ? '#9ca3af' : '#6b7280',
                                     lineHeight: '1.4',
-                                }, children: ["\u641C\u7D22\u7AD9\u70B9: ", selectedTask.sites.filter(s => s.enabled).map(s => s.name).join(', '), _jsx("br", {}), "\u8D85\u65F6\u65F6\u95F4: ", selectedTask.timeout, "\u79D2 \u2022 \u91CD\u8BD5\u6B21\u6570: ", selectedTask.retryAttempts] })] }))] }), _jsxs("div", { style: {
+                                }, children: ["\u641C\u7D22\u7AD9\u70B9:", ' ', selectedTask.sites
+                                        .filter(s => s.enabled)
+                                        .map(s => s.name)
+                                        .join(', '), _jsx("br", {}), "\u8D85\u65F6\u65F6\u95F4: ", selectedTask.timeout, "\u79D2 \u2022 \u91CD\u8BD5\u6B21\u6570: ", selectedTask.retryAttempts] })] }))] }), _jsxs("div", { style: {
                     padding: '16px 24px',
                     borderTop: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
                     backgroundColor: isDark ? '#374151' : '#f9fafb',
@@ -218,12 +211,8 @@ export const TaskSelector = ({ isOpen, onClose, onTaskSelect, suggestedTask, sug
                             padding: '8px 16px',
                             border: 'none',
                             borderRadius: '6px',
-                            backgroundColor: !selectedTaskId || !query.trim()
-                                ? (isDark ? '#4b5563' : '#e5e7eb')
-                                : '#3b82f6',
-                            color: !selectedTaskId || !query.trim()
-                                ? (isDark ? '#9ca3af' : '#9ca3af')
-                                : '#ffffff',
+                            backgroundColor: !selectedTaskId || !query.trim() ? (isDark ? '#4b5563' : '#e5e7eb') : '#3b82f6',
+                            color: !selectedTaskId || !query.trim() ? (isDark ? '#9ca3af' : '#9ca3af') : '#ffffff',
                             fontSize: '14px',
                             cursor: !selectedTaskId || !query.trim() ? 'not-allowed' : 'pointer',
                             fontWeight: '500',

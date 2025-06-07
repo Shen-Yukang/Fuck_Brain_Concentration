@@ -3,6 +3,17 @@ import App from '@src/App';
 import injectedStyle from '@src/index.css?inline';
 
 export function mount() {
+  // Check if extension context is valid before mounting
+  try {
+    if (!chrome?.runtime?.id) {
+      console.warn('Extension context invalidated, skipping mount');
+      return;
+    }
+  } catch (error) {
+    console.warn('Extension context check failed, skipping mount:', error);
+    return;
+  }
+
   const root = document.createElement('div');
   root.id = 'chrome-extension-boilerplate-react-vite-runtime-content-view-root';
 
@@ -31,5 +42,14 @@ export function mount() {
   }
 
   shadowRoot.appendChild(rootIntoShadow);
-  createRoot(rootIntoShadow).render(<App />);
+
+  try {
+    createRoot(rootIntoShadow).render(<App />);
+  } catch (error) {
+    console.error('Error rendering React app:', error);
+    // If rendering fails due to extension context invalidation, clean up
+    if (error instanceof Error && error.message.includes('Extension context invalidated')) {
+      root.remove();
+    }
+  }
 }

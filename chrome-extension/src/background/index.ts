@@ -23,6 +23,26 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       });
     return true; // 保持消息通道开放以进行异步响应
   }
+
+  if (message.type === 'PLAY_TTS_SOUND') {
+    // 处理TTS播放请求（来自语音对话）
+    audioManager
+      .playTTSNotification(message.text)
+      .then(() => sendResponse({ success: true }))
+      .catch(error => {
+        console.error('TTS play error:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // 保持消息通道开放以进行异步响应
+  }
+
+  if (message.type === 'SPEECH_CONFIG_CHANGED') {
+    // 处理语音配置变化通知
+    console.log('Speech configuration changed:', message.config);
+    sendResponse({ success: true });
+    return false;
+  }
+
   return false;
 });
 
@@ -59,6 +79,36 @@ chrome.storage.onChanged.addListener(async (changes, areaName) => {
       if (newValue?.defaultText !== oldValue?.defaultText) {
         console.log('DefaultText changed, clearing start voice cache');
         await audioManager.clearVoiceCacheOnVoiceTypeChange('', ''); // 这会清除所有缓存
+      }
+    }
+
+    // 监听语音对话配置变化
+    if (changes['speech-chat-config-storage-key']) {
+      const newValue = changes['speech-chat-config-storage-key'].newValue;
+      const oldValue = changes['speech-chat-config-storage-key'].oldValue;
+
+      console.log('Speech chat configuration changed:', {
+        old: oldValue,
+        new: newValue,
+      });
+
+      // 通知所有标签页配置已更改
+      try {
+        const tabs = await chrome.tabs.query({});
+        tabs.forEach(tab => {
+          if (tab.id) {
+            chrome.tabs
+              .sendMessage(tab.id, {
+                type: 'SPEECH_CONFIG_CHANGED',
+                config: newValue,
+              })
+              .catch(() => {
+                // 忽略无法发送消息的标签页（如chrome://页面）
+              });
+          }
+        });
+      } catch (error) {
+        console.error('Error notifying tabs of speech config change:', error);
       }
     }
   }

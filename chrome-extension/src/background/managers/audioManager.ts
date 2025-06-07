@@ -1,4 +1,5 @@
 import { soundSettingsStorage, ttsConfigStorage, voiceCacheStorage } from '@extension/storage';
+import { TTSTextProcessor, TTSCacheManager, TTSErrorHandler } from '@extension/shared';
 import { TTSService } from '../../services/ttsService.js';
 import { TIMEOUTS, MESSAGE_TYPES, ERROR_MESSAGES } from '../../constants/index.js';
 
@@ -38,7 +39,7 @@ export class AudioManager {
       console.log('Generating TTS for text:', text);
 
       // 检查是否为开始语音（固定文本，可以缓存）
-      const isStartVoice = this.isStartVoiceText(text);
+      const isStartVoice = TTSTextProcessor.isStartVoiceText(text);
       let audioData: string | null = null;
 
       if (isStartVoice) {
@@ -50,7 +51,7 @@ export class AudioManager {
         } else {
           console.log('No cached start voice found, generating new one');
           // 使用配置的默认文本或回退到固定文本
-          const startText = this.getStartVoiceText(ttsConfig);
+          const startText = TTSTextProcessor.getStartVoiceText(ttsConfig);
           audioData = await TTSService.generateSpeech(startText);
 
           if (audioData) {
@@ -195,74 +196,6 @@ export class AudioManager {
       console.error('TTS test error:', error);
       return { success: false, error: (error as Error).message };
     }
-  }
-
-  /**
-   * 获取开始语音文本
-   */
-  private getStartVoiceText(ttsConfig: any): string {
-    // 如果用户设置了自定义默认文本，使用自定义文本
-    if (ttsConfig.defaultText && ttsConfig.defaultText.trim()) {
-      return ttsConfig.defaultText;
-    }
-
-    // 根据语音类型获取预设的默认文本
-    const voiceOptions = [
-      {
-        value: 'zh_female_linjianvhai_moon_bigtts',
-        defaultText:
-          '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-      },
-      {
-        value: 'zh_female_yuanqinvyou_moon_bigtts',
-        defaultText:
-          '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-      },
-      {
-        value: 'zh_female_gaolengyujie_moon_bigtts',
-        defaultText:
-          '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-      },
-      {
-        value: 'multi_female_shuangkuaisisi_moon_bigtts',
-        defaultText:
-          'いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ',
-      },
-      {
-        value: 'multi_female_gaolengyujie_moon_bigtts',
-        defaultText:
-          'いやー、集中しているところを見ると、目がキラキラしていて、超魅力的ですよね!この本気さ、きっと手に入ります!頑張って、私はそっとそばであなたに付き添って一緒に、集中してアヒルを沖ます!愛してますよ',
-      },
-      {
-        value: 'zh_female_tianmeixiaoyuan_moon_bigtts',
-        defaultText:
-          '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-      },
-      {
-        value: 'zh_female_kailangjiejie_moon_bigtts',
-        defaultText:
-          '呀~ 看你专注的样子，眼睛亮亮的，真的超有魅力呢！这股认真劲儿，一定能收获满满！加油哦，我就悄悄在旁边陪你一起，专注冲鸭！',
-      },
-    ];
-
-    const currentVoice = voiceOptions.find(option => option.value === ttsConfig.voiceType);
-    return currentVoice?.defaultText || '专注模式已启动，加油保持专注！';
-  }
-
-  /**
-   * 检查是否为开始语音文本
-   */
-  private isStartVoiceText(text: string): boolean {
-    // 检查文本是否包含开始语音的关键词
-    return (
-      text.includes('专注模式已启动') ||
-      text.includes('开始专注') ||
-      text.includes('加油，保持专注') ||
-      text.includes('看你专注的样子') ||
-      text.includes('集中しているところを見ると') ||
-      text.includes('专注冲鸭') ||
-      text.includes('集中してアヒルを沖ます')
-    );
   }
 
   /**

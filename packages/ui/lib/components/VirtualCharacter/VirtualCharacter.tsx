@@ -26,9 +26,40 @@ export const VirtualCharacter: React.FC<VirtualCharacterProps> = ({ className })
     currentAnimation: 'idle',
     position: { x: 0, y: 0 },
   });
+  const [extensionContextValid, setExtensionContextValid] = useState(true);
+
+  // Check extension context validity
+  useEffect(() => {
+    const checkExtensionContext = () => {
+      try {
+        // Check if chrome runtime is available
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+          setExtensionContextValid(true);
+        } else {
+          setExtensionContextValid(false);
+          console.warn('Extension context is not valid');
+        }
+      } catch (error) {
+        setExtensionContextValid(false);
+        console.warn('Extension context check failed:', error);
+      }
+    };
+
+    checkExtensionContext();
+
+    // Check periodically in case context becomes invalid
+    const interval = setInterval(checkExtensionContext, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize character when component mounts
   useEffect(() => {
+    if (!extensionContextValid) {
+      console.warn('Skipping character initialization - extension context invalid');
+      return;
+    }
+
     initializeCharacter();
 
     // Listen for character state changes from the service
@@ -41,7 +72,7 @@ export const VirtualCharacter: React.FC<VirtualCharacterProps> = ({ className })
     return () => {
       window.removeEventListener('characterStateChange', handleStateChange as EventListener);
     };
-  }, []);
+  }, [extensionContextValid]);
 
   // Update character visibility when config changes
   useEffect(() => {
@@ -278,8 +309,8 @@ export const VirtualCharacter: React.FC<VirtualCharacterProps> = ({ className })
     return () => window.removeEventListener('resize', handleResize);
   }, [characterState.isVisible, config.appearance.position, config.appearance.size]);
 
-  // Don't render anything if character is not enabled
-  if (!config.enabled) {
+  // Don't render anything if character is not enabled or extension context is invalid
+  if (!config.enabled || !extensionContextValid) {
     return null;
   }
 

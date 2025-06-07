@@ -5,7 +5,7 @@ const ttsConfigBaseStorage = createStorage('tts-config-storage-key', {
     appid: '',
     token: '',
     cluster: 'volcano_tts',
-    voiceType: 'zh_male_M392_conversation_wvae_bigtts',
+    voiceType: 'zh_female_linjianvhai_moon_bigtts', // 默认使用"邻家女孩"
     encoding: 'mp3',
     speedRatio: 1.0,
     uid: 'chrome_extension_user',
