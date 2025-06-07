@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useStorage, VOICE_OPTIONS, TTSTextProcessor } from '@extension/shared';
+import { useStorage, VOICE_OPTIONS, TTSTextProcessor, getVoiceLabelByType } from '@extension/shared';
 import { ttsConfigStorage } from '@extension/storage';
 import { useState } from 'react';
 export const TTSSettings = () => {
@@ -28,15 +28,32 @@ export const TTSSettings = () => {
         setIsTestPlaying(true);
         setTestResult('');
         try {
+            // 确保配置已保存
+            if (!ttsConfig.appid || !ttsConfig.token) {
+                setTestResult('❌ 请先配置AppID和Token');
+                return;
+            }
             // 使用当前配置的默认文本进行测试
             const testText = getDisplayDefaultText() || '这是语音合成测试，你好！';
+            console.log('Testing TTS with:', {
+                voiceType: ttsConfig.voiceType,
+                text: testText,
+                enabled: ttsConfig.enabled,
+            });
             // 发送消息给background script进行TTS测试
             const response = await chrome.runtime.sendMessage({
                 type: 'TEST_TTS',
                 text: testText,
+                // 明确传递当前配置，确保使用正确的语音类型
+                config: {
+                    voiceType: ttsConfig.voiceType,
+                    speedRatio: ttsConfig.speedRatio,
+                    appid: ttsConfig.appid,
+                    token: ttsConfig.token,
+                },
             });
             if (response && response.success) {
-                setTestResult('✅ 测试成功！语音合成正常工作。');
+                setTestResult(`✅ 测试成功！使用语音类型: ${getVoiceLabelByType(ttsConfig.voiceType)}`);
             }
             else {
                 setTestResult('❌ 测试失败：' + (response?.error || '未知错误'));

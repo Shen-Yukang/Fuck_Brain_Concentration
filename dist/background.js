@@ -12,7 +12,7 @@ function De() {
       if (globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)
         t.exports = globalThis.browser;
       else {
-        const o = "The message port closed before a response was received.", a = (n) => {
+        const o = "The message port closed before a response was received.", i = (a) => {
           const c = {
             alarms: {
               clear: {
@@ -687,7 +687,7 @@ function De() {
           };
           if (Object.keys(c).length === 0)
             throw new Error("api-metadata.json has not been included in browser-polyfill");
-          class i extends WeakMap {
+          class n extends WeakMap {
             constructor(d, m = void 0) {
               super(m), this.createItem = d;
             }
@@ -696,8 +696,8 @@ function De() {
             }
           }
           const f = (g) => g && typeof g == "object" && typeof g.then == "function", s = (g, d) => (...m) => {
-            n.runtime.lastError ? g.reject(new Error(n.runtime.lastError.message)) : d.singleCallbackArg || m.length <= 1 && d.singleCallbackArg !== !1 ? g.resolve(m[0]) : g.resolve(m);
-          }, l = (g) => g == 1 ? "argument" : "arguments", h = (g, d) => function(A, ...S) {
+            a.runtime.lastError ? g.reject(new Error(a.runtime.lastError.message)) : d.singleCallbackArg || m.length <= 1 && d.singleCallbackArg !== !1 ? g.resolve(m[0]) : g.resolve(m);
+          }, l = (g) => g == 1 ? "argument" : "arguments", A = (g, d) => function(h, ...S) {
             if (S.length < d.minArgs)
               throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${S.length}`);
             if (S.length > d.maxArgs)
@@ -705,32 +705,32 @@ function De() {
             return new Promise((x, w) => {
               if (d.fallbackToNoCallback)
                 try {
-                  A[g](...S, s({
+                  h[g](...S, s({
                     resolve: x,
                     reject: w
                   }, d));
                 } catch (u) {
-                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), A[g](...S), d.fallbackToNoCallback = !1, d.noCallback = !0, x();
+                  console.warn(`${g} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, u), h[g](...S), d.fallbackToNoCallback = !1, d.noCallback = !0, x();
                 }
-              else d.noCallback ? (A[g](...S), x()) : A[g](...S, s({
+              else d.noCallback ? (h[g](...S), x()) : h[g](...S, s({
                 resolve: x,
                 reject: w
               }, d));
             });
           }, y = (g, d, m) => new Proxy(d, {
-            apply(A, S, x) {
+            apply(h, S, x) {
               return m.call(S, g, ...x);
             }
           });
           let M = Function.call.bind(Object.prototype.hasOwnProperty);
           const N = (g, d = {}, m = {}) => {
-            let A = /* @__PURE__ */ Object.create(null), S = {
+            let h = /* @__PURE__ */ Object.create(null), S = {
               has(w, u) {
-                return u in g || u in A;
+                return u in g || u in h;
               },
               get(w, u, b) {
-                if (u in A)
-                  return A[u];
+                if (u in h)
+                  return h[u];
                 if (!(u in g))
                   return;
                 let E = g[u];
@@ -738,8 +738,8 @@ function De() {
                   if (typeof d[u] == "function")
                     E = y(g, g[u], d[u]);
                   else if (M(m, u)) {
-                    let W = h(u, m[u]);
-                    E = y(g, g[u], W);
+                    let q = A(u, m[u]);
+                    E = y(g, g[u], q);
                   } else
                     E = E.bind(g);
                 else if (typeof E == "object" && E !== null && (M(d, u) || M(m, u)))
@@ -747,32 +747,32 @@ function De() {
                 else if (M(m, "*"))
                   E = N(E, d[u], m["*"]);
                 else
-                  return Object.defineProperty(A, u, {
+                  return Object.defineProperty(h, u, {
                     configurable: !0,
                     enumerable: !0,
                     get() {
                       return g[u];
                     },
-                    set(W) {
-                      g[u] = W;
+                    set(q) {
+                      g[u] = q;
                     }
                   }), E;
-                return A[u] = E, E;
+                return h[u] = E, E;
               },
               set(w, u, b, E) {
-                return u in A ? A[u] = b : g[u] = b, !0;
+                return u in h ? h[u] = b : g[u] = b, !0;
               },
               defineProperty(w, u, b) {
-                return Reflect.defineProperty(A, u, b);
+                return Reflect.defineProperty(h, u, b);
               },
               deleteProperty(w, u) {
-                return Reflect.deleteProperty(A, u);
+                return Reflect.deleteProperty(h, u);
               }
             }, x = Object.create(g);
             return new Proxy(x, S);
           }, v = (g) => ({
-            addListener(d, m, ...A) {
-              d.addListener(g.get(m), ...A);
+            addListener(d, m, ...h) {
+              d.addListener(g.get(m), ...h);
             },
             hasListener(d, m) {
               return d.hasListener(g.get(m));
@@ -780,30 +780,30 @@ function De() {
             removeListener(d, m) {
               d.removeListener(g.get(m));
             }
-          }), B = new i((g) => typeof g != "function" ? g : function(m) {
-            const A = N(m, {}, {
+          }), B = new n((g) => typeof g != "function" ? g : function(m) {
+            const h = N(m, {}, {
               getContent: {
                 minArgs: 0,
                 maxArgs: 0
               }
             });
-            g(A);
-          }), Y = new i((g) => typeof g != "function" ? g : function(m, A, S) {
-            let x = !1, w, u = new Promise((K) => {
+            g(h);
+          }), K = new n((g) => typeof g != "function" ? g : function(m, h, S) {
+            let x = !1, w, u = new Promise((J) => {
               w = function(_) {
-                x = !0, K(_);
+                x = !0, J(_);
               };
             }), b;
             try {
-              b = g(m, A, w);
-            } catch (K) {
-              b = Promise.reject(K);
+              b = g(m, h, w);
+            } catch (J) {
+              b = Promise.reject(J);
             }
             const E = b !== !0 && f(b);
             if (b !== !0 && !E && !x)
               return !1;
-            const W = (K) => {
-              K.then((_) => {
+            const q = (J) => {
+              J.then((_) => {
                 S(_);
               }, (_) => {
                 let ue;
@@ -815,23 +815,23 @@ function De() {
                 console.error("Failed to send onMessage rejected reply", _);
               });
             };
-            return W(E ? b : u), !0;
+            return q(E ? b : u), !0;
           }), p = ({
             reject: g,
             resolve: d
           }, m) => {
-            n.runtime.lastError ? n.runtime.lastError.message === o ? d() : g(new Error(n.runtime.lastError.message)) : m && m.__mozWebExtensionPolyfillReject__ ? g(new Error(m.message)) : d(m);
-          }, P = (g, d, m, ...A) => {
-            if (A.length < d.minArgs)
-              throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${A.length}`);
-            if (A.length > d.maxArgs)
-              throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${A.length}`);
+            a.runtime.lastError ? a.runtime.lastError.message === o ? d() : g(new Error(a.runtime.lastError.message)) : m && m.__mozWebExtensionPolyfillReject__ ? g(new Error(m.message)) : d(m);
+          }, P = (g, d, m, ...h) => {
+            if (h.length < d.minArgs)
+              throw new Error(`Expected at least ${d.minArgs} ${l(d.minArgs)} for ${g}(), got ${h.length}`);
+            if (h.length > d.maxArgs)
+              throw new Error(`Expected at most ${d.maxArgs} ${l(d.maxArgs)} for ${g}(), got ${h.length}`);
             return new Promise((S, x) => {
               const w = p.bind(null, {
                 resolve: S,
                 reject: x
               });
-              A.push(w), m.sendMessage(...A);
+              h.push(w), m.sendMessage(...h);
             });
           }, Le = {
             devtools: {
@@ -840,8 +840,8 @@ function De() {
               }
             },
             runtime: {
-              onMessage: v(Y),
-              onMessageExternal: v(Y),
+              onMessage: v(K),
+              onMessageExternal: v(K),
               sendMessage: P.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
@@ -877,61 +877,61 @@ function De() {
             websites: {
               "*": de
             }
-          }, N(n, Le, c);
+          }, N(a, Le, c);
         };
-        t.exports = a(chrome);
+        t.exports = i(chrome);
       }
     });
   }(se)), se.exports;
 }
 De();
-var C;
+var U;
 (function(r) {
   r.Local = "local", r.Sync = "sync", r.Managed = "managed", r.Session = "session";
-})(C || (C = {}));
+})(U || (U = {}));
 var ye;
 (function(r) {
   r.ExtensionPagesOnly = "TRUSTED_CONTEXTS", r.ExtensionPagesAndContentScripts = "TRUSTED_AND_UNTRUSTED_CONTEXTS";
 })(ye || (ye = {}));
 const T = globalThis.chrome, be = async (r, e) => {
-  const t = (a) => typeof a == "function", o = (a) => a instanceof Promise;
+  const t = (i) => typeof i == "function", o = (i) => i instanceof Promise;
   return t(r) ? (o(r), r(e)) : r;
 };
-let Ce = !1;
-function Ue(r) {
+let Ue = !1;
+function Ce(r) {
   if (T && T.storage[r] === void 0)
     throw new Error(`Check your storage permission in manifest.json: ${r} is not defined`);
 }
 function F(r, e, t) {
-  var B, Y;
-  let o = null, a = !1, n = [];
-  const c = (t == null ? void 0 : t.storageEnum) ?? C.Local, i = (t == null ? void 0 : t.liveUpdate) ?? !1, f = ((B = t == null ? void 0 : t.serialization) == null ? void 0 : B.serialize) ?? ((p) => p), s = ((Y = t == null ? void 0 : t.serialization) == null ? void 0 : Y.deserialize) ?? ((p) => p);
-  Ce === !1 && c === C.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ue(c), T == null || T.storage[c].setAccessLevel({
+  var B, K;
+  let o = null, i = !1, a = [];
+  const c = (t == null ? void 0 : t.storageEnum) ?? U.Local, n = (t == null ? void 0 : t.liveUpdate) ?? !1, f = ((B = t == null ? void 0 : t.serialization) == null ? void 0 : B.serialize) ?? ((p) => p), s = ((K = t == null ? void 0 : t.serialization) == null ? void 0 : K.deserialize) ?? ((p) => p);
+  Ue === !1 && c === U.Session && (t == null ? void 0 : t.sessionAccessForContentScripts) === !0 && (Ce(c), T == null || T.storage[c].setAccessLevel({
     accessLevel: ye.ExtensionPagesAndContentScripts
   }).catch((p) => {
     console.warn(p), console.warn("Please call setAccessLevel into different context, like a background script.");
-  }), Ce = !0);
+  }), Ue = !0);
   const l = async () => {
-    Ue(c);
+    Ce(c);
     const p = await (T == null ? void 0 : T.storage[c].get([r]));
     return p ? s(p[r]) ?? e : e;
-  }, h = () => {
-    n.forEach((p) => p());
+  }, A = () => {
+    a.forEach((p) => p());
   }, y = async (p) => {
-    a || (o = await l()), o = await be(p, o), await (T == null ? void 0 : T.storage[c].set({ [r]: f(o) })), h();
-  }, M = (p) => (n = [...n, p], () => {
-    n = n.filter((P) => P !== p);
+    i || (o = await l()), o = await be(p, o), await (T == null ? void 0 : T.storage[c].set({ [r]: f(o) })), A();
+  }, M = (p) => (a = [...a, p], () => {
+    a = a.filter((P) => P !== p);
   }), N = () => o;
   l().then((p) => {
-    o = p, a = !0, h();
+    o = p, i = !0, A();
   });
   async function v(p) {
     if (p[r] === void 0)
       return;
     const P = s(p[r].newValue);
-    o !== P && (o = await be(P, o), h());
+    o !== P && (o = await be(P, o), A());
   }
-  return i && (T == null || T.storage[c].onChanged.addListener(v)), {
+  return n && (T == null || T.storage[c].onChanged.addListener(v)), {
     get: l,
     set: y,
     getSnapshot: N,
@@ -939,7 +939,7 @@ function F(r, e, t) {
   };
 }
 const ke = F("theme-storage-key", "light", {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), Fe = {
   ...ke,
@@ -951,7 +951,7 @@ const ke = F("theme-storage-key", "light", {
   // 默认25分钟
   isActive: !1
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), L = {
   ...te,
@@ -979,17 +979,17 @@ const ke = F("theme-storage-key", "light", {
     const e = Math.max(0, r.endTime - Date.now());
     return Math.floor(e / 1e3);
   }
-}, U = F("blocked-urls-storage-key", {
+}, C = F("blocked-urls-storage-key", {
   urls: [],
   studyModeUrls: [],
   studyModeSelectors: {}
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), Be = async () => {
   try {
-    const r = await U.get();
-    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await U.set((e) => ({
+    const r = await C.get();
+    (!r.studyModeUrls || !r.studyModeSelectors) && (console.log("Migrating blocked URLs storage structure..."), await C.set((e) => ({
       urls: e.urls || [],
       studyModeUrls: e.studyModeUrls || [],
       studyModeSelectors: e.studyModeSelectors || {}
@@ -1000,9 +1000,9 @@ const ke = F("theme-storage-key", "light", {
 };
 Be();
 const k = {
-  ...U,
+  ...C,
   addUrl: async (r) => {
-    await U.set((e) => {
+    await C.set((e) => {
       if (e.urls.includes(r))
         return e;
       const t = e.studyModeUrls.filter((o) => o !== r);
@@ -1014,19 +1014,19 @@ const k = {
     });
   },
   removeUrl: async (r) => {
-    await U.set((e) => ({
+    await C.set((e) => ({
       ...e,
       urls: e.urls.filter((t) => t !== r)
     }));
   },
   clearUrls: async () => {
-    await U.set((r) => ({
+    await C.set((r) => ({
       ...r,
       urls: []
     }));
   },
   addStudyModeUrl: async (r) => {
-    await U.set((e) => {
+    await C.set((e) => {
       if (e.studyModeUrls.includes(r))
         return e;
       const t = e.urls.filter((o) => o !== r);
@@ -1038,7 +1038,7 @@ const k = {
     });
   },
   removeStudyModeUrl: async (r) => {
-    await U.set((e) => ({
+    await C.set((e) => ({
       ...e,
       studyModeUrls: e.studyModeUrls.filter((t) => t !== r)
     }));
@@ -1047,7 +1047,7 @@ const k = {
     e ? await k.addStudyModeUrl(r) : await k.addUrl(r);
   },
   addStudyModeSelector: async (r, e) => {
-    await U.set((t) => {
+    await C.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return o.includes(e) ? t : {
         ...t,
@@ -1059,19 +1059,19 @@ const k = {
     });
   },
   removeStudyModeSelector: async (r, e) => {
-    await U.set((t) => {
+    await C.set((t) => {
       const o = t.studyModeSelectors[r] || [];
       return {
         ...t,
         studyModeSelectors: {
           ...t.studyModeSelectors,
-          [r]: o.filter((a) => a !== e)
+          [r]: o.filter((i) => i !== e)
         }
       };
     });
   },
   clearStudyModeSelectors: async (r) => {
-    await U.set((e) => {
+    await C.set((e) => {
       const { [r]: t, ...o } = e.studyModeSelectors;
       return {
         ...e,
@@ -1079,17 +1079,17 @@ const k = {
       };
     });
   }
-}, q = F("notification-cache-storage-key", {
+}, $ = F("notification-cache-storage-key", {
   isGenerating: !1
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), ne = {
-  ...q,
+  ...$,
   // 保存通知内容
   saveNotification: async (r, e = 60) => {
     const t = Date.now();
-    await q.set({
+    await $.set({
       pendingNotification: r,
       generatedAt: t,
       expiresAt: t + e * 60 * 1e3,
@@ -1098,12 +1098,12 @@ const k = {
   },
   // 获取通知内容（如果有效）
   getNotification: async () => {
-    const r = await q.get();
+    const r = await $.get();
     return r.pendingNotification ? r.expiresAt && r.expiresAt < Date.now() ? (await ne.clearNotification(), null) : r.pendingNotification : null;
   },
   // 清除通知缓存
   clearNotification: async () => {
-    await q.set((r) => ({
+    await $.set((r) => ({
       ...r,
       pendingNotification: void 0,
       generatedAt: void 0,
@@ -1113,19 +1113,19 @@ const k = {
   },
   // 设置生成状态
   setGenerating: async (r) => {
-    await q.set((e) => ({
+    await $.set((e) => ({
       ...e,
       isGenerating: r
     }));
   },
   // 检查是否正在生成中
-  isGenerating: async () => (await q.get()).isGenerating
+  isGenerating: async () => (await $.get()).isGenerating
 };
 var pe;
 (function(r) {
   r.DEEPSEEK = "deepseek", r.OPENAI = "openai";
 })(pe || (pe = {}));
-const $ = F("ai-config-storage-key", {
+const Y = F("ai-config-storage-key", {
   enabled: !1,
   provider: pe.DEEPSEEK,
   model: "deepseek-chat",
@@ -1133,27 +1133,27 @@ const $ = F("ai-config-storage-key", {
   preGenerateMinutes: 5
   // 默认提前5分钟生成
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
-}), J = {
-  ...$,
+}), Z = {
+  ...Y,
   // 启用/禁用AI生成
   enableAI: async (r) => {
-    await $.set((e) => ({
+    await Y.set((e) => ({
       ...e,
       enabled: r
     }));
   },
   // 更新API密钥
   updateAPIKey: async (r) => {
-    await $.set((e) => ({
+    await Y.set((e) => ({
       ...e,
       apiKey: r
     }));
   },
   // 更新AI提供商
   updateProvider: async (r, e, t) => {
-    await $.set((o) => ({
+    await Y.set((o) => ({
       ...o,
       provider: r,
       ...e ? { model: e } : {},
@@ -1162,7 +1162,7 @@ const $ = F("ai-config-storage-key", {
   },
   // 更新提示词
   updatePrompts: async (r, e) => {
-    await $.set((t) => ({
+    await Y.set((t) => ({
       ...t,
       ...r !== void 0 ? { systemPrompt: r } : {},
       ...e !== void 0 ? { promptTemplate: e } : {}
@@ -1170,7 +1170,7 @@ const $ = F("ai-config-storage-key", {
   },
   // 更新预生成时间
   updatePreGenerateTime: async (r) => {
-    await $.set((e) => ({
+    await Y.set((e) => ({
       ...e,
       preGenerateMinutes: Math.max(1, Math.min(30, r))
       // 限制在1-30分钟之间
@@ -1182,7 +1182,7 @@ const $ = F("ai-config-storage-key", {
   volume: 0.5
   // 默认音量50%
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), fe = {
   ...me,
@@ -1214,9 +1214,9 @@ const $ = F("ai-config-storage-key", {
   defaultText: ""
   // 默认为空，将根据语音类型自动设置
 }, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
-}), Z = {
+}), G = {
   ...Ae,
   // 更新配置
   updateConfig: async (r) => {
@@ -1231,7 +1231,7 @@ const $ = F("ai-config-storage-key", {
     return r.enabled && r.appid.length > 0 && r.token.length > 0;
   }
 }, O = F("voice-cache-storage-key", {}, {
-  storageEnum: C.Local,
+  storageEnum: U.Local,
   liveUpdate: !0
 }), R = {
   ...O,
@@ -1432,12 +1432,12 @@ const Q = class Q {
   static async generateSpeech(e) {
     var t;
     try {
-      const o = await Z.get();
+      const o = await G.get();
       if (!o.enabled)
         return console.log("TTS is disabled"), null;
       if (!o.appid || !o.token)
         return console.error("TTS configuration is incomplete"), null;
-      const a = `chrome_ext_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`, n = {
+      const i = `chrome_ext_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`, a = {
         app: {
           appid: o.appid,
           cluster: o.cluster
@@ -1451,32 +1451,32 @@ const Q = class Q {
           speed_ratio: o.speedRatio
         },
         request: {
-          reqid: a,
+          reqid: i,
           text: e,
           operation: "query"
         }
       };
-      console.log("Sending TTS request:", { reqid: a, text: e });
+      console.log("Sending TTS request:", { reqid: i, text: e });
       const c = await fetch(Q.API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer; ${o.token}`
         },
-        body: JSON.stringify(n)
+        body: JSON.stringify(a)
       });
       if (!c.ok)
         throw new Error(`HTTP error! status: ${c.status}`);
-      const i = await c.json();
-      if (i.code !== 3e3)
-        throw new Error(`TTS API error: ${i.message} (code: ${i.code})`);
-      if (!i.data)
+      const n = await c.json();
+      if (n.code !== 3e3)
+        throw new Error(`TTS API error: ${n.message} (code: ${n.code})`);
+      if (!n.data)
         throw new Error("No audio data received from TTS API");
       return console.log("TTS generation successful:", {
-        reqid: i.reqid,
-        duration: (t = i.addition) == null ? void 0 : t.duration,
-        dataLength: i.data.length
-      }), i.data;
+        reqid: n.reqid,
+        duration: (t = n.addition) == null ? void 0 : t.duration,
+        dataLength: n.data.length
+      }), n.data;
     } catch (o) {
       return console.error("Error generating speech:", o), null;
     }
@@ -1494,19 +1494,19 @@ const Q = class Q {
 };
 H(Q, "API_URL", Pe.API_URL);
 let X = Q;
-const G = class G {
+const V = class V {
   constructor() {
   }
   static getInstance() {
-    return G.instance || (G.instance = new G()), G.instance;
+    return V.instance || (V.instance = new V()), V.instance;
   }
   /**
    * 播放TTS语音通知
    */
   async playTTSNotification(e) {
     try {
-      const t = await Z.get();
-      if (!t.enabled || !await Z.isConfigured())
+      const t = await G.get();
+      if (!t.enabled || !await G.isConfigured())
         return console.log("TTS not enabled or not configured, falling back to normal sound"), await this.playNotificationSound();
       const o = await fe.get();
       if (!o.enabled) {
@@ -1514,25 +1514,25 @@ const G = class G {
         return;
       }
       console.log("Generating TTS for text:", e);
-      const a = ie.isStartVoiceText(e);
-      let n = null;
-      if (a)
-        if (n = await R.getStartVoice(t.voiceType), n)
+      const i = ie.isStartVoiceText(e);
+      let a = null;
+      if (i)
+        if (a = await R.getStartVoice(t.voiceType), a)
           console.log("Using cached start voice for voiceType:", t.voiceType);
         else {
           console.log("No cached start voice found, generating new one");
-          const i = ie.getStartVoiceText(t);
-          n = await X.generateSpeech(i), n && (await R.cacheStartVoice(t.voiceType, n), console.log("Start voice generated and cached for voiceType:", t.voiceType));
+          const n = ie.getStartVoiceText(t);
+          a = await X.generateSpeech(n), a && (await R.cacheStartVoice(t.voiceType, a), console.log("Start voice generated and cached for voiceType:", t.voiceType));
         }
       else
-        n = await X.generateSpeech(e);
-      if (!n)
+        a = await X.generateSpeech(e);
+      if (!a)
         return console.log("TTS generation failed, falling back to normal sound"), await this.playNotificationSound();
       await this.ensureOffscreenDocument();
       const c = await chrome.runtime.sendMessage({
         type: ae.PLAY_TTS_SOUND,
         volume: o.volume,
-        audioData: n
+        audioData: a
       });
       c && c.success ? console.log("TTS notification played successfully with volume:", o.volume) : (console.error("Failed to play TTS notification:", c == null ? void 0 : c.error), await this.playNotificationSound());
     } catch (t) {
@@ -1562,40 +1562,53 @@ const G = class G {
   }
   /**
    * 测试TTS功能
+   * 修复Bug: 确保使用当前配置的语音类型进行测试
    */
-  async testTTS(e) {
+  async testTTS(e, t) {
     try {
-      if (!(await Z.get()).enabled || !await Z.isConfigured())
+      let o = await G.get();
+      if (t && (o = { ...o, ...t }, console.log("Using test config:", t)), !o.enabled || !o.appid || !o.token)
         return { success: !1, error: oe.TTS_NOT_CONFIGURED };
-      const o = await X.generateSpeech(e);
-      if (!o)
+      console.log("Testing TTS with config:", {
+        voiceType: o.voiceType,
+        text: e,
+        speedRatio: o.speedRatio,
+        appid: o.appid ? "***" : "missing",
+        token: o.token ? "***" : "missing"
+      }), t && await G.set(o);
+      const i = await X.generateSpeech(e);
+      if (t) {
+        const c = await G.get();
+        await G.set({ ...c, ...t });
+      }
+      if (!i)
         return { success: !1, error: oe.TTS_GENERATION_FAILED };
       const a = await fe.get();
       if (!a.enabled)
         return { success: !1, error: oe.SOUND_DISABLED };
-      await this.ensureOffscreenDocument(), await new Promise((n) => setTimeout(n, Ee.OFFSCREEN_LOAD_DELAY));
+      await this.ensureOffscreenDocument(), await new Promise((c) => setTimeout(c, Ee.OFFSCREEN_LOAD_DELAY));
       try {
-        const c = await new Promise((i, f) => {
-          const s = setTimeout(() => {
-            f(new Error(oe.MESSAGE_TIMEOUT));
+        const n = await new Promise((f, s) => {
+          const l = setTimeout(() => {
+            s(new Error(oe.MESSAGE_TIMEOUT));
           }, Ee.MESSAGE_TIMEOUT);
           chrome.runtime.sendMessage(
             {
               type: ae.PLAY_TTS_SOUND,
               volume: a.volume,
-              audioData: o
+              audioData: i
             },
-            (l) => {
-              clearTimeout(s), chrome.runtime.lastError ? f(new Error(chrome.runtime.lastError.message)) : i(l);
+            (A) => {
+              clearTimeout(l), chrome.runtime.lastError ? s(new Error(chrome.runtime.lastError.message)) : f(A);
             }
           );
         });
-        return c && c.success ? { success: !0 } : { success: !1, error: (c == null ? void 0 : c.error) || "播放失败" };
-      } catch (n) {
-        return console.error("Message sending error:", n), { success: !1, error: "无法与音频播放器通信: " + n.message };
+        return n && n.success ? { success: !0 } : { success: !1, error: (n == null ? void 0 : n.error) || "播放失败" };
+      } catch (c) {
+        return console.error("Message sending error:", c), { success: !1, error: "无法与音频播放器通信: " + c.message };
       }
-    } catch (t) {
-      return console.error("TTS test error:", t), { success: !1, error: t.message };
+    } catch (o) {
+      return console.error("TTS test error:", o), { success: !1, error: o.message };
     }
   }
   /**
@@ -1628,8 +1641,8 @@ const G = class G {
     }
   }
 };
-H(G, "instance");
-let ee = G;
+H(V, "instance");
+let ee = V;
 const Me = [
   "休息一下吧！你已经专注工作了一段时间。",
   "该活动一下了！站起来伸展一下身体吧。",
@@ -1646,18 +1659,18 @@ function Ve() {
   const r = Math.floor(Math.random() * Me.length);
   return Me[r];
 }
-const V = class V {
+const z = class z {
   constructor() {
   }
   static getInstance() {
-    return V.instance || (V.instance = new V()), V.instance;
+    return z.instance || (z.instance = new z()), z.instance;
   }
   /**
    * 获取专注结束通知消息
    */
   async getEndNotification() {
     try {
-      if (!(await J.get()).enabled)
+      if (!(await Z.get()).enabled)
         return this.getDefaultEndMessage();
       const t = await ne.getNotification();
       return t ? (console.log("Using cached AI notification"), t) : await this.generateAINotification();
@@ -1670,7 +1683,7 @@ const V = class V {
    */
   async preGenerateNotification(e) {
     try {
-      if (!(await J.get()).enabled)
+      if (!(await Z.get()).enabled)
         return;
       const o = Math.max(
         he.MIN_PRE_GENERATE_MINUTES,
@@ -1680,8 +1693,8 @@ const V = class V {
         async () => {
           try {
             await this.generateAINotification(), console.log("AI notification pre-generated successfully");
-          } catch (a) {
-            console.error("Error pre-generating AI notification:", a);
+          } catch (i) {
+            console.error("Error pre-generating AI notification:", i);
           }
         },
         o * 60 * 1e3
@@ -1695,7 +1708,7 @@ const V = class V {
    */
   async generateAINotification() {
     try {
-      const e = await J.get();
+      const e = await Z.get();
       if (!e.apiKey || !e.provider)
         return console.log("AI configuration incomplete, using default message"), this.getDefaultEndMessage();
       const t = await this.buildNotificationPrompt(), o = await this.callAIService(e, t);
@@ -1712,7 +1725,7 @@ const V = class V {
       hour: "2-digit",
       minute: "2-digit"
     }), o = (await L.get()).duration;
-    return ((await J.get()).promptTemplate || `现在是${e}，用户刚刚完成了{duration}分钟的专注时间段。请生成一条温暖、鼓励的休息提醒，内容要：
+    return ((await Z.get()).promptTemplate || `现在是${e}，用户刚刚完成了{duration}分钟的专注时间段。请生成一条温暖、鼓励的休息提醒，内容要：
 1. 简洁明了（不超过50字）
 2. 积极正面，给用户成就感
 3. 建议适当的休息活动
@@ -1725,18 +1738,18 @@ const V = class V {
    */
   async callAIService(e, t) {
     try {
-      const o = this.getAPIEndpoint(e.provider), a = this.prepareRequestBody(e, t), n = new AbortController(), c = setTimeout(() => n.abort(), 1e4), i = await fetch(o, {
+      const o = this.getAPIEndpoint(e.provider), i = this.prepareRequestBody(e, t), a = new AbortController(), c = setTimeout(() => a.abort(), 1e4), n = await fetch(o, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${e.apiKey}`
         },
-        body: JSON.stringify(a),
-        signal: n.signal
+        body: JSON.stringify(i),
+        signal: a.signal
       });
-      if (clearTimeout(c), !i.ok)
-        throw new Error(`AI API error: ${i.status} ${i.statusText}`);
-      const l = (await i.json()).choices[0].message.content.trim().replace(/^["']|["']$/g, "").replace(/\n+/g, " ").trim();
+      if (clearTimeout(c), !n.ok)
+        throw new Error(`AI API error: ${n.status} ${n.statusText}`);
+      const l = (await n.json()).choices[0].message.content.trim().replace(/^["']|["']$/g, "").replace(/\n+/g, " ").trim();
       return l.length > 100 ? l.substring(0, 97) + "..." : l;
     } catch (o) {
       return console.error("Error calling AI service:", o), null;
@@ -1756,7 +1769,7 @@ const V = class V {
    * 准备请求体
    */
   prepareRequestBody(e, t) {
-    const a = e.systemPrompt || `你是一个友好、积极的助手，负责在用户专注工作一段时间后提醒他们休息。
+    const i = e.systemPrompt || `你是一个友好、积极的助手，负责在用户专注工作一段时间后提醒他们休息。
 你的消息应该：
 1. 简短（不超过50个字）
 2. 友好且鼓励性的
@@ -1770,7 +1783,7 @@ const V = class V {
     return {
       model: e.model || "deepseek-chat",
       messages: [
-        { role: "system", content: a },
+        { role: "system", content: i },
         { role: "user", content: t }
       ],
       temperature: 0.8,
@@ -1794,8 +1807,8 @@ const V = class V {
     }
   }
 };
-H(V, "instance");
-let ce = V;
+H(z, "instance");
+let ce = z;
 const ze = {
   domain: "bilibili.com",
   getSelectors() {
@@ -1805,22 +1818,22 @@ const ze = {
     return function(e) {
       const t = "已为您屏蔽搜索功能，专注于观看学习内容", o = "rgba(255, 105, 180, 0.8)";
       try {
-        let a = function(c, i) {
+        let i = function(c, n) {
           if (document.querySelector('[data-focus-reminder="true"]')) {
             console.log("🎯 [Site Handler] Focus reminder already exists");
             return;
           }
           const s = document.createElement("div");
-          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = i, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
+          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = n, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
           const l = document.createElement("div");
           l.textContent = "专注提醒", l.style.fontWeight = "bold", l.style.fontSize = "16px", l.style.marginBottom = "8px", s.appendChild(l);
-          const h = document.createElement("div");
-          h.textContent = c, s.appendChild(h), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
+          const A = document.createElement("div");
+          A.textContent = c, s.appendChild(A), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
             s.style.transition = "opacity 1s", s.style.opacity = "0", setTimeout(() => {
               document.body.contains(s) && document.body.removeChild(s);
             }, 1e3);
           }, 3e3);
-        }, n = function(c) {
+        }, a = function(c) {
           c.forEach((f) => {
             try {
               const s = document.querySelectorAll(f);
@@ -1831,7 +1844,7 @@ const ze = {
               console.error("🚨 [Site Handler] Error with selector " + f + ":", s);
             }
           });
-          const i = new MutationObserver((f) => {
+          const n = new MutationObserver((f) => {
             let s = !1;
             f.forEach((l) => {
               l.type === "childList" && l.addedNodes.length > 0 && (s = !0);
@@ -1840,27 +1853,27 @@ const ze = {
                 document.querySelectorAll(l).forEach((y) => {
                   y instanceof HTMLElement && !y.dataset.studyModeDisabled && (y.style.display = "none", y.dataset.studyModeDisabled = "true");
                 });
-              } catch (h) {
-                console.error("🚨 [Site Handler] Mutation observer error:", h);
+              } catch (A) {
+                console.error("🚨 [Site Handler] Mutation observer error:", A);
               }
             });
           });
-          i.observe(document.documentElement, {
+          n.observe(document.documentElement, {
             childList: !0,
             subtree: !0
-          }), window.__studyModeObserver = i;
+          }), window.__studyModeObserver = n;
         };
-        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), a(t, o), n(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
-      } catch (a) {
-        console.error("🚨 [Site Handler] Error in script execution:", a);
+        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), i(t, o), a(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
+      } catch (i) {
+        console.error("🚨 [Site Handler] Error in script execution:", i);
         try {
-          e.forEach((n) => {
-            document.querySelectorAll(n).forEach((i) => {
-              i instanceof HTMLElement && (i.style.display = "none");
+          e.forEach((a) => {
+            document.querySelectorAll(a).forEach((n) => {
+              n instanceof HTMLElement && (n.style.display = "none");
             });
           }), console.log("🎯 [Site Handler] Fallback CSS hiding applied");
-        } catch (n) {
-          console.error("🚨 [Site Handler] Fallback also failed:", n);
+        } catch (a) {
+          console.error("🚨 [Site Handler] Fallback also failed:", a);
         }
       }
     };
@@ -1874,22 +1887,22 @@ const ze = {
     return function(e) {
       const t = "已为您屏蔽热搜和顶部导航，专注于当前任务", o = "rgba(0, 128, 0, 0.8)";
       try {
-        let a = function(c, i) {
+        let i = function(c, n) {
           if (document.querySelector('[data-focus-reminder="true"]')) {
             console.log("🎯 [Site Handler] Focus reminder already exists");
             return;
           }
           const s = document.createElement("div");
-          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = i, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
+          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = n, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
           const l = document.createElement("div");
           l.textContent = "专注提醒", l.style.fontWeight = "bold", l.style.fontSize = "16px", l.style.marginBottom = "8px", s.appendChild(l);
-          const h = document.createElement("div");
-          h.textContent = c, s.appendChild(h), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
+          const A = document.createElement("div");
+          A.textContent = c, s.appendChild(A), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
             s.style.transition = "opacity 1s", s.style.opacity = "0", setTimeout(() => {
               document.body.contains(s) && document.body.removeChild(s);
             }, 1e3);
           }, 3e3);
-        }, n = function(c) {
+        }, a = function(c) {
           c.forEach((f) => {
             try {
               const s = document.querySelectorAll(f);
@@ -1900,7 +1913,7 @@ const ze = {
               console.error("🚨 [Site Handler] Error with selector " + f + ":", s);
             }
           });
-          const i = new MutationObserver((f) => {
+          const n = new MutationObserver((f) => {
             let s = !1;
             f.forEach((l) => {
               l.type === "childList" && l.addedNodes.length > 0 && (s = !0);
@@ -1909,27 +1922,27 @@ const ze = {
                 document.querySelectorAll(l).forEach((y) => {
                   y instanceof HTMLElement && !y.dataset.studyModeDisabled && (y.style.display = "none", y.dataset.studyModeDisabled = "true");
                 });
-              } catch (h) {
-                console.error("🚨 [Site Handler] Mutation observer error:", h);
+              } catch (A) {
+                console.error("🚨 [Site Handler] Mutation observer error:", A);
               }
             });
           });
-          i.observe(document.documentElement, {
+          n.observe(document.documentElement, {
             childList: !0,
             subtree: !0
-          }), window.__studyModeObserver = i;
+          }), window.__studyModeObserver = n;
         };
-        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), a(t, o), n(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
-      } catch (a) {
-        console.error("🚨 [Site Handler] Error in script execution:", a);
+        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), i(t, o), a(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
+      } catch (i) {
+        console.error("🚨 [Site Handler] Error in script execution:", i);
         try {
-          e.forEach((n) => {
-            document.querySelectorAll(n).forEach((i) => {
-              i instanceof HTMLElement && (i.style.display = "none");
+          e.forEach((a) => {
+            document.querySelectorAll(a).forEach((n) => {
+              n instanceof HTMLElement && (n.style.display = "none");
             });
           }), console.log("🎯 [Site Handler] Fallback CSS hiding applied");
-        } catch (n) {
-          console.error("🚨 [Site Handler] Fallback also failed:", n);
+        } catch (a) {
+          console.error("🚨 [Site Handler] Fallback also failed:", a);
         }
       }
     };
@@ -1943,22 +1956,22 @@ const ze = {
     return function(e) {
       const t = "已为您屏蔽热门话题推荐，专注于学习和阅读", o = "rgba(0, 123, 255, 0.8)";
       try {
-        let a = function(c, i) {
+        let i = function(c, n) {
           if (document.querySelector('[data-focus-reminder="true"]')) {
             console.log("🎯 [Site Handler] Focus reminder already exists");
             return;
           }
           const s = document.createElement("div");
-          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = i, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
+          s.setAttribute("data-focus-reminder", "true"), s.style.position = "fixed", s.style.top = "70px", s.style.right = "10px", s.style.backgroundColor = n, s.style.color = "white", s.style.padding = "12px 16px", s.style.borderRadius = "8px", s.style.zIndex = "9999999", s.style.fontSize = "14px", s.style.fontFamily = "Arial, sans-serif", s.style.boxShadow = "0 2px 10px rgba(0, 0, 0, 0.2)", s.style.width = "200px", s.style.textAlign = "center";
           const l = document.createElement("div");
           l.textContent = "专注提醒", l.style.fontWeight = "bold", l.style.fontSize = "16px", l.style.marginBottom = "8px", s.appendChild(l);
-          const h = document.createElement("div");
-          h.textContent = c, s.appendChild(h), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
+          const A = document.createElement("div");
+          A.textContent = c, s.appendChild(A), document.body.appendChild(s), console.log("🎯 [Site Handler] Focus reminder card created"), setTimeout(() => {
             s.style.transition = "opacity 1s", s.style.opacity = "0", setTimeout(() => {
               document.body.contains(s) && document.body.removeChild(s);
             }, 1e3);
           }, 3e3);
-        }, n = function(c) {
+        }, a = function(c) {
           c.forEach((f) => {
             try {
               const s = document.querySelectorAll(f);
@@ -1969,7 +1982,7 @@ const ze = {
               console.error("🚨 [Site Handler] Error with selector " + f + ":", s);
             }
           });
-          const i = new MutationObserver((f) => {
+          const n = new MutationObserver((f) => {
             let s = !1;
             f.forEach((l) => {
               l.type === "childList" && l.addedNodes.length > 0 && (s = !0);
@@ -1978,27 +1991,27 @@ const ze = {
                 document.querySelectorAll(l).forEach((y) => {
                   y instanceof HTMLElement && !y.dataset.studyModeDisabled && (y.style.display = "none", y.dataset.studyModeDisabled = "true");
                 });
-              } catch (h) {
-                console.error("🚨 [Site Handler] Mutation observer error:", h);
+              } catch (A) {
+                console.error("🚨 [Site Handler] Mutation observer error:", A);
               }
             });
           });
-          i.observe(document.documentElement, {
+          n.observe(document.documentElement, {
             childList: !0,
             subtree: !0
-          }), window.__studyModeObserver = i;
+          }), window.__studyModeObserver = n;
         };
-        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), a(t, o), n(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
-      } catch (a) {
-        console.error("🚨 [Site Handler] Error in script execution:", a);
+        console.log("🎯 [Site Handler] Script execution started!"), console.log("🎯 [Site Handler] Message:", t), console.log("🎯 [Site Handler] Background color:", o), i(t, o), a(e), console.log("🎯 [Site Handler] Script execution completed successfully!");
+      } catch (i) {
+        console.error("🚨 [Site Handler] Error in script execution:", i);
         try {
-          e.forEach((n) => {
-            document.querySelectorAll(n).forEach((i) => {
-              i instanceof HTMLElement && (i.style.display = "none");
+          e.forEach((a) => {
+            document.querySelectorAll(a).forEach((n) => {
+              n instanceof HTMLElement && (n.style.display = "none");
             });
           }), console.log("🎯 [Site Handler] Fallback CSS hiding applied");
-        } catch (n) {
-          console.error("🚨 [Site Handler] Fallback also failed:", n);
+        } catch (a) {
+          console.error("🚨 [Site Handler] Fallback also failed:", a);
         }
       }
     };
@@ -2008,18 +2021,18 @@ function qe(r) {
   try {
     const t = new URL(r).hostname;
     console.log("getSiteHandler: Checking URL:", r), console.log("getSiteHandler: Hostname:", t);
-    const o = Ne.find((a) => !!(t === a.domain || t.endsWith("." + a.domain) || (t.startsWith("www.") ? t.substring(4) : t) === a.domain));
+    const o = Ne.find((i) => !!(t === i.domain || t.endsWith("." + i.domain) || (t.startsWith("www.") ? t.substring(4) : t) === i.domain));
     return console.log("getSiteHandler: Found handler:", (o == null ? void 0 : o.domain) || "none"), o;
   } catch (e) {
     console.error("getSiteHandler: Error:", e);
     return;
   }
 }
-const z = class z {
+const j = class j {
   constructor() {
   }
   static getInstance() {
-    return z.instance || (z.instance = new z()), z.instance;
+    return j.instance || (j.instance = new j()), j.instance;
   }
   /**
    * 检查并处理标签页URL
@@ -2032,16 +2045,16 @@ const z = class z {
         console.log("UrlBlocker: Focus mode not active, skipping URL check");
         return;
       }
-      const a = await k.get();
-      console.log("UrlBlocker: Blocked config:", a);
-      const n = this.isUrlBlocked(t, a.urls);
-      if (console.log("UrlBlocker: Is blocked?", n), n) {
+      const i = await k.get();
+      console.log("UrlBlocker: Blocked config:", i);
+      const a = this.isUrlBlocked(t, i.urls);
+      if (console.log("UrlBlocker: Is blocked?", a), a) {
         console.log("UrlBlocker: Blocking URL:", t), await this.showBlockedWarning(e, t);
         return;
       }
-      const c = this.isUrlBlocked(t, a.studyModeUrls);
+      const c = this.isUrlBlocked(t, i.studyModeUrls);
       if (console.log("UrlBlocker: Is study mode?", c), c) {
-        console.log("UrlBlocker: Applying study mode to URL:", t), await this.handleStudyModeUrl(e, t, a.studyModeSelectors);
+        console.log("UrlBlocker: Applying study mode to URL:", t), await this.handleStudyModeUrl(e, t, i.studyModeSelectors);
         return;
       }
       console.log("UrlBlocker: URL is allowed:", t);
@@ -2054,29 +2067,29 @@ const z = class z {
    */
   isUrlBlocked(e, t) {
     try {
-      const a = new URL(e).hostname;
-      console.log("UrlBlocker: Checking URL:", e), console.log("UrlBlocker: Domain:", a), console.log("UrlBlocker: Blocked URLs list:", t);
-      const n = t.some((c) => {
-        let i = c.trim();
-        if (i.startsWith("http://") || i.startsWith("https://"))
+      const i = new URL(e).hostname;
+      console.log("UrlBlocker: Checking URL:", e), console.log("UrlBlocker: Domain:", i), console.log("UrlBlocker: Blocked URLs list:", t);
+      const a = t.some((c) => {
+        let n = c.trim();
+        if (n.startsWith("http://") || n.startsWith("https://"))
           try {
-            i = new URL(i).hostname;
+            n = new URL(n).hostname;
           } catch {
-            i = i.replace(/^https?:\/\//, "").split("/")[0];
+            n = n.replace(/^https?:\/\//, "").split("/")[0];
           }
-        if (console.log("UrlBlocker: Comparing with cleaned URL:", i), i.startsWith("*.")) {
-          const v = i.substring(2), B = a.endsWith(v);
+        if (console.log("UrlBlocker: Comparing with cleaned URL:", n), n.startsWith("*.")) {
+          const v = n.substring(2), B = i.endsWith(v);
           return console.log("UrlBlocker: Wildcard match result:", B), B;
         }
         if (c.includes("/") && !c.startsWith("http")) {
           const v = e.includes(c);
           return console.log("UrlBlocker: Full URL match result:", v), v;
         }
-        const f = a === i, s = a.endsWith("." + i), l = i.endsWith("." + a), h = a.startsWith("www.") ? a.substring(4) : a, y = i.startsWith("www.") ? i.substring(4) : i, M = h === y, N = f || s || l || M;
+        const f = i === n, s = i.endsWith("." + n), l = n.endsWith("." + i), A = i.startsWith("www.") ? i.substring(4) : i, y = n.startsWith("www.") ? n.substring(4) : n, M = A === y, N = f || s || l || M;
         return console.log("UrlBlocker: Domain match result:", {
-          domain: a,
-          cleanBlockedUrl: i,
-          domainWithoutWww: h,
+          domain: i,
+          cleanBlockedUrl: n,
+          domainWithoutWww: A,
           cleanBlockedUrlWithoutWww: y,
           exactMatch: f,
           subdomainMatch: s,
@@ -2085,7 +2098,7 @@ const z = class z {
           finalResult: N
         }), N;
       });
-      return console.log("UrlBlocker: Final blocking result:", n), n;
+      return console.log("UrlBlocker: Final blocking result:", a), a;
     } catch (o) {
       return console.error("Error checking if URL is blocked:", o), !1;
     }
@@ -2106,22 +2119,22 @@ const z = class z {
    */
   async handleStudyModeUrl(e, t, o) {
     try {
-      const n = new URL(t).hostname;
-      console.log("UrlBlocker: Handling study mode for URL:", t), console.log("UrlBlocker: Domain:", n);
+      const a = new URL(t).hostname;
+      console.log("UrlBlocker: Handling study mode for URL:", t), console.log("UrlBlocker: Domain:", a);
       const c = qe(t);
       if (c) {
         console.log("UrlBlocker: Found predefined site handler for domain:", c.domain), await this.applySiteHandler(e, c);
         return;
       }
       console.log("UrlBlocker: No predefined site handler found, checking user selectors");
-      const i = o[n] || [];
-      if (console.log("UrlBlocker: User selectors for domain:", n, i), i.length === 0) {
+      const n = o[a] || [];
+      if (console.log("UrlBlocker: User selectors for domain:", a, n), n.length === 0) {
         console.log("UrlBlocker: No selectors configured for study mode URL:", t);
         return;
       }
-      await this.injectHideElements(e, i), console.log("UrlBlocker: Study mode applied to:", t, "with selectors:", i);
-    } catch (a) {
-      console.error("Error handling study mode URL:", a);
+      await this.injectHideElements(e, n), console.log("UrlBlocker: Study mode applied to:", t, "with selectors:", n);
+    } catch (i) {
+      console.error("Error handling study mode URL:", i);
     }
   }
   /**
@@ -2129,7 +2142,7 @@ const z = class z {
    */
   async injectHideElements(e, t) {
     try {
-      const o = t.map((a) => `${a} { display: none !important; }`).join(`
+      const o = t.map((i) => `${i} { display: none !important; }`).join(`
 `);
       await chrome.scripting.insertCSS({
         target: { tabId: e },
@@ -2144,19 +2157,19 @@ const z = class z {
    */
   async applySiteHandler(e, t) {
     try {
-      const o = t.getSelectors(), a = await chrome.tabs.get(e);
+      const o = t.getSelectors(), i = await chrome.tabs.get(e);
       if (console.log("UrlBlocker: Tab status before injection:", {
         tabId: e,
-        status: a.status,
-        url: a.url,
+        status: i.status,
+        url: i.url,
         domain: t.domain
-      }), a.status === "loading" && (console.log("UrlBlocker: Page is loading, waiting..."), await new Promise((n) => setTimeout(n, 1e3))), t.getCustomHandler) {
-        const n = t.getCustomHandler(e);
+      }), i.status === "loading" && (console.log("UrlBlocker: Page is loading, waiting..."), await new Promise((a) => setTimeout(a, 1e3))), t.getCustomHandler) {
+        const a = t.getCustomHandler(e);
         console.log("UrlBlocker: Executing custom handler for:", e, t.domain, o);
         try {
           const c = await chrome.scripting.executeScript({
             target: { tabId: e },
-            func: n,
+            func: a,
             args: [o]
           });
           console.log("UrlBlocker: Script injection result:", c), console.log("UrlBlocker: Applied custom site handler for:", t.domain);
@@ -2232,9 +2245,9 @@ const z = class z {
       const e = await k.get();
       console.log("UrlBlocker: Current config before initialization:", e);
       let t = !1;
-      for (const a of Ne) {
-        const n = a.domain;
-        e.studyModeUrls.includes(n) ? console.log("UrlBlocker: Predefined site already in study mode:", n) : (e.studyModeUrls.push(n), t = !0, console.log("UrlBlocker: Added predefined site to study mode:", n));
+      for (const i of Ne) {
+        const a = i.domain;
+        e.studyModeUrls.includes(a) ? console.log("UrlBlocker: Predefined site already in study mode:", a) : (e.studyModeUrls.push(a), t = !0, console.log("UrlBlocker: Added predefined site to study mode:", a));
       }
       t ? (await k.set(e), console.log("UrlBlocker: Predefined sites initialized")) : console.log("UrlBlocker: No changes needed, all predefined sites already configured");
       const o = await k.get();
@@ -2244,14 +2257,14 @@ const z = class z {
     }
   }
 };
-H(z, "instance");
-let le = z;
-const j = class j {
+H(j, "instance");
+let le = j;
+const W = class W {
   constructor() {
     H(this, "timerInterval", null);
   }
   static getInstance() {
-    return j.instance || (j.instance = new j()), j.instance;
+    return W.instance || (W.instance = new W()), W.instance;
   }
   /**
    * 启动专注模式
@@ -2336,7 +2349,7 @@ const j = class j {
    */
   async preGenerateNotification(e) {
     try {
-      if (!(await J.get()).enabled)
+      if (!(await Z.get()).enabled)
         return;
       await ce.getInstance().preGenerateNotification(e);
     } catch (t) {
@@ -2378,10 +2391,10 @@ const j = class j {
     }
   }
 };
-H(j, "instance");
-let Se = j;
+H(W, "instance");
+let Se = W;
 const Te = Se.getInstance(), ge = ee.getInstance(), xe = le.getInstance();
-chrome.runtime.onMessage.addListener((r, e, t) => r.type === ae.TEST_TTS ? (ge.testTTS(r.text).then((o) => t(o)).catch((o) => {
+chrome.runtime.onMessage.addListener((r, e, t) => r.type === ae.TEST_TTS ? (ge.testTTS(r.text, r.config).then((o) => t(o)).catch((o) => {
   console.error("TTS test error:", o), t({ success: !1, error: o.message });
 }), !0) : r.type === "PLAY_TTS_SOUND" ? (ge.playTTSNotification(r.text).then(() => t({ success: !0 })).catch((o) => {
   console.error("TTS play error:", o), t({ success: !1, error: o.message });
@@ -2403,15 +2416,15 @@ chrome.storage.onChanged.addListener(async (r, e) => {
         new: t
       });
       try {
-        (await chrome.tabs.query({})).forEach((n) => {
-          n.id && chrome.tabs.sendMessage(n.id, {
+        (await chrome.tabs.query({})).forEach((a) => {
+          a.id && chrome.tabs.sendMessage(a.id, {
             type: "SPEECH_CONFIG_CHANGED",
             config: t
           }).catch(() => {
           });
         });
-      } catch (a) {
-        console.error("Error notifying tabs of speech config change:", a);
+      } catch (i) {
+        console.error("Error notifying tabs of speech config change:", i);
       }
     }
   }

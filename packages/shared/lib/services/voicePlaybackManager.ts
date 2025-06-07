@@ -65,7 +65,7 @@ export class VoicePlaybackManager {
     console.log('Starting TTS playback:', {
       text: text.substring(0, 50) + '...',
       estimatedDuration,
-      estimatedEndTime: new Date(this.state.estimatedEndTime).toISOString(),
+      estimatedEndTime: this.state.estimatedEndTime ? new Date(this.state.estimatedEndTime).toISOString() : 'unknown',
     });
 
     this.callbacks.onStart?.();

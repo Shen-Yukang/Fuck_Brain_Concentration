@@ -3,22 +3,21 @@
  * 解决代码重复和状态管理问题
  */
 
-import {
+import type {
   IVoiceService,
-  VoiceState,
   VoiceStateInfo,
-  VoiceError,
-  VoiceErrorType,
   VoiceResult,
   SpeechOptions,
   SpeechResult,
   ListenOptions,
   ListenResult,
-  STATE_TRANSITIONS,
 } from '../types/voiceTypes.js';
+import { VoiceState, VoiceError, VoiceErrorType, STATE_TRANSITIONS } from '../types/voiceTypes.js';
 import { VOICE_CONSTANTS, RECOGNITION_CONSTANTS } from '../constants/voiceConstants.js';
-import { VoicePlaybackManager, PlaybackCallbacks } from './voicePlaybackManager.js';
-import { VoiceRecognitionManager, RecognitionCallbacks } from './voiceRecognitionManager.js';
+import type { PlaybackCallbacks } from './voicePlaybackManager.js';
+import { VoicePlaybackManager } from './voicePlaybackManager.js';
+import type { RecognitionCallbacks } from './voiceRecognitionManager.js';
+import { VoiceRecognitionManager } from './voiceRecognitionManager.js';
 
 export class UnifiedVoiceService implements IVoiceService {
   private state: VoiceState = VoiceState.IDLE;
@@ -207,165 +206,6 @@ export class UnifiedVoiceService implements IVoiceService {
     }
   }
 
-  private async speakWithTTS(text: string, options: SpeechOptions): Promise<VoiceResult<SpeechResult>> {
-    return new Promise(resolve => {
-      const startTime = Date.now();
-
-      try {
-        chrome.runtime.sendMessage(
-          {
-            type: 'PLAY_TTS_SOUND',
-            text: text,
-          },
-          response => {
-            if (chrome.runtime.lastError) {
-              const error = new VoiceError(
-                VoiceErrorType.TTS_PLAYBACK_FAILED,
-                'TTS service communication failed',
-                new Error(chrome.runtime.lastError.message),
-              );
-              this.setErrorState(error);
-              resolve({ success: false, error });
-              return;
-            }
-
-            if (!response || !response.success) {
-              const error = new VoiceError(VoiceErrorType.TTS_PLAYBACK_FAILED, 'TTS playback failed', undefined, {
-                response,
-              });
-              this.setErrorState(error);
-              resolve({ success: false, error });
-              return;
-            }
-
-            // 估算播放时长并设置状态检查
-            const estimatedDuration = Math.min(
-              Math.max(text.length * VOICE_CONSTANTS.ESTIMATED_DURATION_PER_CHAR, VOICE_CONSTANTS.MIN_PLAY_DURATION),
-              VOICE_CONSTANTS.MAX_PLAY_DURATION,
-            );
-
-            this.setupPlaybackMonitoring(estimatedDuration, startTime, resolve, options);
-          },
-        );
-      } catch (error) {
-        const voiceError = new VoiceError(
-          VoiceErrorType.TTS_PLAYBACK_FAILED,
-          'Failed to send TTS message',
-          error as Error,
-        );
-        this.setErrorState(voiceError);
-        resolve({ success: false, error: voiceError });
-      }
-    });
-  }
-
-  private async speakWithWebAPI(text: string, options: SpeechOptions): Promise<VoiceResult<SpeechResult>> {
-    return new Promise(resolve => {
-      try {
-        if (!('speechSynthesis' in window)) {
-          const error = new VoiceError(VoiceErrorType.TTS_PLAYBACK_FAILED, 'Speech synthesis not supported');
-          this.setErrorState(error);
-          resolve({ success: false, error });
-          return;
-        }
-
-        // 停止当前播放
-        speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = options.speed || 1.0;
-        utterance.volume = options.volume || 0.8;
-
-        const startTime = Date.now();
-
-        utterance.onstart = () => {
-          options.onStart?.();
-        };
-
-        utterance.onend = () => {
-          const duration = Date.now() - startTime;
-          this.isSpeaking = false;
-          this.setState(VoiceState.IDLE);
-          this.currentUtterance = undefined;
-          options.onEnd?.();
-          resolve({
-            success: true,
-            data: { duration, interrupted: false },
-          });
-        };
-
-        utterance.onerror = event => {
-          const error = new VoiceError(
-            VoiceErrorType.TTS_PLAYBACK_FAILED,
-            'Web Speech API error',
-            new Error(event.error),
-          );
-          this.setErrorState(error);
-          options.onError?.(error);
-          resolve({ success: false, error });
-        };
-
-        this.currentUtterance = utterance;
-        speechSynthesis.speak(utterance);
-      } catch (error) {
-        const voiceError = new VoiceError(VoiceErrorType.TTS_PLAYBACK_FAILED, 'Web Speech API failed', error as Error);
-        this.setErrorState(voiceError);
-        resolve({ success: false, error: voiceError });
-      }
-    });
-  }
-
-  private setupPlaybackMonitoring(
-    estimatedDuration: number,
-    startTime: number,
-    resolve: (result: VoiceResult<SpeechResult>) => void,
-    options: SpeechOptions,
-  ): void {
-    let checkCount = 0;
-    const maxChecks = Math.ceil(estimatedDuration / VOICE_CONSTANTS.PLAY_STATUS_CHECK_INTERVAL);
-
-    this.playbackCheckInterval = setInterval(() => {
-      checkCount++;
-
-      // 如果超过估算时间或达到最大检查次数，认为播放完成
-      if (checkCount >= maxChecks) {
-        this.clearPlaybackMonitoring();
-        const duration = Date.now() - startTime;
-        this.isSpeaking = false;
-        this.setState(VoiceState.IDLE);
-        options.onEnd?.();
-        resolve({
-          success: true,
-          data: { duration, interrupted: false },
-        });
-      }
-    }, VOICE_CONSTANTS.PLAY_STATUS_CHECK_INTERVAL);
-
-    // 设置最大超时
-    this.speechTimeout = setTimeout(() => {
-      this.clearPlaybackMonitoring();
-      const duration = Date.now() - startTime;
-      this.isSpeaking = false;
-      this.setState(VoiceState.IDLE);
-      options.onEnd?.();
-      resolve({
-        success: true,
-        data: { duration, interrupted: false },
-      });
-    }, estimatedDuration + 1000); // 额外1秒缓冲
-  }
-
-  private clearPlaybackMonitoring(): void {
-    if (this.playbackCheckInterval) {
-      clearInterval(this.playbackCheckInterval);
-      this.playbackCheckInterval = undefined;
-    }
-    if (this.speechTimeout) {
-      clearTimeout(this.speechTimeout);
-      this.speechTimeout = undefined;
-    }
-  }
-
   async stopSpeaking(): Promise<VoiceResult<void>> {
     try {
       await this.playbackManager.stop();
@@ -478,26 +318,6 @@ export class UnifiedVoiceService implements IVoiceService {
               error as Error,
             );
       this.setErrorState(voiceError);
-      return { success: false, error: voiceError };
-    }
-  }
-
-  async stopListening(): Promise<VoiceResult<void>> {
-    try {
-      await this.recognitionManager.stopListening();
-
-      this.isListening = false;
-      if (this.state === VoiceState.LISTENING) {
-        this.setState(VoiceState.IDLE);
-      }
-
-      return { success: true };
-    } catch (error) {
-      const voiceError = new VoiceError(
-        VoiceErrorType.SPEECH_RECOGNITION_FAILED,
-        'Failed to stop listening',
-        error as Error,
-      );
       return { success: false, error: voiceError };
     }
   }

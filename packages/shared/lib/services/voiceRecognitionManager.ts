@@ -36,7 +36,7 @@ export class VoiceRecognitionManager {
     hasResult: false,
   };
 
-  private recognition?: SpeechRecognition;
+  private recognition?: any; // SpeechRecognition type varies by browser
   private callbacks: RecognitionCallbacks = {};
   private timeoutHandle?: NodeJS.Timeout;
   private conversationTimeoutHandle?: NodeJS.Timeout;

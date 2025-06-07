@@ -1,0 +1,1 @@
+{"version":3,"file":"withSuspense.d.ts","sourceRoot":"","sources":["../../../lib/hoc/withSuspense.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,aAAa,EAAE,YAAY,EAAE,MAAM,OAAO,CAAC;AAGzD,wBAAgB,YAAY,CAAC,CAAC,SAAS,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,EAC5D,SAAS,EAAE,aAAa,CAAC,CAAC,CAAC,EAC3B,iBAAiB,EAAE,YAAY,IAEF,OAAO,CAAC,6CAOtC"}

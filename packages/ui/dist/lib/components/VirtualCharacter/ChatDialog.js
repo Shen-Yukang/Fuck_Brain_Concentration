@@ -201,7 +201,7 @@ export const ChatDialog = ({ isOpen, onClose, onSendMessage, onTaskExecute, char
     };
     // Play text using Web Speech API
     const playWithWebSpeechAPI = async (text) => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             try {
                 if (!('speechSynthesis' in window)) {
                     resolve();

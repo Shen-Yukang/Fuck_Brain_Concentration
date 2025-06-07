@@ -27,3 +27,4 @@ tsconfig.tsbuildinfo
 
 # temporarily commented out (can learn more about it)
 .github/
+dist/
