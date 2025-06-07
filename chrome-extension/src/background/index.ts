@@ -13,9 +13,9 @@ const urlBlocker = UrlBlocker.getInstance();
 // 消息监听器
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === MESSAGE_TYPES.TEST_TTS) {
-    // 处理TTS测试请求
+    // 处理TTS测试请求，支持传递测试配置
     audioManager
-      .testTTS(message.text)
+      .testTTS(message.text, message.config)
       .then(result => sendResponse(result))
       .catch(error => {
         console.error('TTS test error:', error);

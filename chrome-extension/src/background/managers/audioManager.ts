@@ -130,17 +130,44 @@ export class AudioManager {
 
   /**
    * 测试TTS功能
+   * 修复Bug: 确保使用当前配置的语音类型进行测试
    */
-  async testTTS(text: string): Promise<{ success: boolean; error?: string }> {
+  async testTTS(text: string, testConfig?: any): Promise<{ success: boolean; error?: string }> {
     try {
-      // 检查TTS配置
-      const ttsConfig = await ttsConfigStorage.get();
-      if (!ttsConfig.enabled || !(await ttsConfigStorage.isConfigured())) {
+      // 获取当前TTS配置
+      let ttsConfig = await ttsConfigStorage.get();
+
+      // 如果提供了测试配置，临时使用测试配置
+      if (testConfig) {
+        ttsConfig = { ...ttsConfig, ...testConfig };
+        console.log('Using test config:', testConfig);
+      }
+
+      if (!ttsConfig.enabled || !ttsConfig.appid || !ttsConfig.token) {
         return { success: false, error: ERROR_MESSAGES.TTS_NOT_CONFIGURED };
       }
 
-      // 生成语音
+      console.log('Testing TTS with config:', {
+        voiceType: ttsConfig.voiceType,
+        text: text,
+        speedRatio: ttsConfig.speedRatio,
+        appid: ttsConfig.appid ? '***' : 'missing',
+        token: ttsConfig.token ? '***' : 'missing',
+      });
+
+      // 如果使用测试配置，临时保存配置以确保TTSService使用正确的设置
+      if (testConfig) {
+        await ttsConfigStorage.set(ttsConfig);
+      }
+
+      // 生成语音 - 这里会使用当前配置的语音类型
       const audioData = await TTSService.generateSpeech(text);
+
+      // 如果使用了测试配置，恢复原始配置
+      if (testConfig) {
+        const originalConfig = await ttsConfigStorage.get();
+        await ttsConfigStorage.set({ ...originalConfig, ...testConfig });
+      }
 
       if (!audioData) {
         return { success: false, error: ERROR_MESSAGES.TTS_GENERATION_FAILED };
